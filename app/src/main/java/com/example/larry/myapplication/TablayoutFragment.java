@@ -1,7 +1,9 @@
 package com.example.larry.myapplication;
 
+import android.app.AlertDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -11,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
@@ -18,6 +21,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.larry.myapplication.banner.SimpleImageBanner;
+import com.example.larry.myapplication.utils.DataProvider;
+import com.example.larry.myapplication.utils.T;
+import com.example.larry.myapplication.utils.ViewFindUtils;
+
+import dmax.dialog.SpotsDialog;
 
 /**
  * Created by Larry on 2015/12/13.
@@ -44,6 +54,7 @@ public class TablayoutFragment extends Fragment {
         return rootView;
     }
 
+
     public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
@@ -66,26 +77,73 @@ public class TablayoutFragment extends Fragment {
             return fragment;
         }
 
+
+
+        protected  TextView tv;
+        protected  SwipeRefreshLayout swipeRefreshLayout;
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                  Bundle savedInstanceState) {
             int tab_number =  getArguments().getInt(ARG_SECTION_NUMBER);
+            View rootView = null;
             @LayoutRes int resource ;
             switch (tab_number){
                 case 1:
                     resource = R.layout.tab_one;
+                    rootView = inflater.inflate(resource, container, false);
+                    sib_simple_usage(rootView);
+                    tv = (TextView)rootView.findViewById(R.id.tab1_title2);
+                    swipeRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.swipe_container);
+                    //设置刷新时动画的颜色，可以设置4个
+                    swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
+                    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+                        @Override
+                        public void onRefresh() {
+                            tv.setText("正在刷新");
+                            // TODO Auto-generated method stub
+                            AlertDialog ad = new SpotsDialog(container.getContext());
+                            ad.show();
+                            new Handler().postDelayed(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    // TODO Auto-generated method stub
+                                    tv.setText("刷新完成");
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            }, 6000);
+                            ad.dismiss();
+                        }
+                    });
+
                     break;
                 case 2:
                     resource = R.layout.tab_two;
+                    rootView = inflater.inflate(resource, container, false);
                     break;
                 default:
                     resource = R.layout.tab_three;
+                    rootView = inflater.inflate(resource, container, false);
                     break;
             }
-            View rootView = inflater.inflate(resource, container, false);
 //            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 //            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
+        }
+        private void sib_simple_usage(final View view) {
+            SimpleImageBanner sib = ViewFindUtils.find(view, R.id.sib_simple_usage);
+
+            sib
+                    .setSource(DataProvider.getList())
+                    .startScroll();
+
+            sib.setOnItemClickL(new SimpleImageBanner.OnItemClickL() {
+                @Override
+                public void onItemClick(int position) {
+                    T.showShort(view.getContext(), "position--->" + position);
+                }
+            });
         }
     }
 

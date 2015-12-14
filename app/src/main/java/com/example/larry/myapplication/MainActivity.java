@@ -1,8 +1,10 @@
 package com.example.larry.myapplication;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.larry.myapplication.utils.ConfigStore;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,12 +34,16 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        drawer.openDrawer(GravityCompat.START);
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.content_layout,new TablayoutFragment()).commit();
-
+        boolean bool = ConfigStore.isFirstEnter(getBaseContext(),this.getLocalClassName());
+        if(!bool) {
+            drawer.openDrawer(GravityCompat.START);
+            ConfigStore.writeFirstEnter(getBaseContext(), this.getLocalClassName());
+        }
     }
 
     @Override
