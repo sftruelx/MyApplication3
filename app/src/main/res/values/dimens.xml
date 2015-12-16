@@ -14,7 +14,7 @@
     <!-- playback controls -->
     <dimen name="playback_controls_albumart_horizontal_margin">8dp</dimen>
     <dimen name="playback_controls_albumart_size">64dp</dimen>
-    <dimen name="playback_controls_padding">8dp</dimen>
+    <dimen name="playback_controls_padding">3dp</dimen>
 
     <!-- navigation drawer -->
     <dimen name="drawer_item_icon_margin_end">32dp</dimen>
