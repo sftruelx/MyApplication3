@@ -5,4 +5,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="currently_playing_artist">currently song </string>
+    <string name="currently_playing_song">currently playing song</string>
+    <string name="currently_playing_extra_info">extra info</string>
+    <string name="play_pause">pause</string>
 </resources>

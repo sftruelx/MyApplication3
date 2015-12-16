@@ -1,5 +1,9 @@
 package com.example.larry.myapplication;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -14,11 +18,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RemoteViews;
 
 import com.example.larry.myapplication.utils.ConfigStore;
+import com.example.larry.myapplication.utils.LogHelper;
+import com.example.larry.myapplication.utils.NetworkHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    int notification_id=19172439;
+    NotificationManager nm;
+    Handler handler=new Handler();
+    Notification notification;
+    int count=0;
+    private static final String TAG = LogHelper.makeLogTag(MainActivity.class);
+
+    private PlaybackControlsFragment mControlsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +59,19 @@ public class MainActivity extends AppCompatActivity
             drawer.openDrawer(GravityCompat.START);
             ConfigStore.writeFirstEnter(getBaseContext(), this.getLocalClassName());
         }
+        mControlsFragment = (PlaybackControlsFragment) getFragmentManager()
+                .findFragmentById(R.id.fragment_playback_controls);
+        if (mControlsFragment == null) {
+            throw new IllegalStateException("Mising fragment with id 'controls'. Cannot continue.");
+        }
+        showPlaybackControls();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     @Override
@@ -55,7 +83,24 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+    protected void showPlaybackControls() {
+        LogHelper.d(TAG, "showPlaybackControls");
+        if (NetworkHelper.isOnline(this)) {
+            getFragmentManager().beginTransaction()
+                    .setCustomAnimations(
+                            R.animator.slide_in_from_bottom, R.animator.slide_out_to_bottom,
+                            R.animator.slide_in_from_bottom, R.animator.slide_out_to_bottom)
+                    .show(mControlsFragment)
+                    .commit();
+        }
+    }
 
+    protected void hidePlaybackControls() {
+        LogHelper.d(TAG, "hidePlaybackControls");
+        getFragmentManager().beginTransaction()
+                .hide(mControlsFragment)
+                .commit();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -72,6 +117,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            hidePlaybackControls();
+
             return true;
         }
 
@@ -86,7 +133,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            showPlaybackControls();
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
