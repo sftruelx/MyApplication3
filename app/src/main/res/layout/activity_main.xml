@@ -13,12 +13,30 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
          <!--Content-->
         <FrameLayout
             android:id="@+id/content_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-        <!--<include layout="@layout/content_main"/>-->
+            <android.support.v7.widget.CardView
+                android:id="@+id/controls_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                app:cardElevation="8dp">
+
+                <fragment android:name="com.example.android.uamp.ui.PlaybackControlsFragment"
+                    android:id="@+id/fragment_playback_controls"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    tools:layout="@layout/fragment_playback_controls" />
+
+            </android.support.v7.widget.CardView>
+        </RelativeLayout>
         <!-- Drawer -->
         <android.support.design.widget.NavigationView
             android:id="@+id/nav_view"
