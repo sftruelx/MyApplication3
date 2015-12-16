@@ -1,9 +1,9 @@
-package com.example.larry.myapplication.utils;
+package com.example.larry.myapplication.media;
 
 /**
  * Created by Larry on 2015/12/16.
  */
-public class ConstUtil {
+public class ConstMsg {
     //MusicBox接收器所能响应的Action
     public static final String MUSICBOX_ACTION="com.jph.musicbox.MUSICBOX_ACTION";
     //MusicService接收器所能响应的Action
@@ -25,7 +25,7 @@ public class ConstUtil {
     //菜单退出选的项的itemId
     public static final int MENU_EXIT=0x201;
 
-    public ConstUtil() {
+    public ConstMsg() {
         // TODO Auto-generated constructor stub
     }
 

@@ -46,10 +46,10 @@ public final class AlbumArtCache {
 
     private final LruCache<String, Bitmap[]> mCache;
 
-    private static final AlbumArtCache sInstance = new AlbumArtCache();
+    private static final AlbumArtCache Instance = new AlbumArtCache();
 
     public static AlbumArtCache getInstance() {
-        return sInstance;
+        return Instance;
     }
 
     private AlbumArtCache() {

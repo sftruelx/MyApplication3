@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 /**
  * Created by 067231 on 2015/12/16.
  *          播放器控制类
+ *          应该包括Music Service
+ *          消息发送器
  */
 public class MediaController {
 
