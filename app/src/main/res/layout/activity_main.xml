@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <include layout="@layout/app_bar_main"/>
@@ -25,10 +25,10 @@
                 android:id="@+id/controls_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                app:cardElevation="8dp">
+                android:background="@color/red"
+                android:layout_alignParentBottom="true">
 
-                <fragment android:name="com.example.android.uamp.ui.PlaybackControlsFragment"
+                <fragment android:name="com.example.larry.myapplication.PlaybackControlsFragment"
                     android:id="@+id/fragment_playback_controls"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

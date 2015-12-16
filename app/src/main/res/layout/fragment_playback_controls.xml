@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright (C) 2014 The Android Open Source Project
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/playback_controls_padding">
     <ImageView
@@ -24,8 +9,6 @@
         tools:src="@drawable/ic_launcher"
         android:layout_width="@dimen/playback_controls_albumart_size"
         android:layout_height="@dimen/playback_controls_albumart_size"
-        android:scaleType="centerCrop"
-        android:contentDescription="@string/currently_playing_song"
         android:layout_alignParentStart="true"/>
     <LinearLayout
         android:id="@+id/content"
@@ -43,9 +26,9 @@
             android:maxLines="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/currently_playing_song"
+            android:contentDescription=" currently_playing_song"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?android:attr/textColorPrimary"/>
+            android:textColor="#FF4081"/>
         <TextView
             android:id="@+id/artist"
             tools:text="John Doe and Band"
@@ -53,7 +36,7 @@
             android:maxLines="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/currently_playing_artist"
+            android:contentDescription=" currently_playing_artist"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
         <TextView
             android:id="@+id/extra_info"
@@ -63,8 +46,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:contentDescription="@string/currently_playing_extra_info"
+            android:contentDescription=" currently_playing_extra_info"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
+
     </LinearLayout>
     <ImageButton
         android:id="@+id/play_pause"
@@ -73,9 +57,8 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:layout_alignParentEnd="true"
-        android:background="?android:selectableItemBackgroundBorderless"
         android:src="@drawable/ic_play_arrow_black_36dp"
-        android:contentDescription="@string/play_pause"
+        android:contentDescription=" play_pause"
         android:tintMode="src_in"
-        android:tint="@color/bt_accent"/>
+        android:tint="#d45f00"/>
 </RelativeLayout>
