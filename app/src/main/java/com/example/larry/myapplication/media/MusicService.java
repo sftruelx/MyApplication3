@@ -63,6 +63,15 @@ public class MusicService extends Service {
         });
 
     }
+
+    protected void sendBroadcastToClient(int state) {
+        Intent intent=new Intent();
+        intent.setAction(ConstMsg.MUSICSERVICE_ACTION);
+        intent.putExtra("control", state);
+        sendBroadcast(intent);
+        LogHelper.i(TAG, "发送控制广播" + state);
+    }
+
     /**
      * 装载和播放音乐
      * @param index int index 播放第几首音乐的索引
@@ -79,14 +88,12 @@ public class MusicService extends Service {
         if (index<0) {
             current=index=2;
         }
-        //发送广播停止前台Activity更新界面
-        Intent intent=new Intent();
-        intent.putExtra("current", index);
-        intent.setAction(ConstMsg.MUSICSERVICE_ACTION);
-        sendBroadcast(intent);
+
+
         try {
             //TODO 读取SD卡内的语音文件
             //获取assets目录下指定文件的AssetFileDescriptor对象
+/*
             AssetFileDescriptor assetFileDescriptor=assetManager.openFd(musics[current]);
             mediaPlayer.reset();//初始化mediaPlayer对象
             mediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(),
@@ -95,10 +102,11 @@ public class MusicService extends Service {
             mediaPlayer.prepare();
             //播放音乐
             mediaPlayer.start();
+*/
 
             //getDuration()方法要在prepare()方法之后，否则会出现Attempt to call getDuration without a valid mediaplayer异常
 //            MusicBox.skbMusic.setMax(mediaPlayer.getDuration());//设置SeekBar的长度
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -112,6 +120,7 @@ public class MusicService extends Service {
                 if(isChanging==true)//当用户正在拖动进度进度条时不处理进度条的的进度
                     return;
                 //TODO 发送消息出去
+                sendBroadcastToClient(ConstMsg.STATE_PLAY);
             }
         };
         //每隔10毫秒检测一下播放进度

@@ -35,7 +35,7 @@ public class WelcomeActivity extends Activity {
         decorView = getWindow().getDecorView();
         boolean bool = ConfigStore.isFirstEnter(getBaseContext(),this.getLocalClassName());
         Log.i("this is my logs = ",String.valueOf(bool));
-        if(!bool) {
+        if(bool) {
             sgb();
 
         }else{

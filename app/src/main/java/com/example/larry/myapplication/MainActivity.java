@@ -41,6 +41,12 @@ public class MainActivity extends AppCompatActivity
     protected Intent mIntent;
     protected PlaybackControlsFragment mControlsFragment;
     protected MsgReceiver musicReceiver;
+    /******通知栏*****/
+    int notification_id=19172439;
+    NotificationManager nm;
+    Handler handler=new Handler();
+    Notification notification;
+    /******通知栏*****/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +89,24 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void initNotification(){
+        //建立notification,前面有学习过，不解释了，不懂看搜索以前的文章
+        nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        notification=new Notification(R.drawable.ic_launcher,"图标边的文字",System.currentTimeMillis());
+        notification.contentView = new RemoteViews(getPackageName(),R.layout.notification);
+        //使用notification.xml文件作VIEW
+        notification.contentView.setProgressBar(R.id.pb, 100,0, false);
+        //设置进度条，最大值 为100,当前值为0，最后一个参数为true时显示条纹
+        //（就是在Android Market下载软件，点击下载但还没获取到目标大小时的状态）
+        Intent notificationIntent = new Intent(this,NotifactionActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this,0,notificationIntent,0);
+        notification.contentIntent = contentIntent;
+        showNotification();
+    }
 
+    public void showNotification(){
+        nm.notify(notification_id, notification);
+    }
     /**
      *向后台Service发送控制广播ConstMsg 里面都有
      *@param state int state 控制状态码
@@ -195,6 +218,7 @@ public class MainActivity extends AppCompatActivity
             //可以在这里更新播放信息
             int progress = intent.getIntExtra("progress", 0);
 //            mProgressBar.setProgress(progress);
+            LogHelper.i(TAG,"接收Service传送过来的消息");
         }
 
     }
