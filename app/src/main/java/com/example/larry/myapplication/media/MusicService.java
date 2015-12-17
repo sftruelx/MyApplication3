@@ -63,6 +63,14 @@ public class MusicService extends Service {
         });
 
     }
+
+    protected void sendBroadcastToClient(int state) {
+        Intent intent=new Intent();
+        intent.setAction(ConstMsg.MUSICSERVICE_ACTION);
+        intent.putExtra("control", state);
+        sendBroadcast(intent);
+        LogHelper.i(TAG,"发送Service控制广播" + state);
+    }
     /**
      * 装载和播放音乐
      * @param index int index 播放第几首音乐的索引
@@ -111,7 +119,8 @@ public class MusicService extends Service {
                 isTimerRunning=true;
                 if(isChanging==true)//当用户正在拖动进度进度条时不处理进度条的的进度
                     return;
-                //TODO 发送消息出去
+                LogHelper.i(TAG,"发送消息出去");
+                sendBroadcastToClient(ConstMsg.STATE_PLAY);
             }
         };
         //每隔10毫秒检测一下播放进度

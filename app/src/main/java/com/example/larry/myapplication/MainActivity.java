@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity
         //注册广播接收器
         musicReceiver = new MsgReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConstMsg.MUSICCLIENT_ACTION);
+        intentFilter.addAction(ConstMsg.MUSICSERVICE_ACTION);
         registerReceiver(musicReceiver, intentFilter);
         //启动MUSIC服务
         Intent intent = new Intent(this,MusicService.class);
@@ -192,9 +192,9 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            //可以在这里更新播放信息
             int progress = intent.getIntExtra("progress", 0);
 //            mProgressBar.setProgress(progress);
+            LogHelper.i(TAG,"可以在这里更新播放信息");
         }
 
     }
