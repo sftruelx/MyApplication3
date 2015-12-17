@@ -13,6 +13,8 @@ import android.os.IBinder;
 import com.example.larry.myapplication.utils.LogHelper;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Larry on 2015/12/16.
@@ -20,8 +22,8 @@ import java.io.IOException;
 public class MusicService extends Service {
     protected static String TAG = LogHelper.makeLogTag(MusicService.class);
     private Intent intent = new Intent("com.example.larry.myapplication.RECEIVER");
-//    Timer mTimer;
-//    TimerTask mTimerTask;
+    Timer mTimer;
+    TimerTask mTimerTask;
     static boolean isChanging=false;//互斥变量，防止定时器与SeekBar拖动时进度冲突
     //创建一个媒体播放器的对象
     static MediaPlayer mediaPlayer;
@@ -84,6 +86,7 @@ public class MusicService extends Service {
         intent.setAction(ConstMsg.MUSICSERVICE_ACTION);
         sendBroadcast(intent);
         try {
+            //TODO 读取SD卡内的语音文件
             //获取assets目录下指定文件的AssetFileDescriptor对象
             AssetFileDescriptor assetFileDescriptor=assetManager.openFd(musics[current]);
             mediaPlayer.reset();//初始化mediaPlayer对象
@@ -93,6 +96,7 @@ public class MusicService extends Service {
             mediaPlayer.prepare();
             //播放音乐
             mediaPlayer.start();
+
             //getDuration()方法要在prepare()方法之后，否则会出现Attempt to call getDuration without a valid mediaplayer异常
 //            MusicBox.skbMusic.setMax(mediaPlayer.getDuration());//设置SeekBar的长度
         } catch (IOException e) {
@@ -100,19 +104,19 @@ public class MusicService extends Service {
             e.printStackTrace();
         }
     //----------定时器记录播放进度---------//
-//        这个不应该放在这里，应该放在页面自行处理
-//        mTimer = new Timer();
-//        mTimerTask = new TimerTask() {
-//            @Override
-//            public void run() {
-//                isTimerRunning=true;
-//                if(isChanging==true)//当用户正在拖动进度进度条时不处理进度条的的进度
-//                    return;
-////                MusicBox.skbMusic.setProgress(mediaPlayer.getCurrentPosition());
-//            }
-//        };
-//        //每隔10毫秒检测一下播放进度
-//        mTimer.schedule(mTimerTask, 0, 10);
+//        每500ms发送一次广播
+        mTimer = new Timer();
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                isTimerRunning=true;
+                if(isChanging==true)//当用户正在拖动进度进度条时不处理进度条的的进度
+                    return;
+//                MusicBox.skbMusic.setProgress(mediaPlayer.getCurrentPosition());
+            }
+        };
+        //每隔10毫秒检测一下播放进度
+        mTimer.schedule(mTimerTask, 0, 10);
 }
     @Override
     public IBinder onBind(Intent intent) {

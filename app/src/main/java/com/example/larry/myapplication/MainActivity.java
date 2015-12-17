@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity
         //启动MUSIC服务
         Intent intent = new Intent(this,MusicService.class);
         getApplicationContext().startService(intent);
-        sendBroadcastToService(ConstMsg.STATE_PLAY);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -83,25 +83,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public static Intent getExplicitIntent(Context context, Intent implicitIntent) {
-        // Retrieve all services that can match the given intent
-        PackageManager pm = context.getPackageManager();
-        List<ResolveInfo> resolveInfo = pm.queryIntentServices(implicitIntent, 0);
-        // Make sure only one match was found
-        if (resolveInfo == null || resolveInfo.size() != 1) {
-            return null;
-        }
-        // Get component info and create ComponentName
-        ResolveInfo serviceInfo = resolveInfo.get(0);
-        String packageName = serviceInfo.serviceInfo.packageName;
-        String className = serviceInfo.serviceInfo.name;
-        ComponentName component = new ComponentName(packageName, className);
-        // Create a new intent. Use the old one for extras and such reuse
-        Intent explicitIntent = new Intent(implicitIntent);
-        // Set the component to be explicit
-        explicitIntent.setComponent(component);
-        return explicitIntent;
-    }
+
     /**
      *向后台Service发送控制广播ConstMsg 里面都有
      *@param state int state 控制状态码
@@ -181,6 +163,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             showPlaybackControls();
+            sendBroadcastToService(ConstMsg.STATE_PLAY);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

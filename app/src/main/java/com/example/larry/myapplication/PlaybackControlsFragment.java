@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.utils.AlbumArtCache;
 import com.example.larry.myapplication.utils.LogHelper;
 
@@ -44,6 +45,8 @@ import com.example.larry.myapplication.utils.LogHelper;
 public class PlaybackControlsFragment extends Fragment {
 
     private static final String TAG = LogHelper.makeLogTag(PlaybackControlsFragment.class);
+
+    MainActivity parentActivity;
 
     private ImageButton mPlayPause;
     private TextView mTitle;
@@ -66,7 +69,7 @@ public class PlaybackControlsFragment extends Fragment {
                 LogHelper.i(TAG, "播放面板被点击,暂时没什么用");
             }
         });
-
+        parentActivity = (MainActivity ) getActivity();
         return rootView;
     }
 
@@ -87,9 +90,11 @@ public class PlaybackControlsFragment extends Fragment {
                     if (state == PlaybackState.STATE_PAUSED ||
                             state == PlaybackState.STATE_STOPPED ||
                             state == PlaybackState.STATE_NONE) {
+                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PLAY);
                     } else if (state == PlaybackState.STATE_PLAYING ||
                             state == PlaybackState.STATE_BUFFERING ||
                             state == PlaybackState.STATE_CONNECTING) {
+                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PAUSE);
                     }
                     break;
             }
