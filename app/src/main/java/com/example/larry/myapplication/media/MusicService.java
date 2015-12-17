@@ -56,7 +56,6 @@ public class MusicService extends Service {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                // TODO Auto-generated method stub
 //              mTimer.cancel();//取消定时器
                 current++;
                 prepareAndPlay(current);
@@ -112,7 +111,7 @@ public class MusicService extends Service {
                 isTimerRunning=true;
                 if(isChanging==true)//当用户正在拖动进度进度条时不处理进度条的的进度
                     return;
-//                MusicBox.skbMusic.setProgress(mediaPlayer.getCurrentPosition());
+                //TODO 发送消息出去
             }
         };
         //每隔10毫秒检测一下播放进度
