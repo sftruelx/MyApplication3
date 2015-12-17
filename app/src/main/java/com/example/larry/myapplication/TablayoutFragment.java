@@ -27,7 +27,6 @@ import com.example.larry.myapplication.utils.DataProvider;
 import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.ViewFindUtils;
 
-import dmax.dialog.SpotsDialog;
 
 /**
  * Created by Larry on 2015/12/13.
@@ -102,8 +101,6 @@ public class TablayoutFragment extends Fragment {
                         public void onRefresh() {
                             tv.setText("正在刷新");
                             // TODO Auto-generated method stub
-                            AlertDialog ad = new SpotsDialog(container.getContext());
-                            ad.show();
                             new Handler().postDelayed(new Runnable() {
 
                                 @Override
@@ -113,7 +110,6 @@ public class TablayoutFragment extends Fragment {
                                     swipeRefreshLayout.setRefreshing(false);
                                 }
                             }, 6000);
-                            ad.dismiss();
                         }
                     });
 
