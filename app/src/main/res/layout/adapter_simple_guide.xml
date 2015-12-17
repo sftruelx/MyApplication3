@@ -10,13 +10,14 @@
         android:layout_height="match_parent"
         android:scaleType="fitXY"
         tools:src="@mipmap/guide_img_1" />
+
     <TextView
         android:id="@+id/tv_jump"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_margin="35dp"
+        android:layout_margin="15dp"
         android:background="@drawable/corner_white"
         android:paddingBottom="8dp"
         android:paddingLeft="30dp"
@@ -24,6 +25,6 @@
         android:paddingTop="8dp"
         android:text="立即体验"
         android:textColor="#ffffff"
-        android:textSize="35sp" />
+        android:textSize="15sp" />
 
 </RelativeLayout>
