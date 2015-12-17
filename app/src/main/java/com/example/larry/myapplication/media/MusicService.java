@@ -10,12 +10,16 @@ import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 
+import com.example.larry.myapplication.utils.LogHelper;
+
 import java.io.IOException;
 
 /**
  * Created by Larry on 2015/12/16.
  */
 public class MusicService extends Service {
+    protected static String TAG = LogHelper.makeLogTag(MusicService.class);
+    private Intent intent = new Intent("com.example.larry.myapplication.RECEIVER");
 //    Timer mTimer;
 //    TimerTask mTimerTask;
     static boolean isChanging=false;//互斥变量，防止定时器与SeekBar拖动时进度冲突
@@ -37,12 +41,12 @@ public class MusicService extends Service {
     boolean isTimerRunning=false;
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
         super.onCreate();
+        LogHelper.i(TAG,"service 启动！");
         //注册接收器
         MusicSercieReceiver receiver=new MusicSercieReceiver();
         IntentFilter filter=new IntentFilter();
-        filter.addAction(ConstMsg.MUSICSERVICE_ACTION);
+        filter.addAction(ConstMsg.MUSICCLIENT_ACTION);
         registerReceiver(receiver, filter);
         mediaPlayer=new MediaPlayer();
         assetManager=getAssets();
@@ -77,7 +81,7 @@ public class MusicService extends Service {
         //发送广播停止前台Activity更新界面
         Intent intent=new Intent();
         intent.putExtra("current", index);
-        intent.setAction(ConstMsg.MUSICBOX_ACTION);
+        intent.setAction(ConstMsg.MUSICSERVICE_ACTION);
         sendBroadcast(intent);
         try {
             //获取assets目录下指定文件的AssetFileDescriptor对象
@@ -117,10 +121,11 @@ public class MusicService extends Service {
     }
     //创建广播接收器用于接收前台Activity发来的广播
     class MusicSercieReceiver extends BroadcastReceiver {
+        protected  String TAG = LogHelper.makeLogTag(MusicSercieReceiver.class);
         @Override
-        public void onReceive(Context context, Intent intent) {
-            // TODO Auto-generated method stub
+        public void onReceive(Context context, Intent intent){
             int control=intent.getIntExtra("control", -1);
+            LogHelper.i(TAG,"接收前台Activity发来的广播" + control);
             switch (control) {
                 case ConstMsg.STATE_PLAY://播放音乐
                     if (state==ConstMsg.STATE_PAUSE) {//如果原来状态是暂停

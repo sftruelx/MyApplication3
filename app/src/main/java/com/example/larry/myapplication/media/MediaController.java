@@ -1,5 +1,7 @@
 package com.example.larry.myapplication.media;
 
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaMetadata;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
@@ -13,7 +15,7 @@ import android.support.annotation.Nullable;
  *          消息发送器
  */
 public class MediaController {
-
+    MusicService musicReceiver;
 
 
 

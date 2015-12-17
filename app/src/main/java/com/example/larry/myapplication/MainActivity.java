@@ -3,7 +3,13 @@ package com.example.larry.myapplication;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -20,21 +26,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RemoteViews;
 
+import com.example.larry.myapplication.media.ConstMsg;
+import com.example.larry.myapplication.media.MusicService;
 import com.example.larry.myapplication.utils.ConfigStore;
 import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.NetworkHelper;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    int notification_id=19172439;
-    NotificationManager nm;
-    Handler handler=new Handler();
-    Notification notification;
-    int count=0;
+
     private static final String TAG = LogHelper.makeLogTag(MainActivity.class);
-
-    private PlaybackControlsFragment mControlsFragment;
-
+    protected Intent mIntent;
+    protected PlaybackControlsFragment mControlsFragment;
+    protected MsgReceiver musicReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +48,15 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //注册广播接收器
+        musicReceiver = new MsgReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConstMsg.MUSICCLIENT_ACTION);
+        registerReceiver(musicReceiver, intentFilter);
+        //启动MUSIC服务
+        Intent intent = new Intent(this,MusicService.class);
+        getApplicationContext().startService(intent);
+        sendBroadcastToService(ConstMsg.STATE_PLAY);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -67,6 +82,38 @@ public class MainActivity extends AppCompatActivity
         showPlaybackControls();
 
     }
+
+    public static Intent getExplicitIntent(Context context, Intent implicitIntent) {
+        // Retrieve all services that can match the given intent
+        PackageManager pm = context.getPackageManager();
+        List<ResolveInfo> resolveInfo = pm.queryIntentServices(implicitIntent, 0);
+        // Make sure only one match was found
+        if (resolveInfo == null || resolveInfo.size() != 1) {
+            return null;
+        }
+        // Get component info and create ComponentName
+        ResolveInfo serviceInfo = resolveInfo.get(0);
+        String packageName = serviceInfo.serviceInfo.packageName;
+        String className = serviceInfo.serviceInfo.name;
+        ComponentName component = new ComponentName(packageName, className);
+        // Create a new intent. Use the old one for extras and such reuse
+        Intent explicitIntent = new Intent(implicitIntent);
+        // Set the component to be explicit
+        explicitIntent.setComponent(component);
+        return explicitIntent;
+    }
+    /**
+     *向后台Service发送控制广播ConstMsg 里面都有
+     *@param state int state 控制状态码
+     * */
+    protected void sendBroadcastToService(int state) {
+        Intent intent=new Intent();
+        intent.setAction(ConstMsg.MUSICCLIENT_ACTION);
+        intent.putExtra("control", state);
+        sendBroadcast(intent);
+        LogHelper.i(TAG,"发送控制广播" + state);
+    }
+
 
     @Override
     protected void onStart() {
@@ -149,5 +196,23 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    @Override
+    protected void onDestroy() {
+        //停止服务
+        stopService(mIntent);
+        //注销广播
+        unregisterReceiver(musicReceiver);
+        super.onDestroy();
+    }
+    public class MsgReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //可以在这里更新播放信息
+            int progress = intent.getIntExtra("progress", 0);
+//            mProgressBar.setProgress(progress);
+        }
+
     }
 }
