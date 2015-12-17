@@ -61,7 +61,7 @@ public class NotifactionActivity extends Activity {
             notification.contentView.setProgressBar(R.id.pb, 100,count, false);
             //设置当前值为count
             showNotification();//这里是更新notification,就是更新进度条
-            if(count<100) handler.postDelayed(run, 200);
+            if(count<=100) handler.postDelayed(run, 200);
             //200毫秒count加1
         }
 
