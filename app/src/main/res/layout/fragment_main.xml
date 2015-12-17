@@ -41,8 +41,6 @@ limitations under the License.
         android:paddingTop="8dp"
         android:text="立即体验"
         android:textColor="#ffffff"
-        android:tint="@color/accent"
-        android:tintMode="src_in"
         android:textSize="25sp" />
 
 
