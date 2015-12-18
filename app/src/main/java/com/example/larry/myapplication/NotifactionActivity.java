@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.NotificationCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RemoteViews;
@@ -32,7 +33,17 @@ public class NotifactionActivity extends Activity {
         bt2.setOnClickListener(bt2lis);
         //建立notification,前面有学习过，不解释了，不懂看搜索以前的文章
         nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        notification=new Notification(R.drawable.ic_launcher,"图标边的文字",System.currentTimeMillis());
+//        notification=new Notification("图标边的文字",System.currentTimeMillis());
+//        notification.icon = R.drawable.ic_launcher;
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                getApplicationContext());
+        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setDefaults(0);
+        builder.setAutoCancel(true);
+
+        notification = builder.build();
+
         notification.contentView = new RemoteViews(getPackageName(),R.layout.notification);
         //使用notification.xml文件作VIEW
         notification.contentView.setProgressBar(R.id.pb, 100,0, false);
@@ -53,7 +64,7 @@ public class NotifactionActivity extends Activity {
 
     };
     Runnable run=new Runnable(){
-
+//    放在消息接收器中
         @Override
         public void run() {
             // TODO Auto-generated method stub

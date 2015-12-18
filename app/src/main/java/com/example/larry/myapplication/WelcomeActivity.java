@@ -1,80 +1,154 @@
 package com.example.larry.myapplication;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
-import com.example.larry.myapplication.banner.SimpleGuideBanner;
-import com.example.larry.myapplication.utils.ConfigStore;
-import com.example.larry.myapplication.utils.DataProvider;
-import com.example.larry.myapplication.utils.ViewFindUtils;
-import com.flyco.banner.anim.select.ZoomInEnter;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-/**
- * Created by 067231 on 2015/12/14.
- */
-public class WelcomeActivity extends Activity {
+public class WelcomeActivity extends AppCompatActivity {
 
-    private Context context = this;
-    private View decorView;
-    private boolean isFromBannerHome;
-    private Class<? extends ViewPager.PageTransformer> transformerClass;
+    /**
+     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * fragments for each of the sections. We use a
+     * {@link FragmentPagerAdapter} derivative, which will keep every
+     * loaded fragment in memory. If this becomes too memory intensive, it
+     * may be best to switch to a
+     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     */
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    /**
+     * The {@link ViewPager} that will host the section contents.
+     */
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome_app);
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        isFromBannerHome = getIntent().getBooleanExtra("isFromBannerHome", false);
-        int position = getIntent().getIntExtra("position", -1);
-        transformerClass = position != -1 ? DataProvider.transformers[position] : null;
-        decorView = getWindow().getDecorView();
-        boolean bool = ConfigStore.isFirstEnter(getBaseContext(),this.getLocalClassName());
-        Log.i("this is my logs = ",String.valueOf(bool));
-        if(!bool) {
-            sgb();
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        }else{
-            Intent intent = new Intent(context, MainActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
-            finish();
+
+    }
+
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    public static class PlaceholderFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        public PlaceholderFragment() {
         }
 
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static PlaceholderFragment newInstance(int sectionNumber) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+//            ImageView img = (ImageView) rootView.findViewById(R.id.background_image);
+//            img.setImageResource(R.mipmap.guide_img_1);
+
+            return rootView;
+        }
     }
 
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    private void sgb() {
-        SimpleGuideBanner sgb = ViewFindUtils.find(decorView, R.id.sgb);
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
-        sgb
-                .setIndicatorHeight(6)
-                .setIndicatorGap(12)
-                .setIndicatorCornerRadius(3.5f)
-                .setSelectAnimClass(ZoomInEnter.class)
-                .setTransformerClass(transformerClass)
-                .barPadding(0, 10, 0, 10)
-                .setSource(DataProvider.geUsertGuides())
-                .startScroll();
+        @Override
+        public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+            return PlaceholderFragment.newInstance(position + 1);
+        }
 
-        sgb.setOnJumpClickL(new SimpleGuideBanner.OnJumpClickL() {
-            @Override
-            public void onJumpClick() {
-                if (isFromBannerHome) {
-                    finish();
-                    return;
-                }
+        @Override
+        public int getCount() {
+            // Show 3 total pages.
+            return 3;
+        }
 
-                Intent intent = new Intent(context, MainActivity.class);
-                startActivity(intent);
-                finish();
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "SECTION 1";
+                case 1:
+                    return "SECTION 2";
+                case 2:
+                    return "SECTION 3";
             }
-        });
+            return null;
+        }
     }
 
 
+    /*
+
+     String artUrl = description.getIconUri().toString();
+        mCurrentArtUrl = artUrl;
+        AlbumArtCache cache = AlbumArtCache.getInstance();
+        Bitmap art = cache.getBigImage(artUrl);
+        if (art == null) {
+            art = description.getIconBitmap();
+        }
+        if (art != null) {
+            // if we have the art cached or from the MediaDescription, use it:
+            mBackgroundImage.setImageBitmap(art);
+        } else {
+            // otherwise, fetch a high res version and update:
+            cache.fetch(artUrl, new AlbumArtCache.FetchListener() {
+                @Override
+                public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
+                    // sanity check, in case a new fetch request has been done while
+                    // the previous hasn't yet returned:
+                    if (artUrl.equals(mCurrentArtUrl)) {
+                        mBackgroundImage.setImageBitmap(bitmap);
+                    }
+                }
+            });
+        }
+
+
+     */
 }
