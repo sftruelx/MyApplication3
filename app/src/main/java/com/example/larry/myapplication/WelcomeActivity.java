@@ -1,5 +1,7 @@
 package com.example.larry.myapplication;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,18 +17,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -78,6 +74,29 @@ public class WelcomeActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            RelativeLayout layout = (RelativeLayout) rootView.findViewById(R.id.pageView);
+            RelativeLayout.LayoutParams layoutParams=
+                    new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            layoutParams.setMargins(0,0,0,15);
+
+            TextView textView = new TextView(this.getContext());
+            textView.setLayoutParams(layoutParams);
+            textView.setText("立即体验");
+            textView.setTextColor(Color.WHITE);
+            textView.setBackgroundResource(R.drawable.corner_white);
+            textView.setTextSize(25f);
+            textView.setPadding(15,15,15,15);
+            layout.addView(textView);
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(),MainActivity.class);
+                    startActivity(intent);
+                }
+            });
 //            ImageView img = (ImageView) rootView.findViewById(R.id.background_image);
 //            img.setImageResource(R.mipmap.guide_img_1);
 
