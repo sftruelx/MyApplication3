@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = LogHelper.makeLogTag(MainActivity.class);
-    protected Intent mIntent;
+    protected Intent intent;
     protected PlaybackControlsFragment mControlsFragment;
     protected MsgReceiver musicReceiver;
     @Override
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity
         intentFilter.addAction(ConstMsg.MUSICSERVICE_ACTION);
         registerReceiver(musicReceiver, intentFilter);
         //启动MUSIC服务
-        Intent intent = new Intent(this,MusicService.class);
+        intent = new Intent(this,MusicService.class);
         getApplicationContext().startService(intent);
 
 
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         //停止服务
-        stopService(mIntent);
+        stopService(intent);
         //注销广播
         unregisterReceiver(musicReceiver);
         super.onDestroy();
@@ -192,9 +192,11 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            int progress = intent.getIntExtra("progress", 0);
+            int state = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
+            int during = intent.getIntExtra(ConstMsg.SONG_DURING,0);
 //            mProgressBar.setProgress(progress);
-            LogHelper.i(TAG,"可以在这里更新播放信息");
+            LogHelper.i(TAG,"可以在这里更新播放信息" +state);
+
         }
 
     }

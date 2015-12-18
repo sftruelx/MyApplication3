@@ -22,6 +22,8 @@ public class ConstMsg {
     public static final int STATE_PREVIOUS=0x126;
     //播放下一首的flag
     public static final int STATE_NEXT=0x127;
+
+    public static final int STATE_OVER=0x128;
     //菜单关于选项的itemId
     public static final int MENU_ABOUT=0x200;
     //菜单退出选的项的itemId
@@ -33,7 +35,7 @@ public class ConstMsg {
     public static final String SONG_TIME = "song time";
     public static final String SONG_ICON = "song icon";
     public static final String SONG_DURING = "song during";
-
+    public static final String SONG_STATE = "song state";
 
     public ConstMsg() {
         // TODO Auto-generated constructor stub

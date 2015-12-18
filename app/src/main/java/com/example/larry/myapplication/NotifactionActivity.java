@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.NotificationCompat;
@@ -12,48 +15,80 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RemoteViews;
 
+import com.example.larry.myapplication.media.ConstMsg;
+import com.example.larry.myapplication.utils.LogHelper;
+
+import java.util.UUID;
+
 /**
  * Created by 067231 on 2015/12/16.
  */
 public class NotifactionActivity extends Activity {
-    /** Called when the activity is first created. */
-    int notification_id=19172439;
+    /**
+     * Called when the activity is first created.
+     */
+    int notification_id = 19172439;
     NotificationManager nm;
-    Handler handler=new Handler();
+    Handler handler = new Handler();
     Notification notification;
-    int count=0;
+
+    MsgReceiver msgReceiver;
+    int count = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        Button bt1=(Button)findViewById(R.id.bt1);
+        Button bt1 = (Button) findViewById(R.id.bt1);
         bt1.setOnClickListener(bt1lis);
-        Button bt2=(Button)findViewById(R.id.bt2);
+        Button bt2 = (Button) findViewById(R.id.bt2);
         bt2.setOnClickListener(bt2lis);
-        //建立notification,前面有学习过，不解释了，不懂看搜索以前的文章
-        nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+
+        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 //        notification=new Notification("图标边的文字",System.currentTimeMillis());
-//        notification.icon = R.drawable.ic_launcher;
+
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 getApplicationContext());
         builder.setSmallIcon(R.drawable.ic_launcher);
         builder.setDefaults(0);
-        builder.setAutoCancel(true);
-
         notification = builder.build();
+        notification.contentView = new RemoteViews(getPackageName(), R.layout.notification);
 
-        notification.contentView = new RemoteViews(getPackageName(),R.layout.notification);
-        //使用notification.xml文件作VIEW
-        notification.contentView.setProgressBar(R.id.pb, 100,0, false);
-        //设置进度条，最大值 为100,当前值为0，最后一个参数为true时显示条纹
-        //（就是在Android Market下载软件，点击下载但还没获取到目标大小时的状态）
-        Intent notificationIntent = new Intent(this,NotifactionActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this,0,notificationIntent,0);
-        notification.contentIntent = contentIntent;
+        notification.contentView.setProgressBar(R.id.pb, 100, 0, false);
+        notification.contentView.setTextViewText(R.id.title, "这里是歌曲名称++");
+
+//        定义按钮事件
+        Intent play_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+        play_intent.putExtra(ConstMsg.SONG_STATE,ConstMsg.STATE_PLAY);
+        notification.contentView.setOnClickPendingIntent(R.id.play_pause,
+                PendingIntent.getBroadcast(this, UUID.randomUUID().hashCode(),
+                        play_intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT));
+        Intent next_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+        next_intent.putExtra(ConstMsg.SONG_STATE,ConstMsg.STATE_NEXT);
+        notification.contentView.setOnClickPendingIntent(R.id.play_next,
+                PendingIntent.getBroadcast(this, UUID.randomUUID().hashCode(),
+                        next_intent ,
+                        PendingIntent.FLAG_UPDATE_CURRENT));
+        Intent previous_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+        previous_intent.putExtra(ConstMsg.SONG_STATE,ConstMsg.STATE_PREVIOUS);
+        notification.contentView.setOnClickPendingIntent(R.id.play_previous,
+                PendingIntent.getBroadcast(this, UUID.randomUUID().hashCode(),
+                        previous_intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT));
+        Intent notificationIntent = new Intent(this, NotifactionActivity.class);
+        notification.contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        //注册广播接收器
+        msgReceiver = new MsgReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConstMsg.MUSICCLIENT_ACTION);
+        registerReceiver(msgReceiver, intentFilter);
     }
-    View.OnClickListener bt1lis=new View.OnClickListener(){
+
+    View.OnClickListener bt1lis = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -63,21 +98,21 @@ public class NotifactionActivity extends Activity {
         }
 
     };
-    Runnable run=new Runnable(){
-//    放在消息接收器中
+    Runnable run = new Runnable() {
+        //    放在消息接收器中
         @Override
         public void run() {
             // TODO Auto-generated method stub
             count++;
-            notification.contentView.setProgressBar(R.id.pb, 100,count, false);
+            notification.contentView.setProgressBar(R.id.pb, 100, count, false);
             //设置当前值为count
             showNotification();//这里是更新notification,就是更新进度条
-            if(count<=100) handler.postDelayed(run, 200);
+            if (count <= 100) handler.postDelayed(run, 200);
             //200毫秒count加1
         }
 
     };
-    View.OnClickListener bt2lis=new View.OnClickListener(){
+    View.OnClickListener bt2lis = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -86,7 +121,26 @@ public class NotifactionActivity extends Activity {
         }
 
     };
-    public void showNotification(){
+
+    public void showNotification() {
         nm.notify(notification_id, notification);
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(msgReceiver);
+        super.onDestroy();
+        //注销广播
+    }
+
+
+    public class MsgReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int state = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
+            int during = intent.getIntExtra(ConstMsg.SONG_DURING, 0);
+            LogHelper.i("TAG", "可以在这里更新播放信息" + state);
+        }
+
     }
 }
