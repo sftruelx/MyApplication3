@@ -63,19 +63,19 @@ public class NotifactionActivity extends Activity {
         Intent play_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
         play_intent.putExtra(ConstMsg.SONG_STATE,ConstMsg.STATE_PLAY);
         notification.contentView.setOnClickPendingIntent(R.id.play_pause,
-                PendingIntent.getBroadcast(this, UUID.randomUUID().hashCode(),
+                PendingIntent.getBroadcast(this, ConstMsg.STATE_PLAY,
                         play_intent,
                         PendingIntent.FLAG_UPDATE_CURRENT));
         Intent next_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
         next_intent.putExtra(ConstMsg.SONG_STATE,ConstMsg.STATE_NEXT);
         notification.contentView.setOnClickPendingIntent(R.id.play_next,
-                PendingIntent.getBroadcast(this, UUID.randomUUID().hashCode(),
+                PendingIntent.getBroadcast(this, ConstMsg.STATE_NEXT,
                         next_intent ,
                         PendingIntent.FLAG_UPDATE_CURRENT));
         Intent previous_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
         previous_intent.putExtra(ConstMsg.SONG_STATE,ConstMsg.STATE_PREVIOUS);
         notification.contentView.setOnClickPendingIntent(R.id.play_previous,
-                PendingIntent.getBroadcast(this, UUID.randomUUID().hashCode(),
+                PendingIntent.getBroadcast(this, ConstMsg.STATE_PREVIOUS,
                         previous_intent,
                         PendingIntent.FLAG_UPDATE_CURRENT));
         Intent notificationIntent = new Intent(this, NotifactionActivity.class);
