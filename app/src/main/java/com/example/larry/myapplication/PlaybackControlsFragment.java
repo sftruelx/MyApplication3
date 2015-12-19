@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class PlaybackControlsFragment extends Fragment {
     private TextView mSubtitle;
     private TextView mExtraInfo;
     private ImageView mAlbumArt;
+    private SeekBar seekBar;
     private String mArtUrl;
 
 
@@ -61,6 +63,7 @@ public class PlaybackControlsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_playback_controls, container, false);
         mPlayPause = (ImageButton) rootView.findViewById(R.id.play_pause);
+        seekBar = (SeekBar) rootView.findViewById(R.id.seek_bar);
         mPlayPause.setEnabled(true);
         mPlayPause.setOnClickListener(mButtonListener);
         rootView.setOnClickListener(new View.OnClickListener() {
@@ -69,36 +72,50 @@ public class PlaybackControlsFragment extends Fragment {
                 LogHelper.i(TAG, "播放面板被点击,暂时没什么用");
             }
         });
-        parentActivity = (MainActivity ) getActivity();
+        parentActivity = (MainActivity) getActivity();
         return rootView;
     }
 
     /**
      * 播放面板播放按键或暂停按键
      **/
+    private int state = ConstMsg.STATE_NONE;
     private final View.OnClickListener mButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            PlaybackState stateObj = getActivity().getMediaController().getPlaybackState();
-            final int state = 1;
-//                    stateObj == null ?
-//                    PlaybackState.STATE_NONE : stateObj.getState();
+
             LogHelper.i(TAG, "Button pressed, in state " + state);
             switch (v.getId()) {
                 case R.id.play_pause:
-                    LogHelper.i(TAG, "Play button pressed, in state " + state);
-                    if (state == PlaybackState.STATE_PAUSED ||
-                            state == PlaybackState.STATE_STOPPED ||
-                            state == PlaybackState.STATE_NONE) {
-                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PLAY);
-                    } else if (state == PlaybackState.STATE_PLAYING ||
-                            state == PlaybackState.STATE_BUFFERING ||
-                            state == PlaybackState.STATE_CONNECTING) {
-                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PAUSE);
+                    if (state == ConstMsg.STATE_PAUSED ||
+                            state == ConstMsg.STATE_STOPPED ||
+                            state == ConstMsg.STATE_NONE) {
+                        //通知service播放音乐
+                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PLAYING);
+                    } else if (state == ConstMsg.STATE_PLAYING ||
+                            state == ConstMsg.STATE_BUFFERING ||
+                            state == ConstMsg.STATE_CONNECTING) {
+                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PAUSED);
                     }
                     break;
             }
         }
     };
+    public void updateState(int state, int currentPosition, int during){
+        this.state = state;
+        //根据状态更新按钮形态
+        seekBar.setMax(during);
+        seekBar.setProgress(currentPosition);
+        //TODO 上一首 下一首
+        switch (state){
+            case  ConstMsg.STATE_PLAYING:
+                mPlayPause.setImageResource(R.drawable.ic_pause_black_36dp);
+                break;
+            case ConstMsg.STATE_PAUSED:
+                mPlayPause.setImageResource(R.drawable.ic_play_arrow_black_36dp);
+                break;
+        }
 
+
+    }
 }

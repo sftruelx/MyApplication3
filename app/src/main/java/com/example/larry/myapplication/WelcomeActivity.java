@@ -95,6 +95,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(),MainActivity.class);
                     startActivity(intent);
+
                 }
             });
 //            ImageView img = (ImageView) rootView.findViewById(R.id.background_image);

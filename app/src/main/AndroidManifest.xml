@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:allowBackup="true"
-            android:name=".NotifactionActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -19,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
+        <activity android:name=".WelcomeActivity"
             android:theme="@style/AppTheme"/>
         <service android:name="com.example.larry.myapplication.media.MusicService"></service>
     </application>
