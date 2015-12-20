@@ -38,7 +38,7 @@ public class DummyContent {
     }
 
     private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
+        return new DummyItem(String.valueOf(position),"http://img.xiami.net/images/collect/694/94/130937694_1450453291_jEtd_1.jpg", "Item " + position, makeDetails(position));
     }
 
     private static String makeDetails(int position) {
@@ -55,11 +55,13 @@ public class DummyContent {
      */
     public static class DummyItem {
         public final String id;
+        public final String url;
         public final String content;
         public final String details;
 
-        public DummyItem(String id, String content, String details) {
+        public DummyItem(String id,String url, String content, String details) {
             this.id = id;
+            this.url = url;
             this.content = content;
             this.details = details;
         }

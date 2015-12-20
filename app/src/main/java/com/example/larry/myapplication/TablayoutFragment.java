@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.larry.myapplication.banner.SimpleImageBanner;
 import com.example.larry.myapplication.dummy.DummyContent;
+import com.example.larry.myapplication.songList.DividerItemDecoration;
 import com.example.larry.myapplication.songList.SimpleItemRecyclerViewAdapter;
 import com.example.larry.myapplication.songList.SongListActivity;
 import com.example.larry.myapplication.utils.DataProvider;
@@ -122,7 +123,8 @@ public class TablayoutFragment extends Fragment {
                     resource = R.layout.tab_two;
                     rootView = inflater.inflate(resource, container, false);
 
-                    View recyclerView = rootView.findViewById(R.id.song_list);
+//                    View recyclerView = rootView.findViewById(R.id.song_list);
+                    View recyclerView =  ViewFindUtils.find(rootView,R.id.song_list);
                     assert recyclerView != null;
                     setupRecyclerView((RecyclerView) recyclerView);
 
@@ -146,6 +148,8 @@ public class TablayoutFragment extends Fragment {
 
         private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
             recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+            recyclerView.addItemDecoration(new DividerItemDecoration(
+                    getActivity(), DividerItemDecoration.VERTICAL_LIST));
         }
 
         private void sib_simple_usage(final View view) {
