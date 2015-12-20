@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
 import android.widget.RemoteViews;
 
+import com.example.larry.myapplication.MainActivity;
 import com.example.larry.myapplication.NotifactionActivity;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.utils.LogHelper;
@@ -42,7 +44,6 @@ public class MusicService extends Service {
     Album album = Album.getInstance();
     int during = 0;
     int currentPosition = 0;
-    String[]musics=new String[]{"taoshengyijiu-maoning.mp3", "youcaihua-chenglong.mp3","You Are The One.mp3" };
     //当前的播放的音乐
     int current=0;
     //当前播放状态
@@ -85,6 +86,8 @@ public class MusicService extends Service {
                 getApplicationContext());
         builder.setSmallIcon(R.drawable.ic_launcher);
         builder.setDefaults(0);
+
+
         notification = builder.build();
         notification.contentView = new RemoteViews(getPackageName(), R.layout.notification);
 
@@ -109,12 +112,21 @@ public class MusicService extends Service {
                 PendingIntent.getBroadcast(this, ConstMsg.STATE_PREVIOUS,
                         previous_intent,
                         PendingIntent.FLAG_UPDATE_CURRENT));
-        Intent notificationIntent = new Intent(this, NotifactionActivity.class);
+//        点击通知栏激活activity
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.putExtra(ConstMsg.SONG_STATE,state);
+        notificationIntent.putExtra(ConstMsg.SONG_PROGRESS,currentPosition);
+        notificationIntent.putExtra(ConstMsg.SONG_DURING, during);
         notification.contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
     }
 
     public void showNotification() {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.putExtra(ConstMsg.SONG_STATE,state);
+        notificationIntent.putExtra(ConstMsg.SONG_PROGRESS,currentPosition);
+        notificationIntent.putExtra(ConstMsg.SONG_DURING, during);
+        notification.contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         nm.notify(notification_id, notification);
     }
 
@@ -250,6 +262,7 @@ public class MusicService extends Service {
                             PendingIntent.FLAG_UPDATE_CURRENT));
                     break;
             }
+
             showNotification();
             sendBroadcastToClient(control);
         }

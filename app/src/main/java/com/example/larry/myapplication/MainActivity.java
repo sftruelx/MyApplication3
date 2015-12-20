@@ -33,6 +33,8 @@ import android.widget.Toast;
 
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.media.MusicService;
+import com.example.larry.myapplication.songList.SongDetailActivity;
+import com.example.larry.myapplication.songList.SongDetailFragment;
 import com.example.larry.myapplication.utils.ConfigStore;
 import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.NetworkHelper;
@@ -90,8 +92,12 @@ public class MainActivity extends AppCompatActivity
         if (mControlsFragment == null) {
             throw new IllegalStateException("Mising fragment with id 'controls'. Cannot continue.");
         }
+        Intent toIntent = getIntent();
+        int state = toIntent.getIntExtra(ConstMsg.SONG_STATE,0);
+        int during = intent.getIntExtra(ConstMsg.SONG_DURING, 0);
+        int currentPosition = intent.getIntExtra(ConstMsg.SONG_PROGRESS, 0);
         showPlaybackControls();
-
+        mControlsFragment.updateState(state,currentPosition,during);
 
     }
 
@@ -207,7 +213,6 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             hidePlaybackControls();
-
             return true;
         }
 
@@ -244,7 +249,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         LogHelper.i(TAG, "我没了");
-       stopService(intent);
         //注销广播
         unregisterReceiver(musicReceiver);
         super.onDestroy();

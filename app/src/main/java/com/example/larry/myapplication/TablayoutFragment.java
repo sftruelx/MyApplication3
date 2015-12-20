@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
@@ -23,6 +24,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.larry.myapplication.banner.SimpleImageBanner;
+import com.example.larry.myapplication.dummy.DummyContent;
+import com.example.larry.myapplication.songList.SimpleItemRecyclerViewAdapter;
+import com.example.larry.myapplication.songList.SongListActivity;
 import com.example.larry.myapplication.utils.DataProvider;
 import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.ViewFindUtils;
@@ -117,6 +121,18 @@ public class TablayoutFragment extends Fragment {
                 case 2:
                     resource = R.layout.tab_two;
                     rootView = inflater.inflate(resource, container, false);
+
+                    View recyclerView = rootView.findViewById(R.id.song_list);
+                    assert recyclerView != null;
+                    setupRecyclerView((RecyclerView) recyclerView);
+
+                    if (rootView.findViewById(R.id.song_detail_container) != null) {
+                        // The detail container view will be present only in the
+                        // large-screen layouts (res/values-w900dp).
+                        // If this view is present, then the
+                        // activity should be in two-pane mode.
+                        //  mTwoPane = true;
+                    }
                     break;
                 default:
                     resource = R.layout.tab_three;
@@ -127,6 +143,11 @@ public class TablayoutFragment extends Fragment {
 //            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
+
+        private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+            recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+        }
+
         private void sib_simple_usage(final View view) {
             SimpleImageBanner sib = ViewFindUtils.find(view, R.id.sib_simple_usage);
 

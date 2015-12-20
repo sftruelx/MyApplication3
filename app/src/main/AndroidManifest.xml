@@ -21,6 +21,8 @@
         </activity>
         <activity android:name=".WelcomeActivity"
             android:theme="@style/AppTheme"/>
+        <activity android:name=".songList.SongDetailActivity"
+            android:theme="@style/AppTheme"/>
         <service android:name="com.example.larry.myapplication.media.MusicService"></service>
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
