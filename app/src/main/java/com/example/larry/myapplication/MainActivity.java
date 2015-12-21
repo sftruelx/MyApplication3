@@ -1,25 +1,10 @@
 package com.example.larry.myapplication;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.NotificationCompat;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -28,16 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.RemoteViews;
-import android.widget.Toast;
+
 
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.media.MusicService;
-import com.example.larry.myapplication.songList.SongDetailActivity;
-import com.example.larry.myapplication.songList.SongDetailFragment;
 import com.example.larry.myapplication.utils.ConfigStore;
 import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.NetworkHelper;
+
 
 import java.util.List;
 
@@ -48,11 +31,6 @@ public class MainActivity extends AppCompatActivity
     protected Intent intent;
     protected PlaybackControlsFragment mControlsFragment;
     protected MsgReceiver musicReceiver;
-    int notification_id = 19172439;
-    NotificationManager nm;
-    Handler handler = new Handler();
-    Notification notification;
-    int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,52 +77,6 @@ public class MainActivity extends AppCompatActivity
         showPlaybackControls();
         mControlsFragment.updateState(state,currentPosition,during);
 
-    }
-
-
-    private void showNotificationPanel() {
-        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        notification=new Notification("图标边的文字",System.currentTimeMillis());
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                getApplicationContext());
-        builder.setSmallIcon(R.drawable.ic_launcher);
-        builder.setDefaults(0);
-        notification = builder.build();
-        notification.contentView = new RemoteViews(getPackageName(), R.layout.notification);
-
-        notification.contentView.setProgressBar(R.id.pb, 100, 0, false);
-        notification.contentView.setTextViewText(R.id.title, "这里是歌曲名称++");
-//        if(isPlay){
-//            mRemoteViews.setImageViewResource(R.id.btn_custom_play, R.drawable.btn_pause);
-//        }else{
-//            mRemoteViews.setImageViewResource(R.id.btn_custom_play, R.drawable.btn_play);
-//        }
-//        定义按钮事件
-        Intent play_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
-        play_intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
-        notification.contentView.setOnClickPendingIntent(R.id.play_pause,
-                PendingIntent.getBroadcast(this, ConstMsg.STATE_PLAYING,
-                        play_intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT));
-        Intent next_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
-        next_intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_NEXT);
-        notification.contentView.setOnClickPendingIntent(R.id.play_next,
-                PendingIntent.getBroadcast(this, ConstMsg.STATE_NEXT,
-                        next_intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT));
-        Intent previous_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
-        previous_intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PREVIOUS);
-        notification.contentView.setOnClickPendingIntent(R.id.play_previous,
-                PendingIntent.getBroadcast(this, ConstMsg.STATE_PREVIOUS,
-                        previous_intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT));
-        Intent notificationIntent = new Intent(this, NotifactionActivity.class);
-        notification.contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-    }
-
-    public void showNotification() {
-        nm.notify(notification_id, notification);
     }
 
     /**

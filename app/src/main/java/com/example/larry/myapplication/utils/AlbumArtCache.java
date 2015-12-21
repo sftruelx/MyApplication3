@@ -21,6 +21,9 @@ import android.os.AsyncTask;
 import android.util.LruCache;
 
 
+import com.example.larry.myapplication.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.IOException;
 
@@ -53,6 +56,7 @@ public final class AlbumArtCache {
     }
 
     private AlbumArtCache() {
+
         // Holds no more than MAX_ALBUM_ART_CACHE_SIZE bytes, bounded by maxmemory/4 and
         // Integer.MAX_VALUE:
         int maxSize = Math.min(MAX_ALBUM_ART_CACHE_SIZE,
@@ -75,7 +79,7 @@ public final class AlbumArtCache {
         Bitmap[] result = mCache.get(artUrl);
         return result == null ? null : result[ICON_BITMAP_INDEX];
     }
-
+    DisplayImageOptions options;
     public void fetch(final String artUrl, final FetchListener listener) {
         // WARNING: for the sake of simplicity, simultaneous multi-thread fetch requests
         // are not handled properly: they may cause redundant costly operations, like HTTP
@@ -94,13 +98,17 @@ public final class AlbumArtCache {
             protected Bitmap[] doInBackground(Void[] objects) {
                 Bitmap[] bitmaps;
                 try {
+//                    ImageLoader imageLoader = ImageLoader.getInstance();
+//                    // 将图片显示任务增加到执行池，图片将被显示到ImageView当轮到此ImageView
+//                    Bitmap bitmap = imageLoader.loadImageSync(artUrl);
+                    LogHelper.i(TAG,"imageLoader.loadImageSync" + artUrl);
                     Bitmap bitmap = BitmapHelper.fetchAndRescaleBitmap(artUrl,
                         MAX_ART_WIDTH, MAX_ART_HEIGHT);
                     Bitmap icon = BitmapHelper.scaleBitmap(bitmap,
                         MAX_ART_WIDTH_ICON, MAX_ART_HEIGHT_ICON);
                     bitmaps = new Bitmap[] {bitmap, icon};
                     mCache.put(artUrl, bitmaps);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     return null;
                 }
                 LogHelper.d(TAG, "doInBackground: putting bitmap in cache. cache size=" +

@@ -7,8 +7,6 @@
     android:name="com.example.larry.myapplication.SongListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.example.larry.myapplication.SongListActivity"
+    tools:context="com.example.larry.myapplication.songList.SongListActivity"
     tools:listitem="@layout/song_list_content" />

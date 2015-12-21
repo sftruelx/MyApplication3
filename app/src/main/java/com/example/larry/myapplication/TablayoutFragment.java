@@ -21,6 +21,7 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.larry.myapplication.banner.SimpleImageBanner;
@@ -28,6 +29,7 @@ import com.example.larry.myapplication.dummy.DummyContent;
 import com.example.larry.myapplication.songList.DividerItemDecoration;
 import com.example.larry.myapplication.songList.SimpleItemRecyclerViewAdapter;
 import com.example.larry.myapplication.songList.SongListActivity;
+import com.example.larry.myapplication.songList.SongListFragment;
 import com.example.larry.myapplication.utils.DataProvider;
 import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.ViewFindUtils;
@@ -122,11 +124,10 @@ public class TablayoutFragment extends Fragment {
                 case 2:
                     resource = R.layout.tab_two;
                     rootView = inflater.inflate(resource, container, false);
+                    RelativeLayout tab2Frame = (RelativeLayout) rootView.findViewById(R.id.tab2_frame);
 
-//                    View recyclerView = rootView.findViewById(R.id.song_list);
-                    View recyclerView =  ViewFindUtils.find(rootView,R.id.song_list);
-                    assert recyclerView != null;
-                    setupRecyclerView((RecyclerView) recyclerView);
+                    getChildFragmentManager().beginTransaction().replace(R.id.song_list_frame,new SongListFragment()).commit();
+
 
                     if (rootView.findViewById(R.id.song_detail_container) != null) {
                         // The detail container view will be present only in the
@@ -146,11 +147,6 @@ public class TablayoutFragment extends Fragment {
             return rootView;
         }
 
-        private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-            recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
-            recyclerView.addItemDecoration(new DividerItemDecoration(
-                    getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        }
 
         private void sib_simple_usage(final View view) {
             SimpleImageBanner sib = ViewFindUtils.find(view, R.id.sib_simple_usage);

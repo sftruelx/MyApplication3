@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,15 @@ import com.bumptech.glide.Glide;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.dummy.DummyContent;
 import com.example.larry.myapplication.utils.AlbumArtCache;
+import com.example.larry.myapplication.utils.CircleBitmapDisplayer;
+import com.example.larry.myapplication.utils.Constants;
+import com.example.larry.myapplication.utils.LogHelper;
+import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.util.List;
 
@@ -26,69 +36,56 @@ import java.util.List;
  */
 public class SimpleItemRecyclerViewAdapter
         extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-
+    private static final String TAG = LogHelper.makeLogTag(SimpleItemRecyclerViewAdapter.class);
     private final List<DummyContent.DummyItem> mValues;
-
+    private DisplayImageOptions options;
     public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
+        options = new DisplayImageOptions.Builder()
+                .showImageForEmptyUri(R.drawable.nomal_img)
+                .showImageOnFail(R.drawable.nomal_img)
+                .cacheInMemory(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)     //设置图片的解码类型
+                .displayer(new FadeInBitmapDisplayer(1000))//是否图片加载好后渐入的动画时间
+                .build();
         mValues = items;
     }
-    /* if (convertView == null)
-            * {
-        * 	convertView = View.inflate(context, R.layout.ad_demo, null);
-        * }
-    * TextView tv_demo = ViewHolderUtils.get(convertView, R.id.tv_demo);
-    * ImageView iv_demo = ViewHolderUtils.get(convertView, R.id.iv_demo);
-    * */
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.song_list_content, parent, false);
         return new ViewHolder(view);
     }
-    ImageView iv ;
+
+    ImageView imageView;
+    int p;
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        LogHelper.i(TAG, "position = " + position);
+        p = position;
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText("标题"+mValues.get(position).id);
-        holder.mContentView.setText("内容简介"+mValues.get(position).content);
-        iv = holder.mListImg;
-
-        String artUrl =mValues.get(position).url;
-        String mCurrentArtUrl = artUrl;
+        holder.mIdView.setText("标题" + mValues.get(position).id);
+        holder.mContentView.setText("内容简介" + mValues.get(position).content);
+        imageView = holder.mListImg;
+        String artUrl = Constants.IMAGES[position];
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.displayImage(artUrl, imageView, options);
+        /*String mCurrentArtUrl = artUrl;
         AlbumArtCache cache = AlbumArtCache.getInstance();
         Bitmap art = cache.getBigImage(artUrl);
 
         if (art != null) {
-            // if we have the art cached or from the MediaDescription, use it:
-            iv.setImageBitmap(art);
+            imageView.setImageBitmap(art);
         } else {
-            // otherwise, fetch a high res version and update:
             cache.fetch(artUrl, new AlbumArtCache.FetchListener() {
                 @Override
                 public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
-                    // sanity check, in case a new fetch request has been done while
-                    // the previous hasn't yet returned:
-
-                        iv.setImageBitmap(bitmap);
-
+                    imageView.setImageBitmap(bitmap);
                 }
             });
         }
-/*
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#555555"));
-        if (!TextUtils.isEmpty(mValues.get(position).url)) {
-            Glide.with(holder.mView.getContext())
-                    .load(mValues.get(position).url)
-                    .override(100, 100)
-                    .centerCrop()
-                    .placeholder(colorDrawable)
-                    .into(iv);
-        } else {
-            iv.setImageDrawable(colorDrawable);
-        }
 */
-
-//        iv.setImageResource(R.drawable.song1);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
