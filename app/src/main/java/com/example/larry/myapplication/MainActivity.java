@@ -70,12 +70,13 @@ public class MainActivity extends AppCompatActivity
         if (mControlsFragment == null) {
             throw new IllegalStateException("Mising fragment with id 'controls'. Cannot continue.");
         }
-        Intent toIntent = getIntent();
-        int state = toIntent.getIntExtra(ConstMsg.SONG_STATE,0);
-        int during = intent.getIntExtra(ConstMsg.SONG_DURING, 0);
-        int currentPosition = intent.getIntExtra(ConstMsg.SONG_PROGRESS, 0);
-        showPlaybackControls();
-        mControlsFragment.updateState(state,currentPosition,during);
+        hidePlaybackControls();
+//        Intent toIntent = getIntent();
+//        int state = toIntent.getIntExtra(ConstMsg.SONG_STATE,0);
+//        int during = intent.getIntExtra(ConstMsg.SONG_DURING, 0);
+//        int currentPosition = intent.getIntExtra(ConstMsg.SONG_PROGRESS, 0);
+//        showPlaybackControls();
+//        mControlsFragment.updateState(state,currentPosition,during);
 
     }
 
