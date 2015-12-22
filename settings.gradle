@@ -1,1 +1,1 @@
-include ':app', ':FlycoBanner_Lib'
+include ':app', ':FlycoBanner_Lib', ':library'

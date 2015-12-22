@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:banner="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/lightgray"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.larry.myapplication.MainActivity">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/tab1_title"
-        android:text="Hello World!" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text=" WELCOME !     2015 12 23"
+        android:textSize="33dp" />
 
-    <com.example.larry.myapplication.banner.SimpleImageBanner
-        android:id="@+id/sib_simple_usage"
-        android:layout_width="fill_parent"
+    <android.support.v7.widget.CardView
+        android:id="@+id/tab1_card"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below ="@+id/tab1_title"
-        banner:bb_scale="0.5625"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below ="@+id/sib_simple_usage"
-        android:text="强力推荐"
-        android:id="@+id/tab1_title2" />
+        android:layout_below="@+id/tab1_title"
+        android:layout_margin="5dp">
+        <LinearLayout
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <com.example.larry.myapplication.banner.SimpleImageBanner
+            android:id="@+id/sib_simple_usage"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+
+            banner:bb_scale="0.5625" />
+
+        <TextView
+            android:id="@+id/tab1_title2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sib_simple_usage"
+            android:text="强力推荐" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
-        android:layout_below ="@+id/tab1_title2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tab1_card">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
 
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="10dp"
-                android:text=" swipe_to_refresh"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </ScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

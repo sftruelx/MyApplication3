@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/song_list"
     android:name="com.example.larry.myapplication.SongListFragment"
+    android:background="#f7f7f7"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
