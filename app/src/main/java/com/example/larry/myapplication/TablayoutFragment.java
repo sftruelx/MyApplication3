@@ -37,6 +37,7 @@ import com.example.larry.myapplication.utils.ViewFindUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -104,7 +105,7 @@ public class TablayoutFragment extends Fragment {
                     rootView = inflater.inflate(resource, container, false);
                     sib_simple_usage(rootView);
                     tv = (TextView)rootView.findViewById(R.id.tab1_title);
-                    tv.setText(SimpleDateFormat.getInstance().format(new Date()));
+                    tv.setText(new SimpleDateFormat("dd-MMM EEEEE aa", Locale.ENGLISH).format(new Date()));
 
 
                     break;

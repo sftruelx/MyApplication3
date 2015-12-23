@@ -29,4 +29,10 @@
     <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_action_person</item>
     </style>
+
+    <style name="TabLayoutAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
 </resources>
