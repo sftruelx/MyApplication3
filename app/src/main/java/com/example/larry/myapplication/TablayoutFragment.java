@@ -31,8 +31,11 @@ import com.example.larry.myapplication.songList.SimpleItemRecyclerViewAdapter;
 import com.example.larry.myapplication.songList.SongListActivity;
 import com.example.larry.myapplication.songList.SongListFragment;
 import com.example.larry.myapplication.utils.DataProvider;
+import com.example.larry.myapplication.utils.DepthPageTransformer;
 import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.ViewFindUtils;
+import com.example.larry.myapplication.utils.ZoomOutPageTransformer;
+import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,7 +48,7 @@ public class TablayoutFragment extends Fragment {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    private ViewPager mViewPager;
+    private JazzyViewPager mViewPager;
 
     @Nullable
     @Override
@@ -54,9 +57,10 @@ public class TablayoutFragment extends Fragment {
         mSectionsPagerAdapter = new SectionsPagerAdapter(this.getFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) rootView.findViewById(R.id.container);
+        mViewPager = (JazzyViewPager) rootView.findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
+        mViewPager.setTransitionEffect(JazzyViewPager.TransitionEffect.Stack);
+//        mViewPager.setPageTransformer(true,new DepthPageTransformer());
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
@@ -163,7 +167,12 @@ public class TablayoutFragment extends Fragment {
             // Show 3 total pages.
             return 5;
         }
-
+        @Override
+        public Object instantiateItem(ViewGroup container, final int position) {
+            Object obj = super.instantiateItem(container, position);
+            mViewPager.setObjectForPosition(obj, position);
+            return obj;
+        }
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
