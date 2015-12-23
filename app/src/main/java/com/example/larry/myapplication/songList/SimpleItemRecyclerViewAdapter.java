@@ -1,20 +1,17 @@
 package com.example.larry.myapplication.songList;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,21 +20,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.dummy.DummyContent;
-import com.example.larry.myapplication.utils.AlbumArtCache;
-import com.example.larry.myapplication.utils.CircleBitmapDisplayer;
 import com.example.larry.myapplication.utils.Constants;
 import com.example.larry.myapplication.utils.LogHelper;
-
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-
 import java.util.List;
 
 /**
@@ -48,18 +39,12 @@ public class SimpleItemRecyclerViewAdapter
     private ImageLoader mImageLoader;
     private static final String TAG = LogHelper.makeLogTag(SimpleItemRecyclerViewAdapter.class);
     private final List<DummyContent.DummyItem> mValues;
-    private DisplayImageOptions options;
-    public SimpleItemRecyclerViewAdapter(Context context,List<DummyContent.DummyItem> items) {
+    private RequestQueue mQueue;
 
-        RequestQueue mQueue = Volley.newRequestQueue(context);
+    public SimpleItemRecyclerViewAdapter(Context context, List<DummyContent.DummyItem> items) {
+
+        mQueue = Volley.newRequestQueue(context);
         mImageLoader = new ImageLoader(mQueue, new BitmapCache());
-        options = new DisplayImageOptions.Builder()
-                .showImageForEmptyUri(R.drawable.nomal_img)
-                .showImageOnFail(R.drawable.nomal_img)
-                .cacheInMemory(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)     //设置图片的解码类型
-                .displayer(new FadeInBitmapDisplayer(1000))//是否图片加载好后渐入的动画时间
-                .build();
         mValues = items;
     }
 
@@ -71,36 +56,25 @@ public class SimpleItemRecyclerViewAdapter
     }
 
     ImageView imageView;
-    int p;
+
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         LogHelper.i(TAG, "position = " + position);
-        p = position;
+
         holder.mItem = mValues.get(position);
         holder.mIdView.setText("标题" + mValues.get(position).id);
         holder.mContentView.setText("内容简介" + mValues.get(position).content);
         imageView = holder.mListImg;
         String artUrl = Constants.IMAGES[position];
-        ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.mListImg, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
-        mImageLoader.get(artUrl, listener);
+        getImage(imageView, artUrl);
+        ObjectAnimator.ofFloat(imageView,"alpha",0.5f,1f).setDuration(500).start();
+
+//        ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.mListImg, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
+//        mImageLoader.get(artUrl, listener);
 //        ImageLoader imageLoader = ImageLoader.getInstance();
 //        imageLoader.displayImage(artUrl, imageView, options);
-        /*String mCurrentArtUrl = artUrl;
-        AlbumArtCache cache = AlbumArtCache.getInstance();
-        Bitmap art = cache.getBigImage(artUrl);
 
-        if (art != null) {
-            imageView.setImageBitmap(art);
-        } else {
-            cache.fetch(artUrl, new AlbumArtCache.FetchListener() {
-                @Override
-                public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
-                    imageView.setImageBitmap(bitmap);
-                }
-            });
-        }
-*/
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,26 +95,20 @@ public class SimpleItemRecyclerViewAdapter
             }
         });
     }
-    public static Bitmap toRoundCorner(Bitmap bitmap, int pixels) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-        final int color = 0xff424242;
+
+    private Bitmap createCircleImage(Bitmap source, int min) {
         final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = pixels;
         paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        Bitmap target = Bitmap.createBitmap(min, min, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(target);
+        canvas.drawCircle(min / 2, min / 2, min / 2, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-        return output;
+        canvas.drawBitmap(source, 0, 0, paint);
+        return target;
     }
 
-    public static Bitmap getRoundCornerImage(Bitmap bitmap, int roundPixels)
-    {
+    public static Bitmap getRoundCornerImage(Bitmap bitmap, int roundPixels) {
         //创建一个和原始图片一样大小位图
         Bitmap roundConcerImage = Bitmap.createBitmap(bitmap.getWidth(),
                 bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -161,6 +129,7 @@ public class SimpleItemRecyclerViewAdapter
         canvas.drawBitmap(bitmap, null, rect, paint);
         return roundConcerImage;
     }
+
     @Override
     public int getItemCount() {
         return mValues.size();
@@ -186,6 +155,27 @@ public class SimpleItemRecyclerViewAdapter
             return super.toString() + " '" + mContentView.getText() + "'";
         }
     }
+
+    public void getImage(final ImageView imageView, String url) {
+        ImageView.ScaleType scaleType = ImageView.ScaleType.CENTER;
+        ImageRequest imageRequest = new ImageRequest(
+                url,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        Bitmap temp = createCircleImage(response, 100);
+                        imageView.setImageBitmap(temp);
+                    }
+                }, 0, 0, scaleType, Bitmap.Config.RGB_565, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                imageView.setImageResource(R.drawable.nomal_img);
+            }
+        });
+        mQueue.add(imageRequest);
+    }
+
+
     public class BitmapCache implements ImageLoader.ImageCache {
         private LruCache<String, Bitmap> mCache;
 
@@ -196,7 +186,6 @@ public class SimpleItemRecyclerViewAdapter
                 protected int sizeOf(String key, Bitmap value) {
                     return value.getRowBytes() * value.getHeight();
                 }
-
             };
         }
 
@@ -207,8 +196,7 @@ public class SimpleItemRecyclerViewAdapter
 
         @Override
         public void putBitmap(String url, Bitmap bitmap) {
-            mCache.put(url, getRoundCornerImage(bitmap,50));
+            mCache.put(url, bitmap);
         }
-
     }
 }

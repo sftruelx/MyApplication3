@@ -21,12 +21,6 @@ import android.os.AsyncTask;
 import android.util.LruCache;
 
 
-import com.example.larry.myapplication.R;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-
-import java.io.IOException;
-
 /**
  * Implements a basic cache of album arts, with async loading support.
  */
@@ -79,7 +73,6 @@ public final class AlbumArtCache {
         Bitmap[] result = mCache.get(artUrl);
         return result == null ? null : result[ICON_BITMAP_INDEX];
     }
-    DisplayImageOptions options;
     public void fetch(final String artUrl, final FetchListener listener) {
         // WARNING: for the sake of simplicity, simultaneous multi-thread fetch requests
         // are not handled properly: they may cause redundant costly operations, like HTTP

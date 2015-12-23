@@ -34,6 +34,9 @@ import com.example.larry.myapplication.utils.DataProvider;
 import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.ViewFindUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 /**
  * Created by Larry on 2015/12/13.
@@ -98,44 +101,18 @@ public class TablayoutFragment extends Fragment {
                     resource = R.layout.tab_one;
                     rootView = inflater.inflate(resource, container, false);
                     sib_simple_usage(rootView);
-                    tv = (TextView)rootView.findViewById(R.id.tab1_title2);
-                    swipeRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.swipe_container);
-                    //设置刷新时动画的颜色，可以设置4个
-                    swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
-                    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    tv = (TextView)rootView.findViewById(R.id.tab1_title);
+                    tv.setText(SimpleDateFormat.getInstance().format(new Date()));
 
-                        @Override
-                        public void onRefresh() {
-                            tv.setText("正在刷新");
-                            // TODO Auto-generated method stub
-                            new Handler().postDelayed(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    // TODO Auto-generated method stub
-                                    tv.setText("刷新完成");
-                                    swipeRefreshLayout.setRefreshing(false);
-                                }
-                            }, 6000);
-                        }
-                    });
 
                     break;
                 case 2:
                     resource = R.layout.tab_two;
                     rootView = inflater.inflate(resource, container, false);
-                    RelativeLayout tab2Frame = (RelativeLayout) rootView.findViewById(R.id.tab2_frame);
-
+//                    RelativeLayout tab2Frame = (RelativeLayout) rootView.findViewById(R.id.tab2_frame);
                     getChildFragmentManager().beginTransaction().replace(R.id.song_list_frame,new SongListFragment()).commit();
-
-
-                    if (rootView.findViewById(R.id.song_detail_container) != null) {
-                        // The detail container view will be present only in the
-                        // large-screen layouts (res/values-w900dp).
-                        // If this view is present, then the
-                        // activity should be in two-pane mode.
-                        //  mTwoPane = true;
-                    }
+//                    if (rootView.findViewById(R.id.song_detail_container) != null) {
+//                    }
                     break;
                 default:
                     resource = R.layout.tab_three;
