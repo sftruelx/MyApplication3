@@ -5,104 +5,105 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#eeeeee"
     android:orientation="vertical">
+
     <LinearLayout
+        android:background="@color/lightgrey"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#d9d9d9"
-        android:orientation="vertical" />
+         android:orientation="vertical" />
 
 
-<ScrollView
-android:id="@+id/tab1_scroll"
-android:layout_width="match_parent"
-android:layout_height="match_parent">
+    <ScrollView
+        android:id="@+id/tab1_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#eeeeee"
-    android:padding="8dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.larry.myapplication.MainActivity">
-
-
-    <TextView
-        android:id="@+id/tab1_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tab1_line"
-        android:layout_margin="10dp"
-        android:text=" WELCOME !     2015 12 23"
-        android:textSize="33dp" />
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/tab1_card"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tab1_title"
-        android:layout_margin="5dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:background="#eeeeee"
+            android:padding="8dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:context="com.example.larry.myapplication.MainActivity">
 
-            <com.example.larry.myapplication.banner.SimpleImageBanner
-                android:id="@+id/sib_simple_usage"
-                android:layout_width="fill_parent"
+
+            <TextView
+                android:id="@+id/tab1_title"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                banner:bb_scale="0.5625" />
+                android:layout_below="@+id/tab1_line"
+                android:layout_margin="10dp"
+                android:text=" WELCOME !     2015 12 23"
+                android:textSize="33dp" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/tab1_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tab1_title"
+                android:layout_margin="5dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <com.example.larry.myapplication.banner.SimpleImageBanner
+                        android:id="@+id/sib_simple_usage"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        banner:bb_scale="0.5625" />
+
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
             <TextView
                 android:id="@+id/tab1_title2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tab1_card"
+                android:layout_margin="10dp"
+                android:text="More from Nguyen Le"
+                android:textSize="33dp" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/sib_simple_usage"
-                android:text="强力推荐"
-                android:textSize="25dp" />
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-    <TextView
-        android:id="@+id/tab1_title3"
-        android:layout_margin="10dp"
-        android:layout_below="@+id/tab1_card"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="More from Nguyen Le"/>
+                android:layout_below="@+id/tab1_title2"
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_below="@+id/tab1_title3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/branding_exploration_teaser" />
 
-        <ImageView
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/branding_exploration_teaser"/>
-        <ImageView
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/branding_teaser"/>
-        <ImageView
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/open_teaser"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/branding_teaser" />
 
-    </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/open_teaser" />
 
-    <LinearLayout
-        android:id="@+id/add_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tab1_card"
-        android:orientation="vertical" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/add_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tab1_card"
+                android:orientation="vertical" />
 
 
-</RelativeLayout>
-</ScrollView></LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+</LinearLayout>

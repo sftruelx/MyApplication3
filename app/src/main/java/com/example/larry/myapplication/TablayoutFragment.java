@@ -1,6 +1,7 @@
 package com.example.larry.myapplication;
 
 import android.app.AlertDialog;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,17 +22,25 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.larry.myapplication.banner.SimpleImageBanner;
 import com.example.larry.myapplication.dummy.DummyContent;
 import com.example.larry.myapplication.songList.DividerItemDecoration;
 import com.example.larry.myapplication.songList.SimpleItemRecyclerViewAdapter;
 import com.example.larry.myapplication.songList.SongListActivity;
 import com.example.larry.myapplication.songList.SongListFragment;
+import com.example.larry.myapplication.utils.BitmapCache;
 import com.example.larry.myapplication.utils.DataProvider;
 import com.example.larry.myapplication.utils.DepthPageTransformer;
 import com.example.larry.myapplication.utils.LogHelper;
@@ -111,6 +120,7 @@ public class TablayoutFragment extends Fragment {
                     sib_simple_usage(rootView);
                     tv = (TextView)rootView.findViewById(R.id.tab1_title);
                     tv.setText(new SimpleDateFormat("dd-MMM EEEEE aa", Locale.ENGLISH).format(new Date()));
+//                    getImage(imageView, artUrl);
 
                     break;
                 case 2:

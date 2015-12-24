@@ -27,6 +27,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.dummy.DummyContent;
+import com.example.larry.myapplication.utils.BitmapCache;
 import com.example.larry.myapplication.utils.Constants;
 import com.example.larry.myapplication.utils.LogHelper;
 import java.util.List;
@@ -36,10 +37,11 @@ import java.util.List;
  */
 public class SimpleItemRecyclerViewAdapter
         extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-    private ImageLoader mImageLoader;
+
     private static final String TAG = LogHelper.makeLogTag(SimpleItemRecyclerViewAdapter.class);
     private final List<DummyContent.DummyItem> mValues;
     private RequestQueue mQueue;
+    private ImageLoader mImageLoader;
 
     public SimpleItemRecyclerViewAdapter(Context context, List<DummyContent.DummyItem> items) {
 
@@ -163,7 +165,7 @@ public class SimpleItemRecyclerViewAdapter
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
-                        Bitmap temp = createCircleImage(response, 100);
+                        Bitmap temp = createCircleImage(response, 75);
                         imageView.setImageBitmap(temp);
                     }
                 }, 0, 0, scaleType, Bitmap.Config.RGB_565, new Response.ErrorListener() {
@@ -176,27 +178,5 @@ public class SimpleItemRecyclerViewAdapter
     }
 
 
-    public class BitmapCache implements ImageLoader.ImageCache {
-        private LruCache<String, Bitmap> mCache;
 
-        public BitmapCache() {
-            int maxSize = 10 * 1024 * 1024;
-            mCache = new LruCache<String, Bitmap>(maxSize) {
-                @Override
-                protected int sizeOf(String key, Bitmap value) {
-                    return value.getRowBytes() * value.getHeight();
-                }
-            };
-        }
-
-        @Override
-        public Bitmap getBitmap(String url) {
-            return mCache.get(url);
-        }
-
-        @Override
-        public void putBitmap(String url, Bitmap bitmap) {
-            mCache.put(url, bitmap);
-        }
-    }
 }

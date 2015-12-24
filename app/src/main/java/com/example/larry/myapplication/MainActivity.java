@@ -23,8 +23,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.Volley;
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.media.MusicService;
+import com.example.larry.myapplication.utils.BitmapCache;
 import com.example.larry.myapplication.utils.ConfigStore;
 import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.NetworkHelper;
@@ -43,6 +47,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
