@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity
 
         }
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_discard) {
             hidePlaybackControls();
             return true;
         }

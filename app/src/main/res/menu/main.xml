@@ -1,30 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        android:icon="@drawable/ic_action_person"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_find"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_action_headphones"
-        android:title="@string/action_settings"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_email"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_action_email"
-        android:title="@string/action_settings"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_usage"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_action_data_usage"
-        android:title="@string/action_settings"
-        app:showAsAction="always" />
+
     <item
         android:id="@+id/action_dial_pad"
         android:orderInCategory="100"

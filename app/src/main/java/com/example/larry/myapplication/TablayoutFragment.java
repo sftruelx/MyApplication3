@@ -48,6 +48,8 @@ import java.util.Locale;
  */
 public class TablayoutFragment extends Fragment {
 
+    private static final String TAG = LogHelper.makeLogTag(TablayoutFragment.class);
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
@@ -91,19 +93,9 @@ public class TablayoutFragment extends Fragment {
             return fragment;
         }
 
-        private Runnable runnable = new Runnable() {
 
-            @Override
-            public void run() {
-                int[] location = new int[2];
 
-                LogHelper.i("location" + location[0] + " " + location[1]);
-                scrollView.scrollTo(0, v.getBottom());// 改变滚动条的位置
-            }
-        };
-        ScrollView scrollView;
-        View v;
-        int y;
+
         protected  TextView tv;
         protected  SwipeRefreshLayout swipeRefreshLayout;
         @Override
@@ -119,20 +111,7 @@ public class TablayoutFragment extends Fragment {
                     sib_simple_usage(rootView);
                     tv = (TextView)rootView.findViewById(R.id.tab1_title);
                     tv.setText(new SimpleDateFormat("dd-MMM EEEEE aa", Locale.ENGLISH).format(new Date()));
-                    LinearLayout ll = (LinearLayout)rootView.findViewById(R.id.add_panel);
-                    for(int i=0;i<100;i++) {
-                        TextView twoView = new TextView(getContext());
-                        twoView.setTag(i);
-                        twoView.setId(i);
-                        twoView.setText("sldfjsldfjsldkfjsld");
-                        ll.addView(twoView);
-                    }
-                    scrollView = (ScrollView)rootView.findViewById(R.id.tab1_scroll);
-                    v = rootView.findViewById(R.id.tab1_card);
 
-
-                    Handler handler = new Handler();
-                    handler.postDelayed(runnable, 200);
                     break;
                 case 2:
                     resource = R.layout.tab_two;

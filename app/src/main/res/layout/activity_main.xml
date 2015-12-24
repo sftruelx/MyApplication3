@@ -13,9 +13,9 @@
         android:id="@+id/tab1_line"
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:layout_height="1dp"
+        android:layout_height="2dp"
         android:layout_alignParentTop="true"
-        android:background="@color/lightgrey"/>
+        android:background="#f7f7f7"/>
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"

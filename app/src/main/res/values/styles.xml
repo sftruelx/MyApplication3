@@ -3,9 +3,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here.-->
-        <item name="colorPrimary">@color/whitesmoke</item>
-        <item name="colorPrimaryDark">@color/darkorange</item>
-        <item name="colorAccent">@color/darkorange</item>
+        <item name="colorPrimary">#ffffff</item>
+        <item name="colorPrimaryDark">#f36719</item>
+        <item name="colorAccent">#f36719</item>
 
     </style>
 
@@ -20,9 +20,9 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/whitesmoke</item>
-        <item name="colorPrimaryDark">@color/darkorange</item>
-        <item name="colorAccent">@color/darkorange</item>
+        <item name="colorPrimary">#ffffff</item>
+        <item name="colorPrimaryDark">#f36719</item>
+        <item name="colorAccent">#f36719</item>
         <item name="actionOverflowButtonStyle">@style/OverFlow</item>
     </style>
 
