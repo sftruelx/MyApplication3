@@ -7,7 +7,7 @@
     android:name="com.example.larry.myapplication.SongListFragment"
     android:background="#f7f7f7"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.example.larry.myapplication.songList.SongListActivity"
     tools:listitem="@layout/song_list_content" />

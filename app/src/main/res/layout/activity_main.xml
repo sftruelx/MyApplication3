@@ -9,7 +9,13 @@
     android:orientation="vertical">
 
     <include layout="@layout/app_bar_main" />
-
+    <LinearLayout
+        android:id="@+id/tab1_line"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/lightgrey"/>
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"

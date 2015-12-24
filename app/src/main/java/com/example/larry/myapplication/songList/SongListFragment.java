@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -30,8 +31,7 @@ public class SongListFragment extends Fragment {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager( 3,
-                StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new LinearLayoutManager( getContext()));
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this.getContext(),DummyContent.ITEMS));
 //        recyclerView.addItemDecoration(new DividerItemDecoration(
 //                getActivity(), DividerItemDecoration.VERTICAL_LIST));
