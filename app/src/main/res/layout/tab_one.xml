@@ -9,10 +9,10 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:background="@color/lightgrey"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-         android:orientation="vertical" />
+        android:background="@color/lightgrey"
+        android:orientation="vertical" />
 
 
     <ScrollView
@@ -45,56 +45,14 @@
                 android:layout_below="@+id/tab1_title"
                 android:layout_margin="5dp">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <com.example.larry.myapplication.banner.SimpleImageBanner
+                    android:id="@+id/sib_simple_usage"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp">
+                    banner:bb_scale="0.5625" />
 
-                    <com.example.larry.myapplication.banner.SimpleImageBanner
-                        android:id="@+id/sib_simple_usage"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        banner:bb_scale="0.5625" />
-
-
-                </LinearLayout>
             </android.support.v7.widget.CardView>
 
-            <TextView
-                android:id="@+id/tab1_title2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tab1_card"
-                android:layout_margin="10dp"
-                android:text="More from Nguyen Le"
-                android:textSize="33dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tab1_title2"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/branding_exploration_teaser" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/branding_teaser" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/open_teaser" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/add_panel"
@@ -102,7 +60,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tab1_card"
                 android:orientation="vertical" />
-
 
         </RelativeLayout>
     </ScrollView>

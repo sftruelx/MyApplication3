@@ -120,8 +120,9 @@ public class TablayoutFragment extends Fragment {
                     sib_simple_usage(rootView);
                     tv = (TextView)rootView.findViewById(R.id.tab1_title);
                     tv.setText(new SimpleDateFormat("dd-MMM EEEEE aa", Locale.ENGLISH).format(new Date()));
-//                    getImage(imageView, artUrl);
-
+                    LinearLayout line = (LinearLayout)rootView.findViewById(R.id.add_panel);
+                    View v1 = inflater.inflate(R.layout.tab_one_demo,container,false);
+                    line.addView(v1);
                     break;
                 case 2:
                     resource = R.layout.tab_two;
