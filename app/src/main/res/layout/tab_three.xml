@@ -16,4 +16,8 @@
         android:layout_height="wrap_content"
         android:text="今日直播"
         android:textSize="33dp"/>
+    <com.example.larry.myapplication.demo.DrawSnow
+        android:id="@+id/drawView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>
