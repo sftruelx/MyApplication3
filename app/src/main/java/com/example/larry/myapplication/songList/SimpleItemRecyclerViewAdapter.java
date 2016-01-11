@@ -22,15 +22,25 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.manager.LoadController;
+import com.android.volley.manager.RequestManager;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.dummy.DummyContent;
+import com.example.larry.myapplication.entity.Classify;
+import com.example.larry.myapplication.utils.AlbumArtCache;
+import com.example.larry.myapplication.utils.AppUrl;
 import com.example.larry.myapplication.utils.BitmapCache;
 import com.example.larry.myapplication.utils.Constants;
 import com.example.larry.myapplication.utils.LogHelper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Larry on 2015/12/20.
@@ -39,15 +49,23 @@ public class SimpleItemRecyclerViewAdapter
         extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = LogHelper.makeLogTag(SimpleItemRecyclerViewAdapter.class);
-    private final List<DummyContent.DummyItem> mValues;
     private RequestQueue mQueue;
     private ImageLoader mImageLoader;
+    private LoadController loadControler = null;
+    private ArrayList<Classify> list ;
+    AlbumArtCache cache = AlbumArtCache.getInstance();
 
     public SimpleItemRecyclerViewAdapter(Context context, List<DummyContent.DummyItem> items) {
 
         mQueue = Volley.newRequestQueue(context);
         mImageLoader = new ImageLoader(mQueue, new BitmapCache());
-        mValues = items;
+//        mValues = items;
+        list = cache.getClassifies(AppUrl.testUrl);
+        LogHelper.i(TAG,"list = "+ list);
+        if(list== null) {
+            list = new ArrayList<Classify>();
+            loadControler = RequestManager.getInstance().get(AppUrl.testUrl, requestListener, 0);
+        }
     }
 
     @Override
@@ -64,25 +82,25 @@ public class SimpleItemRecyclerViewAdapter
     public void onBindViewHolder(final ViewHolder holder, int position) {
         LogHelper.i(TAG, "position = " + position);
 
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText("标题" + mValues.get(position).id);
-        holder.mContentView.setText("内容简介" + mValues.get(position).content);
+        holder.classify = list.get(position);
+        holder.mIdView.setText(holder.classify.getTitle());
+        holder.mContentView.setText("");
         imageView = holder.mListImg;
-        String artUrl = Constants.IMAGES[position];
+        String artUrl = AppUrl.webUrl + holder.classify.getImg_path();
         getImage(imageView, artUrl);
         ObjectAnimator.ofFloat(imageView,"alpha",0.5f,1f).setDuration(500).start();
 
-//        ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.mListImg, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
-//        mImageLoader.get(artUrl, listener);
+        ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.mListImg, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
+        mImageLoader.get(artUrl, listener);
 //        ImageLoader imageLoader = ImageLoader.getInstance();
 //        imageLoader.displayImage(artUrl, imageView, options);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+      /*  holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (false) {
                     Bundle arguments = new Bundle();
-                    arguments.putString(SongDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+//                    arguments.putString(SongDetailFragment.ARG_ITEM_ID, holder.classify.getId());
 //                    SongDetailFragment fragment = new SongDetailFragment();
 //                    fragment.setArguments(arguments);
 //                    getSupportFragmentManager().beginTransaction()
@@ -91,11 +109,11 @@ public class SimpleItemRecyclerViewAdapter
                 } else {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, SongDetailActivity.class);
-                    intent.putExtra(SongDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                    intent.putExtra(SongDetailFragment.ARG_ITEM_ID,  holder.classify.getId());
                     context.startActivity(intent);
                 }
             }
-        });
+        });*/
     }
 
     private Bitmap createCircleImage(Bitmap source, int min) {
@@ -134,7 +152,7 @@ public class SimpleItemRecyclerViewAdapter
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return list.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -142,7 +160,7 @@ public class SimpleItemRecyclerViewAdapter
         public final ImageView mListImg;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyContent.DummyItem mItem;
+        public Classify  classify;
 
         public ViewHolder(View view) {
             super(view);
@@ -165,8 +183,7 @@ public class SimpleItemRecyclerViewAdapter
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
-                        Bitmap temp = createCircleImage(response, 75);
-                        imageView.setImageBitmap(temp);
+                        imageView.setImageBitmap(response);
                     }
                 }, 0, 0, scaleType, Bitmap.Config.RGB_565, new Response.ErrorListener() {
             @Override
@@ -176,6 +193,28 @@ public class SimpleItemRecyclerViewAdapter
         });
         mQueue.add(imageRequest);
     }
+    private RequestManager.RequestListener requestListener = new RequestManager.RequestListener() {
+
+        @Override
+        public void onRequest() {
+
+        }
+
+        @Override
+        public void onSuccess(String response, Map<String, String> headers, String url, int actionId) {
+            System.out.println("actionId:"+actionId+", OnSucess!\n"+response);
+            Gson gson = new Gson();
+            list = gson.fromJson(response,new TypeToken<List<Classify>>() {
+            }.getType());
+            cache.putClassify(url,list);
+
+        }
+
+        @Override
+        public void onError(String errorMsg, String url, int actionId) {
+            System.out.println("actionId:"+actionId+", onError!\n"+errorMsg);
+        }
+    };
 
 
 
