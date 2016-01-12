@@ -10,22 +10,29 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".SplashActivity"
             android:allowBackup="true"
-            android:name=".MainActivity"
             android:label="Educater"
-            android:theme="@style/AppTheme">
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".WelcomeActivity"
+        <activity
+            android:name=".GuideActivity"
+            android:configChanges="keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
+            android:name=".MainActivity"
+            android:allowBackup="true"
+            android:label="Educater"
             android:theme="@style/AppTheme"/>
-        <activity android:name=".songList.SongDetailActivity"
-            android:theme="@style/AppTheme"/>
+
         <service android:name="com.example.larry.myapplication.media.MusicService"></service>
     </application>
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
