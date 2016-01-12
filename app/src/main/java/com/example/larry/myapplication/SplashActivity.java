@@ -7,21 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-/**
- * 
- * @{# SplashActivity.java Create on 2013-5-2 下午9:10:01
- * 
- *     class desc: 启动画面 (1)判断是否是首次加载应用--采取读取SharedPreferences的方法
- *     (2)是，则进入GuideActivity；否，则进入MainActivity (3)3s后执行(2)操作
- * 
- *     <p>
- *     Copyright: Copyright(c) 2013
- *     </p>
- * @Version 1.0
- * @Author <a href="mailto:gaolei_xj@163.com">Leo</a>
- * 
- * 
- */
+
 public class SplashActivity extends Activity {
 	boolean isFirstIn = false;
 

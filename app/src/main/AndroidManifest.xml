@@ -29,7 +29,11 @@
             android:allowBackup="true"
             android:label="Educater"
             android:theme="@style/AppTheme"/>
-
+        <activity
+            android:name=".WelcomeActivity"
+            android:allowBackup="true"
+            android:label="Educater"
+            android:theme="@style/AppTheme"/>
         <service android:name="com.example.larry.myapplication.media.MusicService"></service>
     </application>
 

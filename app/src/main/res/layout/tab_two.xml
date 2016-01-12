@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tab2_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#eeeeee"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.larry.myapplication.MainActivity">
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
     <LinearLayout
         android:id="@+id/tab2_line"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:orientation="vertical"
-        android:background="@color/lightgrey"
-        android:layout_alignParentTop="true" />
+        android:background="@color/lightgrey"/>
 
 <FrameLayout
     android:id="@+id/song_list_frame"
-    android:layout_below="@+id/tab2_line"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ProgressBar
@@ -30,4 +26,4 @@
         android:indeterminateDuration="1500" />
 </FrameLayout>
 
-</RelativeLayout>
+</LinearLayout>
