@@ -16,20 +16,11 @@
 
 package com.example.larry.myapplication.utils;
 
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.util.LruCache;
 
-import com.android.volley.manager.LoadController;
-import com.android.volley.manager.RequestManager;
 import com.example.larry.myapplication.entity.Classify;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -38,7 +29,7 @@ import java.util.Map;
 public final class AlbumArtCache {
     private static final String TAG = LogHelper.makeLogTag(AlbumArtCache.class);
 
-    private LoadController loadControler = null;
+
 
 
     private static final int MAX_ALBUM_ART_CACHE_SIZE = 12*1024*1024;  // 12 MB

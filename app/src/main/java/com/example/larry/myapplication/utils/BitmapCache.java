@@ -3,12 +3,12 @@ package com.example.larry.myapplication.utils;
 import android.graphics.Bitmap;
 import android.util.LruCache;
 
-import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.ImageCache;
 
 /**
  * Created by Larry on 2015/12/24.
  */
-public class BitmapCache implements ImageLoader.ImageCache {
+public class BitmapCache implements ImageCache {
     private LruCache<String, Bitmap> mCache;
 
     public BitmapCache() {
@@ -19,6 +19,16 @@ public class BitmapCache implements ImageLoader.ImageCache {
                 return value.getRowBytes() * value.getHeight();
             }
         };
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public void invalidateBitmap(String url) {
+
     }
 
     @Override
