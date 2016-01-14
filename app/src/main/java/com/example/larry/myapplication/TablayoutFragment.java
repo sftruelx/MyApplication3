@@ -10,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Spannable;
@@ -22,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.larry.myapplication.banner.SimpleImageBanner;
+import com.example.larry.myapplication.page.DemoFragment;
+import com.example.larry.myapplication.page.TabOneFragment;
 import com.example.larry.myapplication.songList.SongListFragment;
 import com.example.larry.myapplication.utils.DataProvider;
 import com.example.larry.myapplication.utils.LogHelper;
@@ -101,9 +104,12 @@ public class TablayoutFragment extends Fragment {
                     sib_simple_usage(rootView);
                     tv = (TextView)rootView.findViewById(R.id.tab1_title);
                     tv.setText(new SimpleDateFormat("dd-MMM EEEEE aa", Locale.ENGLISH).format(new Date()));
-                    LinearLayout line = (LinearLayout)rootView.findViewById(R.id.add_panel);
-                    View v1 = inflater.inflate(R.layout.tab_one_demo,container,false);
-                    line.addView(v1);
+                    FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+                    ft.replace(R.id.tab_one_frame_one, TabOneFragment.newInstance(1));
+                    ft.replace(R.id.tab_one_frame_two, TabOneFragment.newInstance(1));
+                    ft.replace(R.id.tab_one_frame_three, TabOneFragment.newInstance(1));
+                    ft.commit();
+
                     break;
                 case 2:
                     resource = R.layout.tab_two;

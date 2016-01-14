@@ -1,4 +1,4 @@
-package com.example.larry.myapplication;
+package com.example.larry.myapplication.network;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,8 @@ import com.android.volley.TaskHandle;
 import com.android.volley.VolleyRequest;
 import com.android.volley.base.NetworkResponse;
 import com.android.volley.toolbox.VolleyTickle;
+import com.example.larry.myapplication.entity.DataModule;
+import com.example.larry.myapplication.utils.UILApplication;
 
 
 import org.json.JSONException;
@@ -34,7 +36,7 @@ public class NetworkModule {
 
     private static final Boolean DEBUG = true;
 
-    private static final String API_URL = "http://222.125.193.119:8080/mypro/client/test";
+    private static final String API_URL = "http://api.chihuo888.com/";
     public static final String ACTION_USER_LOGIN_CHANGED = "action.com.example.larry.myapplication.loginStateChanged";
 
     /****************************************************Volley请求***********************************************/
@@ -57,11 +59,11 @@ public class NetworkModule {
                 String result = VolleyTickle.parseResponse(response);
                 try {
                     if (DEBUG) Log.e("response", request.getUrl() + result);
-
+//          在这里解析sever返回的数据包
                     JSONObject obj = new JSONObject(result);
 
                     return new DataModule(obj.getInt("code"),
-                            obj.getString("txt"),
+                            obj.getString("str"),
                             obj.isNull("data") ? null : obj.get("data"));
 
                 } catch (JSONException e) {
@@ -183,7 +185,7 @@ public class NetworkModule {
     private OauthVolleyPostString oauthVolleyPostString;
     private VolleyPostMultipart volleyPostMultipart;
 
-    public NetworkModule(ApplicationController app) {
+    public NetworkModule(UILApplication app) {
         context = app.getApplicationContext();
         loginLock = new ReentrantLock();
         center = new TaskCenter();

@@ -20,11 +20,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#eeeeee"
-            android:padding="8dp"
+            android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:context="com.example.larry.myapplication.MainActivity">
 
@@ -33,17 +33,9 @@
                 android:id="@+id/tab1_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tab1_line"
                 android:layout_margin="10dp"
                 android:text=" WELCOME !     2015 12 23"
                 android:textSize="33dp" />
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/tab1_card"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tab1_title"
-                android:layout_margin="5dp">
 
                 <com.example.larry.myapplication.banner.SimpleImageBanner
                     android:id="@+id/sib_simple_usage"
@@ -51,17 +43,28 @@
                     android:layout_height="wrap_content"
                     banner:bb_scale="0.5625" />
 
-            </android.support.v7.widget.CardView>
 
 
-            <LinearLayout
-                android:id="@+id/add_panel"
+<!--下面放置精选推荐等栏目-->
+
+            <FrameLayout
+                android:id="@+id/tab_one_frame_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <FrameLayout
+                android:id="@+id/tab_one_frame_two"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tab1_card"
-                android:orientation="vertical" />
-
-        </RelativeLayout>
+                android:layout_height="wrap_content"></FrameLayout>
+        </LinearLayout>
+            <FrameLayout
+                android:id="@+id/tab_one_frame_three"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></FrameLayout>
+        </LinearLayout>
 
 
     </ScrollView>

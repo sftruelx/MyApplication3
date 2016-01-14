@@ -146,7 +146,7 @@ public class SimpleItemRecyclerViewAdapter
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

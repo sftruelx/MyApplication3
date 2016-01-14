@@ -1,7 +1,8 @@
-package com.example.larry.myapplication;
+package com.example.larry.myapplication.entity;
 
 import com.android.volley.HttpProcessException;
 import com.android.volley.IDData;
+import com.example.larry.myapplication.network.NetworkModule;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
