@@ -19,19 +19,25 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.Receiver;
+import com.android.volley.TaskHandle;
 import com.example.larry.myapplication.banner.SimpleImageBanner;
-import com.example.larry.myapplication.page.DemoFragment;
+import com.example.larry.myapplication.entity.Album;
+import com.example.larry.myapplication.entity.DataModule;
+import com.example.larry.myapplication.network.NetworkModule;
+import com.example.larry.myapplication.page.PicTextFragment;
 import com.example.larry.myapplication.page.TabOneFragment;
 import com.example.larry.myapplication.songList.SongListFragment;
 import com.example.larry.myapplication.utils.DataProvider;
 import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.T;
+import com.example.larry.myapplication.utils.UILApplication;
 import com.example.larry.myapplication.utils.ViewFindUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -55,6 +61,7 @@ public class TablayoutFragment extends Fragment {
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) rootView.findViewById(R.id.container);
+        mViewPager.setOffscreenPageLimit(6);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 //        添加下行代码后，会出现事件穿透现象
 //        mViewPager.setPageTransformer(true,new DepthPageTransformer());
@@ -64,11 +71,12 @@ public class TablayoutFragment extends Fragment {
     }
 
 
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment  implements Receiver<DataModule> {
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
+        private NetworkModule networkModule;
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public PlaceholderFragment() {
@@ -87,7 +95,11 @@ public class TablayoutFragment extends Fragment {
         }
 
 
-
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            networkModule = ((UILApplication)getActivity().getApplication()).getNetworkModule();
+        }
 
         protected  TextView tv;
         protected  SwipeRefreshLayout swipeRefreshLayout;
@@ -104,12 +116,12 @@ public class TablayoutFragment extends Fragment {
                     sib_simple_usage(rootView);
                     tv = (TextView)rootView.findViewById(R.id.tab1_title);
                     tv.setText(new SimpleDateFormat("dd-MMM EEEEE aa", Locale.ENGLISH).format(new Date()));
-                    FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-                    ft.replace(R.id.tab_one_frame_one, TabOneFragment.newInstance(1));
-                    ft.replace(R.id.tab_one_frame_two, TabOneFragment.newInstance(1));
-                    ft.replace(R.id.tab_one_frame_three, TabOneFragment.newInstance(1));
-                    ft.commit();
-
+//                    FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+//                    ft.replace(R.id.tab_one_frame_one, TabOneFragment.newInstance(1));
+//                    ft.replace(R.id.tab_one_frame_two, TabOneFragment.newInstance(1));
+//                    ft.replace(R.id.tab_one_frame_three, TabOneFragment.newInstance(1));
+//                    ft.commit();
+                    beginVolley();
                     break;
                 case 2:
                     resource = R.layout.tab_two;
@@ -129,7 +141,45 @@ public class TablayoutFragment extends Fragment {
             return rootView;
         }
 
+        private void beginVolley(){
+            TaskHandle handle_0 = networkModule.getAlbums("");
+            handle_0.setId(0);
+            handle_0.setReceiver(this);
+            handle_0.pullTrigger();
 
+        }
+
+        @Override
+        public void onSucess(TaskHandle handle, DataModule result) {
+            switch (handle.id()){
+
+                case 0:
+                    if(result.code() > 0){
+
+                            System.out.println("===========================================");
+try {
+    getChildFragmentManager().beginTransaction().add(R.id.tab_one_frame_one, PicTextFragment.newInstance("小编推荐", result.getAlbum())).commit();
+}catch(Exception e){
+    e.printStackTrace();
+}
+
+                    }
+
+                    break;
+
+
+            }
+        }
+
+        @Override
+        public void onError(TaskHandle handle, Throwable error) {
+            switch (handle.id()){
+                case 0:
+                    break;
+
+
+            }
+        }
         private void sib_simple_usage(final View view) {
             SimpleImageBanner sib = ViewFindUtils.find(view, R.id.sib_simple_usage);
 

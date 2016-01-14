@@ -37,6 +37,7 @@ public class NetworkModule {
     private static final Boolean DEBUG = true;
 
     private static final String API_URL = "http://api.chihuo888.com/";
+    private static final String WEB_URL = "http://222.125.193.119:8080/mypro/client/album";
     public static final String ACTION_USER_LOGIN_CHANGED = "action.com.example.larry.myapplication.loginStateChanged";
 
     /****************************************************Volley请求***********************************************/
@@ -44,6 +45,34 @@ public class NetworkModule {
     /**
      * Volley的String类型的Post请求，成功返回请求Tag和包含JSON内容的CHBRsp,失败返回VolleyError
      */
+
+
+    private class MyPostString implements Processor<DataModule> {
+
+        @Override
+        public DataModule process(final HttpRequest request) throws HttpProcessException {
+            NetworkResponse response = VolleyRequest.RequestPostTickle(context,
+                    request.getUrl(), request.getRequestTag(), request.getHashMap(), null);
+
+            if (response.statusCode == 200) {
+                String result = VolleyTickle.parseResponse(response);
+                try {
+                    if (DEBUG) Log.e("response", request.getUrl() + result);
+//          在这里解析sever返回的数据包
+                    JSONObject obj = new JSONObject(result);
+                    return new DataModule(obj.getInt("total"),
+                            "",
+                            obj.isNull("rows") ? null : obj.get("rows"));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+    }
+
+
     private class VolleyPostString implements Processor<DataModule> {
 
         @Override
@@ -73,6 +102,9 @@ public class NetworkModule {
             return null;
         }
     }
+
+
+
 
     /**
      * 需要身份认证的请求类
@@ -181,6 +213,7 @@ public class NetworkModule {
     private ReentrantLock loginLock;
     private TaskCenter center;
 
+    private MyPostString myPostString;
     private VolleyPostString volleyPostString;
     private OauthVolleyPostString oauthVolleyPostString;
     private VolleyPostMultipart volleyPostMultipart;
@@ -190,6 +223,7 @@ public class NetworkModule {
         loginLock = new ReentrantLock();
         center = new TaskCenter();
 
+        myPostString = new MyPostString();
         volleyPostString = new VolleyPostString();
         oauthVolleyPostString = new OauthVolleyPostString();
         volleyPostMultipart = new VolleyPostMultipart();
@@ -199,7 +233,13 @@ public class NetworkModule {
 
 
     /*******************************process请求事务,根据自己的业务需求，自定义请求地址以及参数)***************************************************/
-
+    public TaskHandle getAlbums(String type) {
+        HttpRequest request = new HttpRequest(WEB_URL);
+        request.addParameter("page", Integer.toString(1));
+        request.addParameter("rows", Integer.toString(20));
+        request.setRequestTag("getAlbum");
+        return center.arrange(request, myPostString);
+    }
 
     /***************************************各个逻辑模块的网络请求(接口url均为举例，请自行添加)******************************************/
 

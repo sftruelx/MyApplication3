@@ -85,7 +85,7 @@ public class TabOneFragment extends Fragment implements Receiver<DataModule> {
             a4.setId(44L);
             a4.setAlbumName("y444tutyu");
             list.add(a4);
-            getChildFragmentManager().beginTransaction().add(R.id.column_linear_frame, PicTextFragment.newInstance("小编推荐",list)).commit();
+//            getChildFragmentManager().beginTransaction().add(R.id.column_linear_frame, PicTextFragment.newInstance("小编推荐",list)).commit();
 
         }
 

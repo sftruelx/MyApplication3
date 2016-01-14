@@ -15,8 +15,8 @@ public class Album implements Parcelable {
     private String author;
     private Long classifyId;
     private String descripe;
-    private Date publishDate;
-    private Date createTime;
+    private Long publishDate;
+    private Long createTime;
     private String imgPath;
 
 
@@ -32,8 +32,8 @@ public class Album implements Parcelable {
         dest.writeString(this.author);
         dest.writeValue(this.classifyId);
         dest.writeString(this.descripe);
-        dest.writeLong(publishDate != null ? publishDate.getTime() : -1);
-        dest.writeLong(createTime != null ? createTime.getTime() : -1);
+        dest.writeValue(this.publishDate);
+        dest.writeValue(this.createTime);
         dest.writeString(this.imgPath);
     }
 
@@ -46,10 +46,8 @@ public class Album implements Parcelable {
         this.author = in.readString();
         this.classifyId = (Long) in.readValue(Long.class.getClassLoader());
         this.descripe = in.readString();
-        long tmpPublishDate = in.readLong();
-        this.publishDate = tmpPublishDate == -1 ? null : new Date(tmpPublishDate);
-        long tmpCreateTime = in.readLong();
-        this.createTime = tmpCreateTime == -1 ? null : new Date(tmpCreateTime);
+        this.publishDate = (Long) in.readValue(Long.class.getClassLoader());
+        this.createTime = (Long) in.readValue(Long.class.getClassLoader());
         this.imgPath = in.readString();
     }
 
@@ -103,19 +101,19 @@ public class Album implements Parcelable {
         this.descripe = descripe;
     }
 
-    public Date getPublishDate() {
+    public Long getPublishDate() {
         return publishDate;
     }
 
-    public void setPublishDate(Date publishDate) {
+    public void setPublishDate(Long publishDate) {
         this.publishDate = publishDate;
     }
 
-    public Date getCreateTime() {
+    public Long getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(Long createTime) {
         this.createTime = createTime;
     }
 

@@ -19,6 +19,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.utils.AppUrl;
+import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.UILApplication;
 
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class PicTextFragment extends Fragment {
         final LinearLayout linear =new LinearLayout(getContext());//定义一个新的LinearLayout
         linear.setOrientation(LinearLayout.HORIZONTAL);//设置为水平
         for(Album album : list){
+            LogHelper.i("=========",album.getAlbumName());
             View child = inflater.inflate(R.layout.pic_text,container,false);
             child.setTag(album.getId());
             child.setOnClickListener(new View.OnClickListener() {
@@ -70,8 +72,8 @@ public class PicTextFragment extends Fragment {
             });
             ImageView mListImg = (ImageView)child.findViewById(R.id.pic_image1);
             ImageLoader.ImageListener listener = ImageLoader.getImageListener(mListImg, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
-            String url = "http://photocdn.sohu.com/tvmobilemvms/20150907/144160323071011277.jpg";
-            mImageLoader.get(/*AppUrl.webUrl + album.getImgPath()*/url, listener);
+//            String url = "http://photocdn.sohu.com/tvmobilemvms/20150907/144160323071011277.jpg";
+            mImageLoader.get(AppUrl.webUrl + album.getImgPath(), listener);
             TextView tv= (TextView)child.findViewById(R.id.pic_text1);
             tv.setText(album.getAlbumName());
             linear.addView(child);

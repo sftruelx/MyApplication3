@@ -3,9 +3,14 @@ package com.example.larry.myapplication.entity;
 import com.android.volley.HttpProcessException;
 import com.android.volley.IDData;
 import com.example.larry.myapplication.network.NetworkModule;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -104,6 +109,18 @@ public class DataModule {
     }
 */
 
+
+    public ArrayList<Album> getAlbum() throws Exception{
+        ArrayList<Album> list;
+        try {
+            Gson gson = new Gson();
+            list = gson.fromJson(getExtra().toString(),new TypeToken<List<Album>>() {
+            }.getType());
+            return list;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
     /**
      * 解析图片相对路径

@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,22 +18,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
-
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.media.MusicService;
-import com.example.larry.myapplication.utils.BitmapCache;
 import com.example.larry.myapplication.utils.ConfigStore;
 import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.NetworkHelper;
-
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

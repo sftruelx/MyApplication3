@@ -85,7 +85,7 @@ public class SimpleItemRecyclerViewAdapter
 
         ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.mListImg, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
         mImageLoader.get(artUrl, listener);
-        ObjectAnimator.ofFloat(imageView,"alpha",0.5f,1f).setDuration(500).start();
+//        ObjectAnimator.ofFloat(imageView,"alpha",0.5f,1f).setDuration(500).start();
 //        ImageLoader imageLoader = ImageLoader.getInstance();
 //        imageLoader.displayImage(artUrl, imageView, options);
 
