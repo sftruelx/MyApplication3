@@ -10,4 +10,5 @@
     <string name="currently_playing_song">currently playing song</string>
     <string name="currently_playing_extra_info">extra info</string>
     <string name="play_pause">pause</string>
+    <string name="empty">NO DATA</string>
 </resources>

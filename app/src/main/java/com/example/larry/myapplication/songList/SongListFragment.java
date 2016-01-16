@@ -4,16 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.larry.myapplication.R;
-import com.example.larry.myapplication.dummy.DummyContent;
+import com.example.larry.myapplication.entity.DummyContent;
 import com.example.larry.myapplication.utils.ViewFindUtils;
 
 /**
@@ -32,7 +30,7 @@ public class SongListFragment extends Fragment {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager( getContext()));
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this.getContext(),DummyContent.ITEMS));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this.getContext(), DummyContent.ITEMS));
 //        recyclerView.addItemDecoration(new DividerItemDecoration(
 //                getActivity(), DividerItemDecoration.VERTICAL_LIST));
     }

@@ -74,8 +74,10 @@ public class PicTextFragment extends Fragment {
             ImageLoader.ImageListener listener = ImageLoader.getImageListener(mListImg, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
 //            String url = "http://photocdn.sohu.com/tvmobilemvms/20150907/144160323071011277.jpg";
             mImageLoader.get(AppUrl.webUrl + album.getImgPath(), listener);
+            TextView mTitle= (TextView)child.findViewById(R.id.pic_title);
+            mTitle.setText(album.getAlbumName());
             TextView tv= (TextView)child.findViewById(R.id.pic_text1);
-            tv.setText(album.getAlbumName());
+            tv.setText(album.getDescripe());
             linear.addView(child);
         }
         v.addView(linear);

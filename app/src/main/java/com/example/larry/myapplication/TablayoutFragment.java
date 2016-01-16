@@ -10,9 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
@@ -22,24 +20,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.Receiver;
-import com.android.volley.TaskHandle;
-import com.example.larry.myapplication.banner.SimpleImageBanner;
-import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.entity.DataModule;
-import com.example.larry.myapplication.network.NetworkModule;
-import com.example.larry.myapplication.page.PicTextFragment;
 import com.example.larry.myapplication.page.TabOneFragment;
-import com.example.larry.myapplication.songList.SongListFragment;
-import com.example.larry.myapplication.utils.DataProvider;
+import com.example.larry.myapplication.page.TabTwoFragment;
 import com.example.larry.myapplication.utils.LogHelper;
-import com.example.larry.myapplication.utils.T;
-import com.example.larry.myapplication.utils.UILApplication;
-import com.example.larry.myapplication.utils.ViewFindUtils;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 
 /**
@@ -50,42 +34,34 @@ public class TablayoutFragment extends Fragment {
     private static final String TAG = LogHelper.makeLogTag(TablayoutFragment.class);
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
+    TabLayout tabLayout;
     private ViewPager mViewPager;
+
+    public static TablayoutFragment newInstance(){
+        TablayoutFragment tf = new TablayoutFragment();
+        return tf;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.content_tablayout,container,false);
+        View rootView = inflater.inflate(R.layout.content_tablayout, container, false);
         mSectionsPagerAdapter = new SectionsPagerAdapter(this.getFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) rootView.findViewById(R.id.container);
-        mViewPager.setOffscreenPageLimit(6);
+        mViewPager.setOffscreenPageLimit(1);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-//        添加下行代码后，会出现事件穿透现象
-//        mViewPager.setPageTransformer(true,new DepthPageTransformer());
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         return rootView;
     }
 
 
-    public static class PlaceholderFragment extends Fragment  implements Receiver<DataModule> {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private NetworkModule networkModule;
+    public static class PlaceholderFragment extends Fragment {
+
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -94,108 +70,38 @@ public class TablayoutFragment extends Fragment {
             return fragment;
         }
 
-
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            networkModule = ((UILApplication)getActivity().getApplication()).getNetworkModule();
+
         }
 
-        protected  TextView tv;
-        protected  SwipeRefreshLayout swipeRefreshLayout;
         @Override
         public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                  Bundle savedInstanceState) {
-            int tab_number =  getArguments().getInt(ARG_SECTION_NUMBER);
+            int tab_number = getArguments().getInt(ARG_SECTION_NUMBER);
             View rootView = null;
-            @LayoutRes int resource ;
-            switch (tab_number){
+            @LayoutRes int resource;
+            switch (tab_number) {
                 case 1:
-                    resource = R.layout.tab_one;
+                    resource = R.layout.tab_two_content;
                     rootView = inflater.inflate(resource, container, false);
-                    sib_simple_usage(rootView);
-                    tv = (TextView)rootView.findViewById(R.id.tab1_title);
-                    tv.setText(new SimpleDateFormat("dd-MMM EEEEE aa", Locale.ENGLISH).format(new Date()));
-//                    FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-//                    ft.replace(R.id.tab_one_frame_one, TabOneFragment.newInstance(1));
-//                    ft.replace(R.id.tab_one_frame_two, TabOneFragment.newInstance(1));
-//                    ft.replace(R.id.tab_one_frame_three, TabOneFragment.newInstance(1));
-//                    ft.commit();
-                    beginVolley();
+                    getChildFragmentManager().beginTransaction().replace(R.id.album_frame, TabOneFragment.newInstance()).commit();
                     break;
                 case 2:
-                    resource = R.layout.tab_two;
+                    resource = R.layout.tab_two_content;
                     rootView = inflater.inflate(resource, container, false);
-//                    RelativeLayout tab2Frame = (RelativeLayout) rootView.findViewById(R.id.tab2_frame);
-                    getChildFragmentManager().beginTransaction().replace(R.id.song_list_frame,new SongListFragment()).commit();
-//                    if (rootView.findViewById(R.id.song_detail_container) != null) {
-//                    }
+                    getChildFragmentManager().beginTransaction().replace(R.id.album_frame, TabTwoFragment.newInstance()).commit();
                     break;
                 default:
                     resource = R.layout.tab_three;
                     rootView = inflater.inflate(resource, container, false);
                     break;
             }
-//            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-//            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
 
-        private void beginVolley(){
-            TaskHandle handle_0 = networkModule.getAlbums("");
-            handle_0.setId(0);
-            handle_0.setReceiver(this);
-            handle_0.pullTrigger();
-
-        }
-
-        @Override
-        public void onSucess(TaskHandle handle, DataModule result) {
-            switch (handle.id()){
-
-                case 0:
-                    if(result.code() > 0){
-
-                            System.out.println("===========================================");
-try {
-    getChildFragmentManager().beginTransaction().add(R.id.tab_one_frame_one, PicTextFragment.newInstance("小编推荐", result.getAlbum())).commit();
-}catch(Exception e){
-    e.printStackTrace();
-}
-
-                    }
-
-                    break;
-
-
-            }
-        }
-
-        @Override
-        public void onError(TaskHandle handle, Throwable error) {
-            switch (handle.id()){
-                case 0:
-                    break;
-
-
-            }
-        }
-        private void sib_simple_usage(final View view) {
-            SimpleImageBanner sib = ViewFindUtils.find(view, R.id.sib_simple_usage);
-
-            sib
-                    .setSource(DataProvider.getList())
-                    .startScroll();
-
-            sib.setOnItemClickL(new SimpleImageBanner.OnItemClickL() {
-                @Override
-                public void onItemClick(int position) {
-                    T.showShort(view.getContext(), "position--->" + position);
-                }
-            });
-        }
     }
-
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -223,20 +129,20 @@ try {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    SpannableString sp = getSpannableString(R.drawable.ic_action_data_usage,"推荐");
-                    return  sp;
+                    SpannableString sp = getSpannableString(R.drawable.ic_action_data_usage, "推荐");
+                    return sp;
                 case 1:
-                    SpannableString sp1 = getSpannableString(R.drawable.ic_action_dial_pad,"分类");
-                    return  sp1;
+                    SpannableString sp1 = getSpannableString(R.drawable.ic_action_dial_pad, "分类");
+                    return sp1;
                 case 2:
-                    SpannableString sp2 = getSpannableString(R.drawable.ic_action_directions,"直播");
-                    return  sp2;
+                    SpannableString sp2 = getSpannableString(R.drawable.ic_action_directions, "直播");
+                    return sp2;
                 case 3:
-                    SpannableString sp3 = getSpannableString(R.drawable.ic_action_discard,"榜单");
-                    return  sp3;
+                    SpannableString sp3 = getSpannableString(R.drawable.ic_action_discard, "榜单");
+                    return sp3;
                 case 4:
-                    SpannableString sp4 = getSpannableString(R.drawable.ic_action_dock,"主播");
-                    return  sp4;
+                    SpannableString sp4 = getSpannableString(R.drawable.ic_action_dock, "主播");
+                    return sp4;
             }
             return null;
         }
@@ -246,7 +152,7 @@ try {
             Drawable dImage = getResources().getDrawable(id);
             dImage.setBounds(0, 0, dImage.getIntrinsicWidth(), dImage.getIntrinsicHeight());
             //这里前面加的空格就是为图片显示
-            SpannableString sp = new SpannableString("  "+ title);
+            SpannableString sp = new SpannableString("  " + title);
             ImageSpan imageSpan = new ImageSpan(dImage, ImageSpan.ALIGN_BOTTOM);
             sp.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             return sp;

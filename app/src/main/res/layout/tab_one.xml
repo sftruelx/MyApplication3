@@ -8,13 +8,6 @@
     android:background="#eeeeee"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/lightgrey"
-        android:orientation="vertical" />
-
-
     <ScrollView
         android:id="@+id/tab1_scroll"
         android:layout_width="match_parent"

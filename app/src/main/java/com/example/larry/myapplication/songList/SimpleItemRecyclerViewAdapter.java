@@ -1,8 +1,6 @@
 package com.example.larry.myapplication.songList;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,9 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,20 +19,15 @@ import android.widget.TextView;
 import com.android.volley.base.RequestQueue;
 import com.android.volley.cache.plus.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.RequestManager;
 import com.example.larry.myapplication.R;
-import com.example.larry.myapplication.dummy.DummyContent;
 import com.example.larry.myapplication.entity.Classify;
+import com.example.larry.myapplication.entity.DummyContent;
 import com.example.larry.myapplication.utils.AlbumArtCache;
 import com.example.larry.myapplication.utils.AppUrl;
-import com.example.larry.myapplication.utils.BitmapCache;
 import com.example.larry.myapplication.utils.LogHelper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Larry on 2015/12/20.

@@ -1,4 +1,4 @@
-package com.example.larry.myapplication.dummy;
+package com.example.larry.myapplication.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
- * <p/>
+ * <p>
  * TODO: Replace all uses of this class before publishing your app.
  */
 public class DummyContent {
@@ -23,7 +23,7 @@ public class DummyContent {
      */
     public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
 
-    private static final int COUNT = 85;
+    private static final int COUNT = 25;
 
     static {
         // Add some sample items.
@@ -38,7 +38,7 @@ public class DummyContent {
     }
 
     private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position),"http://img.xiami.net/images/collect/694/94/130937694_1450453291_jEtd_1.jpg", "Item " + position, makeDetails(position));
+        return new DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
     }
 
     private static String makeDetails(int position) {
@@ -55,13 +55,11 @@ public class DummyContent {
      */
     public static class DummyItem {
         public final String id;
-        public final String url;
         public final String content;
         public final String details;
 
-        public DummyItem(String id,String url, String content, String details) {
+        public DummyItem(String id, String content, String details) {
             this.id = id;
-            this.url = url;
             this.content = content;
             this.details = details;
         }

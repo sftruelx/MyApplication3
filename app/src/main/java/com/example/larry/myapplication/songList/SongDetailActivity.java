@@ -25,6 +25,7 @@ public class SongDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_action_back);
         setSupportActionBar(toolbar);
 
 /*        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

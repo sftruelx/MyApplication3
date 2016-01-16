@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.larry.myapplication.R;
-import com.example.larry.myapplication.dummy.DummyContent;
+import com.example.larry.myapplication.entity.DummyContent;
 
 import java.util.List;
 
