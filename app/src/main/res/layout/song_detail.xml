@@ -41,6 +41,16 @@
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:src="@drawable/bg1"
                 android:scaleType="fitXY"/>
+            <ImageView
+                android:id="@+id/play_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/uamp_ic_play_arrow_white_48dp"
+                android:tintMode="src_in"
+                android:tint="@color/white"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:background="@drawable/round_white"
+                />
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"

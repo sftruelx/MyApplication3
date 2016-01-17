@@ -53,14 +53,14 @@ public class SongDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.song_detail);
-
+        Album album =  (Album)this.getIntent().getExtras().get(ARG_ITEM_ID);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         setSupportActionBar(toolbar);
 
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
-            Album album =  (Album)this.getIntent().getExtras().get(ARG_ITEM_ID);
+
             appBarLayout.setTitle(album.getAlbumName());
         }
 
@@ -70,7 +70,7 @@ public class SongDetailActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
         }
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new SongDetailFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, SongDetailFragment.newInstance(album)).commit();
     }
 
 
