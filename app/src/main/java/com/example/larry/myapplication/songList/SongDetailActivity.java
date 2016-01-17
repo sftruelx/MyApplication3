@@ -1,16 +1,39 @@
 package com.example.larry.myapplication.songList;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.renderscript.Allocation;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
+import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.larry.myapplication.MainActivity;
 import com.example.larry.myapplication.R;
+import com.example.larry.myapplication.entity.Album;
+import com.example.larry.myapplication.entity.DummyContent;
+import com.example.larry.myapplication.utils.FastBlur;
+
+import java.util.List;
 
 /**
  * An activity representing a single Song detail screen. This
@@ -19,66 +42,49 @@ import com.example.larry.myapplication.R;
  * in a {@link SongListActivity}.
  */
 public class SongDetailActivity extends AppCompatActivity {
+    public static final String ARG_ITEM_ID = "item_id";
+    /**
+     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
+     * device.
+     */
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_song_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        setContentView(R.layout.song_detail);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         setSupportActionBar(toolbar);
 
-/*        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        if (appBarLayout != null) {
+            Album album =  (Album)this.getIntent().getExtras().get(ARG_ITEM_ID);
+            appBarLayout.setTitle(album.getAlbumName());
+        }
 
-        // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
         }
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
-        if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(SongDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(SongDetailFragment.ARG_ITEM_ID));
-            SongDetailFragment fragment = new SongDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.song_detail_container, fragment)
-                    .commit();
-        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new SongDetailFragment()).commit();
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            navigateUpTo(new Intent(this, SongListActivity.class));
+//            navigateUpTo(new Intent(this, MainActivity.class));
+            SongDetailActivity.this.finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }

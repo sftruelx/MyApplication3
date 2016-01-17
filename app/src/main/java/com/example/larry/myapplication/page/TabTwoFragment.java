@@ -45,6 +45,7 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 //        setHasOptionsMenu(true);
 
 
@@ -161,7 +162,7 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
                 public void onClick(View v) {
                     Context context = v.getContext();
                         Intent intent = new Intent(context, SongDetailActivity.class);
-                        intent.putExtra(SongDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
+                        intent.putExtra(SongDetailActivity.ARG_ITEM_ID, holder.mItem);
                         context.startActivity(intent);
                 }
             });
