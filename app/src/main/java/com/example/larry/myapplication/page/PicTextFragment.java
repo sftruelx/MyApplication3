@@ -1,6 +1,9 @@
 package com.example.larry.myapplication.page;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,10 +21,12 @@ import com.android.volley.cache.plus.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
+import com.example.larry.myapplication.songList.SongDetailActivity;
 import com.example.larry.myapplication.utils.AppUrl;
 import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.UILApplication;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +65,7 @@ public class PicTextFragment extends Fragment {
         HorizontalScrollView v = (HorizontalScrollView) rootView.findViewById(R.id.tab_one_column_linear);
         final LinearLayout linear =new LinearLayout(getContext());//定义一个新的LinearLayout
         linear.setOrientation(LinearLayout.HORIZONTAL);//设置为水平
-        for(Album album : list){
+        for(final Album album : list){
             LogHelper.i("=========",album.getAlbumName());
             View child = inflater.inflate(R.layout.pic_text,container,false);
             child.setTag(album.getId());
@@ -70,7 +75,7 @@ public class PicTextFragment extends Fragment {
                     Toast.makeText( getContext() , "你选择的是: "+v.getTag().toString(), Toast.LENGTH_SHORT).show();
                 }
             });
-            ImageView mListImg = (ImageView)child.findViewById(R.id.pic_image1);
+            final ImageView mListImg = (ImageView)child.findViewById(R.id.pic_image1);
             ImageLoader.ImageListener listener = ImageLoader.getImageListener(mListImg, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
 //            String url = "http://photocdn.sohu.com/tvmobilemvms/20150907/144160323071011277.jpg";
             mImageLoader.get(AppUrl.webUrl + album.getImgPath(), listener);
@@ -79,6 +84,20 @@ public class PicTextFragment extends Fragment {
             TextView tv= (TextView)child.findViewById(R.id.pic_text1);
             tv.setText(album.getDescripe());
             linear.addView(child);
+            child.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Context context = v.getContext();
+                    Intent intent = new Intent(context, SongDetailActivity.class);
+                    intent.putExtra(SongDetailActivity.ARG_ITEM_ID, album);
+                    Bitmap bmp = ((BitmapDrawable) mListImg.getDrawable()).getBitmap();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte[] bitmapByte = baos.toByteArray();
+                    intent.putExtra("bitmap", bitmapByte);
+                    context.startActivity(intent);
+                }
+            });
         }
         v.addView(linear);
 

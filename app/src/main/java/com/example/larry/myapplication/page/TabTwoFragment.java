@@ -2,6 +2,8 @@ package com.example.larry.myapplication.page;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +26,7 @@ import com.example.larry.myapplication.swipe.SwipeRefreshLayout;
 import com.example.larry.myapplication.utils.AppUrl;
 import com.example.larry.myapplication.utils.UILApplication;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 
@@ -67,8 +70,6 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
         setContentShown(false);
         obtainData(0);
     }
-
-
 
 
     private void obtainData(int type) {
@@ -140,7 +141,7 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
         public SimpleItemRecyclerViewAdapter(List<Album> items) {
 
             mValues = items;
-            mImageLoader = new ImageLoader(((UILApplication)getActivity().getApplication()).mQueue);
+            mImageLoader = new ImageLoader(((UILApplication) getActivity().getApplication()).mQueue);
         }
 
         @Override
@@ -156,14 +157,19 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
             holder.mIdView.setText(mValues.get(position).getAlbumName());
             holder.mContentView.setText(mValues.get(position).getDescripe());
             ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.mPic, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
-            mImageLoader.get( AppUrl.webUrl + holder.mItem.getImgPath(), listener);
+            mImageLoader.get(AppUrl.webUrl + holder.mItem.getImgPath(), listener);
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Context context = v.getContext();
-                        Intent intent = new Intent(context, SongDetailActivity.class);
-                        intent.putExtra(SongDetailActivity.ARG_ITEM_ID, holder.mItem);
-                        context.startActivity(intent);
+                    Intent intent = new Intent(context, SongDetailActivity.class);
+                    intent.putExtra(SongDetailActivity.ARG_ITEM_ID, holder.mItem);
+                    Bitmap bmp = ((BitmapDrawable) holder.mPic.getDrawable()).getBitmap();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte[] bitmapByte = baos.toByteArray();
+                    intent.putExtra("bitmap", bitmapByte);
+                    context.startActivity(intent);
                 }
             });
         }
@@ -189,7 +195,7 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
                 mView = view;
                 mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);
-                mPic =(ImageView)view.findViewById(R.id.album_pic);
+                mPic = (ImageView) view.findViewById(R.id.album_pic);
             }
 
 

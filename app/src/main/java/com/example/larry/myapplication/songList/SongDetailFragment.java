@@ -1,26 +1,19 @@
 package com.example.larry.myapplication.songList;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,13 +21,14 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.cache.plus.ImageLoader;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.entity.DummyContent;
-import com.example.larry.myapplication.utils.FastBlur;
+import com.example.larry.myapplication.utils.AppUrl;
+import com.example.larry.myapplication.utils.MyFragment;
 import com.example.larry.myapplication.utils.T;
-
-import org.w3c.dom.Text;
+import com.example.larry.myapplication.utils.UILApplication;
 
 import java.util.List;
 
@@ -45,7 +39,7 @@ import java.util.List;
  * in two-pane mode (on tablets) or a {@link SongDetailActivity}
  * on handsets.
  */
-public class SongDetailFragment extends Fragment {
+public class SongDetailFragment extends MyFragment {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -56,20 +50,21 @@ public class SongDetailFragment extends Fragment {
      * The dummy content this fragment is presenting.
      */
     private Album mItem;
-
+    private Bitmap bitmap;
     private ImageView image;
-
+    private ImageLoader mImageLoader;
     private CollapsingToolbarLayout toolbar;
     private TextView txt;
 
     /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
+     * Mandatory empty constructor for the fragment manager to instantiate the vffdfdxassade
      * fragment (e.g. upon screen orientation changes).
      */
-    public static SongDetailFragment newInstance(Album album) {
+    public static SongDetailFragment newInstance(Album album , byte[] bis) {
         SongDetailFragment sdf = new SongDetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_ITEM_ID, album);
+        args.putByteArray("bitmap", bis);
         sdf.setArguments(args);
         return sdf;
     }
@@ -77,13 +72,10 @@ public class SongDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments().getParcelable(ARG_ITEM_ID) != null) {
-
-            mItem = (Album) getArguments().getParcelable(ARG_ITEM_ID);
-
-        }
-
+        mImageLoader = new ImageLoader(((UILApplication)getActivity().getApplication()).mQueue);
+        mItem = (Album) getArguments().getParcelable(ARG_ITEM_ID);
+        byte[] bis = getArguments().getByteArray("bitmap");
+        bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
     }
 
     @Override
@@ -91,13 +83,13 @@ public class SongDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.item_list, container, false);
         View recyclerView = rootView.findViewById(R.id.item_list);
+        Activity activity = this.getActivity();
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
-        Activity activity = this.getActivity();
-        image = (ImageView) activity.findViewById(R.id.backdrop);
+
         txt = (TextView) activity.findViewById(R.id.toolar_text);
         toolbar = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-        applyBlur();
+
         ImageView mButton = (ImageView)activity.findViewById(R.id.play_button);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,25 +101,35 @@ public class SongDetailFragment extends Fragment {
         if (mItem != null) {
 //            ((TextView) rootView.findViewById(R.id.song_detail)).setText(mItem.getAlbumName());
         }
-        colorChange(9);
+        image = (ImageView) activity.findViewById(R.id.backdrop);
+        colorChange();
+        applyBlur();
         return rootView;
     }
     /**
      * 界面颜色的更改
      */
-    private void colorChange(int position) {
+    private void colorChange( ) {
         // 用来提取颜色的Bitmap
         BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
         Bitmap bitmap = drawable.getBitmap();
         // Palette的部分
-        Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
-            /**
+        Palette.Builder from = Palette.from(bitmap);
+//        int color1 =from.generate().getMutedColor(getResources().getColor(android.R.color.transparent));
+//        int color2 =from.generate().getVibrantColor(getResources().getColor(android.R.color.transparent));
+//        int color3 =from.generate().getDarkMutedColor(getResources().getColor(android.R.color.transparent));
+//        int color4 =from.generate().getLightMutedColor(getResources().getColor(android.R.color.transparent));
+//        int color5 =from.generate().getLightVibrantColor(getResources().getColor(android.R.color.transparent));
+        int color =from.generate().getDarkVibrantColor(getResources().getColor(android.R.color.transparent));
+        toolbar.setContentScrimColor(colorBurn(color));
+       /* Palette.generateAsync(bitmap,24, new Palette.PaletteAsyncListener() {
+            *//**
              * 提取完之后的回调方法
-             */
+             *//*
             @Override
             public void onGenerated(Palette palette) {
                 Palette.Swatch vibrant = palette.getVibrantSwatch();
-            /* 界面颜色UI统一性处理,看起来更Material一些 */
+            *//* 界面颜色UI统一性处理,看起来更Material一些 *//*
                 toolbar.setContentScrimColor(colorBurn(vibrant.getRgb()));
 //                toolbar.sette(vibrant.getTitleTextColor());
                 // 其中状态栏、游标、底部导航栏的颜色需要加深一下，也可以不加，具体情况在代码之后说明
@@ -135,7 +137,7 @@ public class SongDetailFragment extends Fragment {
 
 //                toolbar.setBackgroundColor(vibrant.getRgb());
             }
-        });
+        });*/
     }
 
     /**

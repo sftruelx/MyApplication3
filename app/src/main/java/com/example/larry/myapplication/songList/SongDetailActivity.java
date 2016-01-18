@@ -1,39 +1,17 @@
 package com.example.larry.myapplication.songList;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.renderscript.Allocation;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
-import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.example.larry.myapplication.MainActivity;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
-import com.example.larry.myapplication.entity.DummyContent;
-import com.example.larry.myapplication.utils.FastBlur;
-
-import java.util.List;
 
 /**
  * An activity representing a single Song detail screen. This
@@ -54,10 +32,15 @@ public class SongDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.song_detail);
         Album album =  (Album)this.getIntent().getExtras().get(ARG_ITEM_ID);
+        byte [] bis=this.getIntent().getByteArrayExtra("bitmap");
+        Bitmap bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         setSupportActionBar(toolbar);
-
+        ImageView playImage = (ImageView) findViewById(R.id.play_image);
+        ImageView image = (ImageView) findViewById(R.id.backdrop);
+        playImage.setImageBitmap(bitmap);
+        image.setImageBitmap(bitmap);
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
 
@@ -70,7 +53,7 @@ public class SongDetailActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
         }
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, SongDetailFragment.newInstance(album)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, SongDetailFragment.newInstance(album,bis)).commit();
     }
 
 
