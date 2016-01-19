@@ -122,6 +122,19 @@ public class DataModule {
         }
     }
 
+
+    public ArrayList<Artist> getArtist() throws Exception{
+        ArrayList<Artist> list;
+        try {
+            Gson gson = new Gson();
+            list = gson.fromJson(getExtra().toString(),new TypeToken<List<Artist>>() {
+            }.getType());
+            return list;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
     /**
      * 解析图片相对路径
      */

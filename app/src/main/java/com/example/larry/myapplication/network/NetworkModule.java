@@ -38,6 +38,7 @@ public class NetworkModule {
 
     private static final String API_URL = "http://api.chihuo888.com/";
     private static final String WEB_URL = "http://222.125.193.119:8080/mypro/client/album";
+    private static final String ARTIST_URL = "http://222.125.193.119:8080/mypro/client/artist";
     public static final String ACTION_USER_LOGIN_CHANGED = "action.com.example.larry.myapplication.loginStateChanged";
 
     /****************************************************Volley请求***********************************************/
@@ -240,6 +241,17 @@ public class NetworkModule {
         request.setRequestTag("getAlbum");
         return center.arrange(request, myPostString);
     }
+
+    public TaskHandle getArtists(String albumId) {
+        HttpRequest request = new HttpRequest(ARTIST_URL);
+        request.addParameter("page", Integer.toString(1));
+        request.addParameter("rows", Integer.toString(20));
+        request.addParameter("albumId",albumId);
+        request.setRequestTag("getArtist");
+        return center.arrange(request, myPostString);
+    }
+
+
 
     /***************************************各个逻辑模块的网络请求(接口url均为举例，请自行添加)******************************************/
 

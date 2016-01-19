@@ -21,10 +21,16 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Receiver;
+import com.android.volley.TaskHandle;
 import com.android.volley.cache.plus.ImageLoader;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
+import com.example.larry.myapplication.entity.Artist;
+import com.example.larry.myapplication.entity.DataModule;
 import com.example.larry.myapplication.entity.DummyContent;
+import com.example.larry.myapplication.swipe.ProgressFragment;
+import com.example.larry.myapplication.swipe.SwipeRefreshLayout;
 import com.example.larry.myapplication.utils.AppUrl;
 import com.example.larry.myapplication.utils.MyFragment;
 import com.example.larry.myapplication.utils.T;
@@ -39,16 +45,13 @@ import java.util.List;
  * in two-pane mode (on tablets) or a {@link SongDetailActivity}
  * on handsets.
  */
-public class SongDetailFragment extends MyFragment {
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_ITEM_ID = "item_id";
+public class SongDetailFragment extends ProgressFragment implements Receiver<DataModule> {
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
+    public static final String ARG_ITEM_ID = "item_id";
+    private View mContentView;
+
+
+    private RecyclerView mListView;
     private Album mItem;
     private Bitmap bitmap;
     private ImageView image;
@@ -56,10 +59,7 @@ public class SongDetailFragment extends MyFragment {
     private CollapsingToolbarLayout toolbar;
     private TextView txt;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the vffdfdxassade
-     * fragment (e.g. upon screen orientation changes).
-     */
+
     public static SongDetailFragment newInstance(Album album , byte[] bis) {
         SongDetailFragment sdf = new SongDetailFragment();
         Bundle args = new Bundle();
@@ -81,11 +81,9 @@ public class SongDetailFragment extends MyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.item_list, container, false);
-        View recyclerView = rootView.findViewById(R.id.item_list);
+        mContentView = inflater.inflate(R.layout.item_list, container, false);
+        mListView = (RecyclerView)mContentView.findViewById(R.id.item_list);
         Activity activity = this.getActivity();
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
 
         txt = (TextView) activity.findViewById(R.id.toolar_text);
         toolbar = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -94,63 +92,72 @@ public class SongDetailFragment extends MyFragment {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                T.showShort(getContext(),"=====================");
+                T.showShort(getContext(),"==========播放专辑中的所有文件===========");
             }
         });
-        // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-//            ((TextView) rootView.findViewById(R.id.song_detail)).setText(mItem.getAlbumName());
-        }
+
         image = (ImageView) activity.findViewById(R.id.backdrop);
         colorChange();
         applyBlur();
-        return rootView;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
-    /**
-     * 界面颜色的更改
-     */
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Setup content view
+        setContentView(mContentView);
+        // Setup text for empty content
+        setEmptyText(R.string.empty);
+        setContentShown(false);
+        obtainData(0);
+    }
+
+
+    private void obtainData(int type) {
+        TaskHandle handle_0 = getNetworkModule().getArtists(String.valueOf(mItem.getId()));
+        handle_0.setId(type);
+        handle_0.setReceiver(this);
+        handle_0.pullTrigger();
+    }
+    private SimpleItemRecyclerViewAdapter mListAdapter;
+    @Override
+    public void onSucess(TaskHandle handle, DataModule result) {
+        switch (handle.id()) {
+
+            case 0:
+                try {
+
+                    mListView = (RecyclerView) mContentView.findViewById(R.id.item_list);
+                    mListAdapter = new SimpleItemRecyclerViewAdapter(result.getArtist());
+                    mListView.setAdapter(mListAdapter);
+                    setContentShown(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                break;
+
+        }
+    }
+
+    @Override
+    public void onError(TaskHandle handle, Throwable error) {
+
+    }
+
     private void colorChange( ) {
         // 用来提取颜色的Bitmap
         BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
         Bitmap bitmap = drawable.getBitmap();
         // Palette的部分
         Palette.Builder from = Palette.from(bitmap);
-//        int color1 =from.generate().getMutedColor(getResources().getColor(android.R.color.transparent));
-//        int color2 =from.generate().getVibrantColor(getResources().getColor(android.R.color.transparent));
-//        int color3 =from.generate().getDarkMutedColor(getResources().getColor(android.R.color.transparent));
-//        int color4 =from.generate().getLightMutedColor(getResources().getColor(android.R.color.transparent));
-//        int color5 =from.generate().getLightVibrantColor(getResources().getColor(android.R.color.transparent));
         int color =from.generate().getDarkVibrantColor(getResources().getColor(android.R.color.transparent));
         toolbar.setContentScrimColor(colorBurn(color));
-       /* Palette.generateAsync(bitmap,24, new Palette.PaletteAsyncListener() {
-            *//**
-             * 提取完之后的回调方法
-             *//*
-            @Override
-            public void onGenerated(Palette palette) {
-                Palette.Swatch vibrant = palette.getVibrantSwatch();
-            *//* 界面颜色UI统一性处理,看起来更Material一些 *//*
-                toolbar.setContentScrimColor(colorBurn(vibrant.getRgb()));
-//                toolbar.sette(vibrant.getTitleTextColor());
-                // 其中状态栏、游标、底部导航栏的颜色需要加深一下，也可以不加，具体情况在代码之后说明
-//                toolbar.setIndicatorColor(colorBurn(vibrant.getRgb()));
 
-//                toolbar.setBackgroundColor(vibrant.getRgb());
-            }
-        });*/
     }
 
-    /**
-     * 颜色加深处理
-     *
-     * @param RGBValues
-     *            RGB的值，由alpha（透明度）、red（红）、green（绿）、blue（蓝）构成，
-     *            Android中我们一般使用它的16进制，
-     *            例如："#FFAABBCC",最左边到最右每两个字母就是代表alpha（透明度）、
-     *            red（红）、green（绿）、blue（蓝）。每种颜色值占一个字节(8位)，值域0~255
-     *            所以下面使用移位的方法可以得到每种颜色的值，然后每种颜色值减小一下，在合成RGB颜色，颜色就会看起来深一些了
-     * @return
-     */
+
     private int colorBurn(int RGBValues) {
         int alpha = RGBValues >> 24;
         int red = RGBValues >> 16 & 0xFF;
@@ -161,9 +168,7 @@ public class SongDetailFragment extends MyFragment {
         blue = (int) Math.floor(blue * (1 - 0.1));
         return Color.rgb(red, green, blue);
     }
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
-    }
+
 
     private void applyBlur() {
         image.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -210,9 +215,9 @@ public class SongDetailFragment extends MyFragment {
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<DummyContent.DummyItem> mValues;
+        private final List<Artist> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
+        public SimpleItemRecyclerViewAdapter(List<Artist> items) {
             mValues = items;
         }
 
@@ -226,8 +231,8 @@ public class SongDetailFragment extends MyFragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mIdView.setText(String.valueOf(mValues.get(position).getArtistId()));
+            holder.mContentView.setText(mValues.get(position).getArtistName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -246,7 +251,7 @@ public class SongDetailFragment extends MyFragment {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public DummyContent.DummyItem mItem;
+            public Artist mItem;
 
             public ViewHolder(View view) {
                 super(view);
