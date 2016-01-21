@@ -202,9 +202,9 @@ public class MusicService extends Service {
         @Override
         public void onReceive(Context context, Intent intent){
 
-            List list = intent.getParcelableArrayListExtra(ConstMsg.ALBUM);
+            ArrayList<Artist> list = intent.getParcelableArrayListExtra(ConstMsg.ALBUM);
             if(songList != null) {
-                songList.addAll(list);
+                songList = list;
                 LogHelper.i(TAG, "接收前台Activity发来的Song" + songList.size());
 
             }
