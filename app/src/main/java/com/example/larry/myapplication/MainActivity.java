@@ -24,15 +24,14 @@ import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.media.MusicService;
 import com.example.larry.myapplication.utils.ConfigStore;
 import com.example.larry.myapplication.utils.LogHelper;
+import com.example.larry.myapplication.utils.MyActivity;
 import com.example.larry.myapplication.utils.NetworkHelper;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends MyActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = LogHelper.makeLogTag(MainActivity.class);
-    protected Intent intent;
-    protected PlaybackControlsFragment mControlsFragment;
-    protected MsgReceiver musicReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +42,14 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //注册广播接收器
+/*        //注册广播接收器
         musicReceiver = new MsgReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConstMsg.MUSICSERVICE_ACTION);
         registerReceiver(musicReceiver, intentFilter);
         //启动MUSIC服务
         intent = new Intent(this, MusicService.class);
-        getApplicationContext().startService(intent);
+        getApplicationContext().startService(intent);*/
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -84,24 +83,8 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    /**
-     * 向后台Service发送控制广播ConstMsg 里面都有
-     *
-     * @param state int state 控制状态码
-     */
-    protected void sendBroadcastToService(int state) {
-        Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
-        intent.putExtra(ConstMsg.SONG_STATE, state);
-        sendBroadcast(intent);
-        LogHelper.i(TAG, "发送控制广播" + state);
-    }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
 
 
     @Override
@@ -114,24 +97,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    protected void showPlaybackControls() {
-        LogHelper.d(TAG, "showPlaybackControls");
-        if (NetworkHelper.isOnline(this)) {
-            getFragmentManager().beginTransaction()
-                    .setCustomAnimations(
-                            R.animator.slide_in_from_bottom, R.animator.slide_out_to_bottom,
-                            R.animator.slide_in_from_bottom, R.animator.slide_out_to_bottom)
-                    .show(mControlsFragment)
-                    .commit();
-        }
-    }
-
-    protected void hidePlaybackControls() {
-        LogHelper.d(TAG, "hidePlaybackControls");
-        getFragmentManager().beginTransaction()
-                .hide(mControlsFragment)
-                .commit();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -231,7 +196,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             showPlaybackControls();
-            sendBroadcastToService(ConstMsg.STATE_PLAYING);
+//            sendBroadcastToService(ConstMsg.STATE_PLAYING);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -251,26 +216,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        LogHelper.i(TAG, "我没了");
-        //注销广播
-        unregisterReceiver(musicReceiver);
         super.onDestroy();
     }
 
-    public class MsgReceiver extends BroadcastReceiver {
-        private int state;
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            state = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
-            int during = intent.getIntExtra(ConstMsg.SONG_DURING, 0);
-            int currentPosition = intent.getIntExtra(ConstMsg.SONG_PROGRESS, 0);
-
-            LogHelper.i(TAG, "播放信息" + state);
-            mControlsFragment.updateState(state, currentPosition, during);
-
-
-        }
-
-    }
 }

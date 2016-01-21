@@ -1,5 +1,6 @@
 package com.example.larry.myapplication.songList;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,8 +11,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.example.larry.myapplication.PlaybackControlsFragment;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
+import com.example.larry.myapplication.media.ConstMsg;
+import com.example.larry.myapplication.utils.LogHelper;
+import com.example.larry.myapplication.utils.MyActivity;
+import com.example.larry.myapplication.utils.NetworkHelper;
+import com.example.larry.myapplication.utils.TestActivity;
 
 /**
  * An activity representing a single Song detail screen. This
@@ -19,8 +26,10 @@ import com.example.larry.myapplication.entity.Album;
  * item details are presented side-by-side with a list of items
  * in a {@link SongListActivity}.
  */
-public class SongDetailActivity extends AppCompatActivity {
+public class SongDetailActivity extends MyActivity {
+    private static final String TAG = LogHelper.makeLogTag(SongDetailActivity.class);
     public static final String ARG_ITEM_ID = "item_id";
+    protected PlaybackControlsFragment mControlsFragment;
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
@@ -52,10 +61,16 @@ public class SongDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
         }
+        mControlsFragment = (PlaybackControlsFragment) getFragmentManager()
+                .findFragmentById(R.id.fragment_playback_controls);
+        if (mControlsFragment == null) {
+            throw new IllegalStateException("Mising fragment with id 'controls'. Cannot continue.");
+        }
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, SongDetailFragment.newInstance(album,bis)).commit();
+//        showPlaybackControls();
+//        hidePlaybackControls();
     }
-
 
 
     @Override

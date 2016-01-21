@@ -13,8 +13,8 @@ import com.android.volley.VolleyRequest;
 import com.android.volley.base.NetworkResponse;
 import com.android.volley.toolbox.VolleyTickle;
 import com.example.larry.myapplication.entity.DataModule;
+import com.example.larry.myapplication.utils.AppUrl;
 import com.example.larry.myapplication.utils.UILApplication;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,8 +37,7 @@ public class NetworkModule {
     private static final Boolean DEBUG = true;
 
     private static final String API_URL = "http://api.chihuo888.com/";
-    private static final String WEB_URL = "http://222.125.193.119:8080/mypro/client/album";
-    private static final String ARTIST_URL = "http://222.125.193.119:8080/mypro/client/artist";
+
     public static final String ACTION_USER_LOGIN_CHANGED = "action.com.example.larry.myapplication.loginStateChanged";
 
     /****************************************************Volley请求***********************************************/
@@ -235,7 +234,7 @@ public class NetworkModule {
 
     /*******************************process请求事务,根据自己的业务需求，自定义请求地址以及参数)***************************************************/
     public TaskHandle getAlbums(String type) {
-        HttpRequest request = new HttpRequest(WEB_URL);
+        HttpRequest request = new HttpRequest(AppUrl.WEB_URL);
         request.addParameter("page", Integer.toString(1));
         request.addParameter("rows", Integer.toString(20));
         request.setRequestTag("getAlbum");
@@ -243,7 +242,7 @@ public class NetworkModule {
     }
 
     public TaskHandle getArtists(String albumId) {
-        HttpRequest request = new HttpRequest(ARTIST_URL);
+        HttpRequest request = new HttpRequest(AppUrl.ARTIST_URL);
         request.addParameter("page", Integer.toString(1));
         request.addParameter("rows", Integer.toString(20));
         request.addParameter("albumId",albumId);

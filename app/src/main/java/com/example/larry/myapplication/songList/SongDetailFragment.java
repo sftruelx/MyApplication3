@@ -93,6 +93,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             @Override
             public void onClick(View v) {
                 T.showShort(getContext(),"==========播放专辑中的所有文件===========");
+//                ((SongDetailActivity)getActivity()).showPlaybackControls();
             }
         });
 
@@ -105,9 +106,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Setup content view
         setContentView(mContentView);
-        // Setup text for empty content
         setEmptyText(R.string.empty);
         setContentShown(false);
         obtainData(0);
