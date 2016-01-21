@@ -80,7 +80,7 @@ public class PlaybackControlsFragment extends Fragment {
     /**
      * 播放面板播放按键或暂停按键
      **/
-    private int state = ConstMsg.STATE_NONE;
+    private int state = ConstMsg.STATE_PAUSED;
     private final View.OnClickListener mButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

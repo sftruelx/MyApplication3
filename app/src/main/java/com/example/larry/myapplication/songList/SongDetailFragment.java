@@ -134,9 +134,9 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                     ArrayList<Artist> list = result.getArtist();
                     mListAdapter = new SimpleItemRecyclerViewAdapter(list);
                     mListView.setAdapter(mListAdapter);
-                    Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
-                    intent.putParcelableArrayListExtra(ConstMsg.ALBUM,list);
-                    getActivity().sendBroadcast(intent);
+//                    Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+//                    intent.putParcelableArrayListExtra(ConstMsg.ALBUM,list);
+//                    getActivity().sendBroadcast(intent);
                     setContentShown(true);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -206,6 +206,7 @@ public class MusicService extends Service {
             if(songList != null) {
                 songList = list;
                 LogHelper.i(TAG, "接收前台Activity发来的Song" + songList.size());
+                //TODO 准备播放Songs
 
             }
             int control=intent.getIntExtra(ConstMsg.SONG_STATE, 0);
