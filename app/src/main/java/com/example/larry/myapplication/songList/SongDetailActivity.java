@@ -29,7 +29,6 @@ import com.example.larry.myapplication.utils.TestActivity;
 public class SongDetailActivity extends MyActivity {
     private static final String TAG = LogHelper.makeLogTag(SongDetailActivity.class);
     public static final String ARG_ITEM_ID = "item_id";
-    protected PlaybackControlsFragment mControlsFragment;
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.

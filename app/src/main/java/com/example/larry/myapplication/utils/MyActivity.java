@@ -42,7 +42,7 @@ public class MyActivity extends AppCompatActivity{
     protected void onDestroy() {
         LogHelper.i(TAG, "我没了");
         //注销广播
-//        unregisterReceiver(musicReceiver);
+        unregisterReceiver(musicReceiver);
         super.onDestroy();
     }
 
@@ -82,9 +82,9 @@ public class MyActivity extends AppCompatActivity{
             int during = intent.getIntExtra(ConstMsg.SONG_DURING, 0);
             int currentPosition = intent.getIntExtra(ConstMsg.SONG_PROGRESS, 0);
 
-            LogHelper.i("", "播放信息" + state);
+            LogHelper.i(TAG, "播放信息" + state);
             //TODO 搞个接口
-//        mControlsFragment.updateState(state, currentPosition, during);
+        mControlsFragment.updateState(state, currentPosition, during);
 
 
         }

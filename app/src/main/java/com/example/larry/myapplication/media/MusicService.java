@@ -20,9 +20,12 @@ import android.widget.RemoteViews;
 import com.example.larry.myapplication.MainActivity;
 import com.example.larry.myapplication.NotifactionActivity;
 import com.example.larry.myapplication.R;
+import com.example.larry.myapplication.entity.Artist;
 import com.example.larry.myapplication.utils.LogHelper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,11 +40,7 @@ public class MusicService extends Service {
     //创建一个媒体播放器的对象
     static MediaPlayer mediaPlayer;
     //创建一个Asset管理器的的对象
-    AssetManager assetManager;
-    //存放音乐名的数组
-//    应该放个储存歌曲的对象数组才好
-
-    Album album = Album.getInstance();
+   ArrayList<Artist> songList ;
     int during = 0;
     int currentPosition = 0;
     //当前的播放的音乐
@@ -60,8 +59,7 @@ public class MusicService extends Service {
         filter.addAction(ConstMsg.MUSICCLIENT_ACTION);
         registerReceiver(receiver, filter);
         mediaPlayer=new MediaPlayer();
-        assetManager=getAssets();
-        //为mediaPlayer的完成事件创建监听器
+          //为mediaPlayer的完成事件创建监听器
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
@@ -203,6 +201,13 @@ public class MusicService extends Service {
         protected  String TAG = LogHelper.makeLogTag(MusicSercieReceiver.class);
         @Override
         public void onReceive(Context context, Intent intent){
+
+            List list = intent.getParcelableArrayListExtra(ConstMsg.ALBUM);
+            if(songList != null) {
+                songList.addAll(list);
+                LogHelper.i(TAG, "接收前台Activity发来的Song" + songList.size());
+
+            }
             int control=intent.getIntExtra(ConstMsg.SONG_STATE, 0);
             LogHelper.i(TAG,"接收前台Activity发来的广播" + control);
             switch (control) {

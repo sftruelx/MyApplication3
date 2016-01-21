@@ -1,6 +1,7 @@
 package com.example.larry.myapplication.songList;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -29,6 +30,7 @@ import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.entity.Artist;
 import com.example.larry.myapplication.entity.DataModule;
 import com.example.larry.myapplication.entity.DummyContent;
+import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.swipe.ProgressFragment;
 import com.example.larry.myapplication.swipe.SwipeRefreshLayout;
 import com.example.larry.myapplication.utils.AppUrl;
@@ -36,6 +38,7 @@ import com.example.larry.myapplication.utils.MyFragment;
 import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.UILApplication;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -128,8 +131,12 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 try {
 
                     mListView = (RecyclerView) mContentView.findViewById(R.id.item_list);
-                    mListAdapter = new SimpleItemRecyclerViewAdapter(result.getArtist());
+                    ArrayList<Artist> list = result.getArtist();
+                    mListAdapter = new SimpleItemRecyclerViewAdapter(list);
                     mListView.setAdapter(mListAdapter);
+                    Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+                    intent.putParcelableArrayListExtra(ConstMsg.ALBUM,list);
+                    getActivity().sendBroadcast(intent);
                     setContentShown(true);
                 } catch (Exception e) {
                     e.printStackTrace();
