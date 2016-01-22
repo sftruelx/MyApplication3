@@ -68,7 +68,7 @@ public class SongDetailActivity extends MyActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, SongDetailFragment.newInstance(album,bis)).commit();
 //        showPlaybackControls();
-//        hidePlaybackControls();
+        hidePlaybackControls();
     }
 
 

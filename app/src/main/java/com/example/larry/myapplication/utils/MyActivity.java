@@ -10,8 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.example.larry.myapplication.PlaybackControlsFragment;
 import com.example.larry.myapplication.R;
+import com.example.larry.myapplication.entity.Artist;
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.media.MusicService;
+
+import java.util.ArrayList;
 
 /**
  * Created by Larry on 2016/1/21.
@@ -40,8 +43,6 @@ public class MyActivity extends AppCompatActivity{
 
     @Override
     protected void onDestroy() {
-        LogHelper.i(TAG, "我没了");
-        //注销广播
         unregisterReceiver(musicReceiver);
         super.onDestroy();
     }
@@ -66,9 +67,10 @@ public class MyActivity extends AppCompatActivity{
     }
 
 
-    public void sendBroadcastToService(int state) {
+    public void sendBroadcastToService(int state, ArrayList<Artist> songList) {
         Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
         intent.putExtra(ConstMsg.SONG_STATE, state);
+        intent.putParcelableArrayListExtra(ConstMsg.ALBUM,songList);
         sendBroadcast(intent);
         LogHelper.i(TAG, "发送控制广播" + state);
     }
@@ -84,7 +86,7 @@ public class MyActivity extends AppCompatActivity{
 
             LogHelper.i(TAG, "播放信息" + state);
             //TODO 搞个接口
-        mControlsFragment.updateState(state, currentPosition, during);
+            mControlsFragment.updateState(state, currentPosition, during);
 
 
         }

@@ -52,7 +52,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
 
     public static final String ARG_ITEM_ID = "item_id";
     private View mContentView;
-
+    ArrayList<Artist> list;
 
     private RecyclerView mListView;
     private Album mItem;
@@ -95,8 +95,8 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                T.showShort(getContext(),"==========播放专辑中的所有文件===========");
-//                ((SongDetailActivity)getActivity()).showPlaybackControls();
+                T.showShort(getContext(),"==========播放专辑中的所有文件==========="+ list.size());
+                ((SongDetailActivity)getActivity()).sendBroadcastToService(ConstMsg.STATE_PLAYING, list);
             }
         });
 
@@ -131,7 +131,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 try {
 
                     mListView = (RecyclerView) mContentView.findViewById(R.id.item_list);
-                    ArrayList<Artist> list = result.getArtist();
+                    list = result.getArtist();
                     mListAdapter = new SimpleItemRecyclerViewAdapter(list);
                     mListView.setAdapter(mListAdapter);
 //                    Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);

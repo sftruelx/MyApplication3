@@ -92,11 +92,11 @@ public class PlaybackControlsFragment extends Fragment {
                             state == ConstMsg.STATE_STOPPED ||
                             state == ConstMsg.STATE_NONE) {
                         //通知service播放音乐
-                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PLAYING);
+                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PLAYING,null);
                     } else if (state == ConstMsg.STATE_PLAYING ||
                             state == ConstMsg.STATE_BUFFERING ||
                             state == ConstMsg.STATE_CONNECTING) {
-                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PAUSED);
+                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PAUSED,null);
                     }
                     break;
             }
