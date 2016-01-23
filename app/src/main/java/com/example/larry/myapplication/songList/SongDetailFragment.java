@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
@@ -61,7 +62,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
     private ImageLoader mImageLoader;
     private CollapsingToolbarLayout toolbar;
     private TextView txt;
-
+    private ArrayList<Artist> list;
 
     public static SongDetailFragment newInstance(Album album , byte[] bis) {
         SongDetailFragment sdf = new SongDetailFragment();
@@ -96,7 +97,10 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             @Override
             public void onClick(View v) {
                 T.showShort(getContext(),"==========播放专辑中的所有文件===========");
-//                ((SongDetailActivity)getActivity()).showPlaybackControls();
+                Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+                intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
+                intent.putParcelableArrayListExtra(ConstMsg.ALBUM,list);
+                getActivity().sendBroadcast(intent);
             }
         });
 
@@ -131,7 +135,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 try {
 
                     mListView = (RecyclerView) mContentView.findViewById(R.id.item_list);
-                    ArrayList<Artist> list = result.getArtist();
+                    list = result.getArtist();
                     mListAdapter = new SimpleItemRecyclerViewAdapter(list);
                     mListView.setAdapter(mListAdapter);
 //                    Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
