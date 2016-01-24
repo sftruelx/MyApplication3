@@ -190,6 +190,9 @@ public class MusicService extends Service {
                         LogHelper.i(TAG, "....setOnCompletionListener..........control " + control + " current " + current);
                         state = ConstMsg.STATE_NONE;
                         sendBroadcastToClient(state);
+                        if(songList.size()>current+1){
+                            prepare(++current);
+                        }
                     }
                 });
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
