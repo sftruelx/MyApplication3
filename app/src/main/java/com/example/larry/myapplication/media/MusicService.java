@@ -187,7 +187,7 @@ public class MusicService extends Service {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         mTimerTask.cancel();
-                        LogHelper.i(TAG, "....setOnCompletionListener..........control "+ control + " current " + current);
+                        LogHelper.i(TAG, "....setOnCompletionListener..........control " + control + " current " + current);
                         state = ConstMsg.STATE_NONE;
                         sendBroadcastToClient(state);
                     }
@@ -274,7 +274,7 @@ public class MusicService extends Service {
             }
             control = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
             LogHelper.i(TAG, "接收前台Activity发来的广播" + control);
-            if(mTimerTask != null) {
+            if (mTimerTask != null) {
                 mTimerTask.cancel();
             }
             switch (control) {
@@ -283,7 +283,7 @@ public class MusicService extends Service {
                         mediaPlayer.start();
                         state = ConstMsg.STATE_PLAYING;
                         sendBroadcastToClient(state);
-                    } else if (state == ConstMsg.STATE_NONE||state == ConstMsg.STATE_STOPPED) {
+                    } else if (state == ConstMsg.STATE_NONE || state == ConstMsg.STATE_STOPPED) {
                         prepare(current);
                         state = ConstMsg.STATE_PLAYING;
                     } else {
@@ -320,5 +320,6 @@ public class MusicService extends Service {
                     break;
             }
 
+        }
     }
 }
