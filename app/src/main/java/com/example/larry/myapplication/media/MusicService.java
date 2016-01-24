@@ -65,13 +65,11 @@ public class MusicService extends Service {
         registerReceiver(receiver, filter);
 
         showNotificationPanel();
-        showNotification();
 
     }
 
     int notification_id = 19172439;
     NotificationManager nm;
-    Handler handler = new Handler();
     Notification notification;
 
     private void showNotificationPanel() {
@@ -167,7 +165,7 @@ public class MusicService extends Service {
         }
 
         showNotification();
-        sendBroadcastToClient(state);
+
     }
 
     /**
@@ -182,12 +180,6 @@ public class MusicService extends Service {
             try {
                 mediaPlayer = new MediaPlayer();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//                mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
-//                    @Override
-//                    public void onBufferingUpdate(MediaPlayer mp, int percent) {
-//                        LogHelper.i(TAG, "buffer = " + percent);
-//                    }
-//                });
                 mediaPlayer.setDataSource(AppUrl.webUrl + artist.getArtistPath());
                 mediaPlayer.prepareAsync();
                 //为mediaPlayer的完成事件创建监听器
@@ -197,6 +189,7 @@ public class MusicService extends Service {
                         mTimerTask.cancel();
                         LogHelper.i(TAG, "....setOnCompletionListener..........control "+ control + " current " + current);
                         state = ConstMsg.STATE_NONE;
+                        sendBroadcastToClient(state);
                     }
                 });
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -205,7 +198,7 @@ public class MusicService extends Service {
                         LogHelper.i(TAG, "prepared......" + current);
                         mediaPlayer.start();
                         state = ConstMsg.STATE_PLAYING;
-                        sendBroadcastToClient(ConstMsg.STATE_PLAYING);
+                        sendBroadcastToClient(state);
                         sendProgress();
                     }
                 });
@@ -216,7 +209,6 @@ public class MusicService extends Service {
             state = ConstMsg.STATE_NONE;
             sendBroadcastToClient(state);
             current = 0;
-            updateState();
         }
     }
 
@@ -243,7 +235,7 @@ public class MusicService extends Service {
 
                 }
                 notification.contentView.setProgressBar(R.id.pb, during, currentPosition, false);
-                showNotification();
+//                showNotification();
                 sendBroadcastToClient(ConstMsg.STATE_PLAYING);
 
             }
@@ -290,6 +282,7 @@ public class MusicService extends Service {
                     if (state == ConstMsg.STATE_PAUSED) {//如果原来状态是暂停
                         mediaPlayer.start();
                         state = ConstMsg.STATE_PLAYING;
+                        sendBroadcastToClient(state);
                     } else if (state == ConstMsg.STATE_NONE||state == ConstMsg.STATE_STOPPED) {
                         prepare(current);
                         state = ConstMsg.STATE_PLAYING;
@@ -303,12 +296,14 @@ public class MusicService extends Service {
                     if (state == ConstMsg.STATE_PLAYING || state == ConstMsg.STATE_PAUSED) {
                         mediaPlayer.stop();
                         state = ConstMsg.STATE_STOPPED;
+                        sendBroadcastToClient(state);
                     }
                     break;
                 case ConstMsg.STATE_PAUSED://暂停播放
                     if (state == ConstMsg.STATE_PLAYING) {
                         mediaPlayer.pause();
                         state = ConstMsg.STATE_PAUSED;
+                        sendBroadcastToClient(state);
                     }
                     break;
                 case ConstMsg.STATE_PREVIOUS://上一首
@@ -324,48 +319,6 @@ public class MusicService extends Service {
                     state = ConstMsg.STATE_PLAYING;
                     break;
             }
-            sendBroadcastToClient(state);
-        }
-                    /* else if (state != ConstMsg.STATE_PLAYING) {
-                        prepare(current);
-
-                    } else if (state == ConstMsg.STATE_PLAYING) {
-                        mediaPlayer.stop();
-//                        mediaPlayer.reset();
-//                        prepare(current);
-                        state = ConstMsg.STATE_STOPPED;
-                    }
-
-                    break;
-                case ConstMsg.STATE_PAUSED://暂停播放
-                    if (state == ConstMsg.STATE_PLAYING) {
-                        mediaPlayer.pause();
-                        state = ConstMsg.STATE_PAUSED;
-                    }
-                    break;
-                case ConstMsg.STATE_STOPPED://停止播放
-                    if (state == ConstMsg.STATE_PLAYING || state == ConstMsg.STATE_PAUSED) {
-                        mediaPlayer.stop();
-                        state = ConstMsg.STATE_STOPPED;
-                    }
-                    break;
-                case ConstMsg.STATE_PREVIOUS://上一首
-                    mediaPlayer.stop();
-                    state = ConstMsg.STATE_STOPPED;
-//                    prepare(--current);
-//                    state = ConstMsg.STATE_PLAYING;
-                    break;
-                case ConstMsg.STATE_NEXT://下一首
-                    mediaPlayer.stop();
-                    state = ConstMsg.STATE_STOPPED;
-//                    prepare(++current);
-//                    state = ConstMsg.STATE_PLAYING;
-                    break;
-                default:
-                    break;
-            }*/
-//            更新通知面板
-
 
     }
 }
