@@ -132,7 +132,7 @@ public class MusicService extends Service {
         intent.putExtra(ConstMsg.SONG_PROGRESS, currentPosition);
         intent.putExtra(ConstMsg.SONG_DURING, during);
         sendBroadcast(intent);
-
+        updateState();
     }
 
     protected void updateState() {
@@ -197,7 +197,6 @@ public class MusicService extends Service {
                         mTimerTask.cancel();
                         LogHelper.i(TAG, "....setOnCompletionListener..........control "+ control + " current " + current);
                         state = ConstMsg.STATE_NONE;
-                        updateState();
                     }
                 });
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -208,7 +207,6 @@ public class MusicService extends Service {
                         state = ConstMsg.STATE_PLAYING;
                         sendBroadcastToClient(ConstMsg.STATE_PLAYING);
                         sendProgress();
-                        updateState();
                     }
                 });
             } catch (Exception e) {
@@ -325,10 +323,8 @@ public class MusicService extends Service {
                     prepare(++current);
                     state = ConstMsg.STATE_PLAYING;
                     break;
-                default:
-                    mediaPlayer.stop();
             }
-            updateState();
+            sendBroadcastToClient(state);
         }
                     /* else if (state != ConstMsg.STATE_PLAYING) {
                         prepare(current);
