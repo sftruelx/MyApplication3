@@ -51,6 +51,8 @@ public class PlaybackControlsFragment extends Fragment {
     MyActivity parentActivity;
 
     private ImageButton mPlayPause;
+    private ImageButton mPlayNext;
+    private ImageButton mPlayPrevious;
     private TextView mTitle;
     private TextView mSubtitle;
     private TextView mExtraInfo;
@@ -64,9 +66,15 @@ public class PlaybackControlsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_playback_controls, container, false);
         mPlayPause = (ImageButton) rootView.findViewById(R.id.play_pause);
+        mPlayNext = (ImageButton)rootView.findViewById(R.id.play_next);
+        mPlayPrevious = (ImageButton)rootView.findViewById(R.id.play_previous);
         seekBar = (SeekBar) rootView.findViewById(R.id.seek_bar);
         mPlayPause.setEnabled(true);
+        mPlayNext.setEnabled(true);
+        mPlayPrevious.setEnabled(true);
         mPlayPause.setOnClickListener(mButtonListener);
+        mPlayNext.setOnClickListener(mButtonListener);
+        mPlayPrevious.setOnClickListener(mButtonListener);
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,20 +107,30 @@ public class PlaybackControlsFragment extends Fragment {
                         parentActivity.sendBroadcastToService(ConstMsg.STATE_PAUSED);
                     }
                     break;
+                case R.id.play_next:
+                    parentActivity.sendBroadcastToService(ConstMsg.STATE_NEXT);
+                    break;
+                case R.id.play_previous:
+                    parentActivity.sendBroadcastToService(ConstMsg.STATE_PREVIOUS);
+                    break;
             }
         }
     };
-    public void updateState(int state, int currentPosition, int during){
+
+    public void updateState(int state, int currentPosition, int during) {
         this.state = state;
         //根据状态更新按钮形态
         seekBar.setMax(during);
         seekBar.setProgress(currentPosition);
         //TODO 上一首 下一首
-        switch (state){
-            case  ConstMsg.STATE_PLAYING:
+        switch (state) {
+            case ConstMsg.STATE_PLAYING:
                 mPlayPause.setImageResource(R.drawable.ic_pause_black_36dp);
                 break;
             case ConstMsg.STATE_PAUSED:
+                mPlayPause.setImageResource(R.drawable.ic_play_arrow_black_36dp);
+                break;
+            case ConstMsg.STATE_NONE:
                 mPlayPause.setImageResource(R.drawable.ic_play_arrow_black_36dp);
                 break;
         }
