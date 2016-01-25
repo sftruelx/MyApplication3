@@ -11,11 +11,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.example.larry.myapplication.MainActivity;
@@ -51,6 +52,7 @@ public class MusicService extends Service {
     int state = ConstMsg.STATE_NONE;
     //记录Timer运行状态
     boolean isTimerRunning = false;
+    int control;
 
     @Override
     public void onCreate() {
@@ -61,35 +63,15 @@ public class MusicService extends Service {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConstMsg.MUSICCLIENT_ACTION);
         registerReceiver(receiver, filter);
-       /* mediaPlayer = new MediaPlayer();
-        //为mediaPlayer的完成事件创建监听器
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                LogHelper.i(TAG, "播放完毕");
-                mediaPlayer.stop();
-                mediaPlayer.release();
-                mediaPlayer = null;
-                state = ConstMsg.STATE_STOPPED;
-//                sendBroadcastToClient(ConstMsg.STATE_STOPPED);
-            }
-        });
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mediaPlayer.start();
-            }
-        });*/
-        showNotificationPanel();
 
+        showNotificationPanel();
 
     }
 
     int notification_id = 19172439;
     NotificationManager nm;
-    Handler handler = new Handler();
     Notification notification;
-    Timer mTimer = new Timer();
+
     private void showNotificationPanel() {
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 //        notification=new Notification("图标边的文字",System.currentTimeMillis());
@@ -148,54 +130,123 @@ public class MusicService extends Service {
         intent.putExtra(ConstMsg.SONG_PROGRESS, currentPosition);
         intent.putExtra(ConstMsg.SONG_DURING, during);
         sendBroadcast(intent);
+        updateState();
+    }
+
+    protected void updateState() {
+        switch (state) {
+            case ConstMsg.STATE_PLAYING:
+                notification.contentView.setImageViewResource(R.id.play_pause, R.drawable.ic_pause_black_36dp);
+                Intent pause_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+                pause_intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PAUSED);
+                notification.contentView.setOnClickPendingIntent(R.id.play_pause,
+                        PendingIntent.getBroadcast(getApplicationContext(), ConstMsg.STATE_PAUSED,
+                                pause_intent,
+                                PendingIntent.FLAG_UPDATE_CURRENT));
+                break;
+            case ConstMsg.STATE_PAUSED:
+                notification.contentView.setImageViewResource(R.id.play_pause, R.drawable.ic_play_arrow_black_36dp);
+                Intent play_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+                play_intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
+                notification.contentView.setOnClickPendingIntent(R.id.play_pause,
+                        PendingIntent.getBroadcast(getApplicationContext(), ConstMsg.STATE_PLAYING,
+                                play_intent,
+                                PendingIntent.FLAG_UPDATE_CURRENT));
+                break;
+            case ConstMsg.STATE_NONE:
+                notification.contentView.setImageViewResource(R.id.play_pause, R.drawable.ic_play_arrow_black_36dp);
+                Intent none_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+                none_intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
+                notification.contentView.setOnClickPendingIntent(R.id.play_pause,
+                        PendingIntent.getBroadcast(getApplicationContext(), ConstMsg.STATE_PLAYING,
+                                none_intent,
+                                PendingIntent.FLAG_UPDATE_CURRENT));
+                break;
+        }
+
+        showNotification();
 
     }
-/*
-    TimerTask mTimerTask = new TimerTask() {
-        @Override
-        public void run() {
-            if(mediaPlayer==null)
-                return;
-            if (mediaPlayer.isPlaying() == false) {
-                handleProgress.sendEmptyMessage(0);
+
+    /**
+     * 装载和播放音乐
+     *
+     * @param index int index 播放第几首音乐的索引
+     */
+    protected void prepare(int index) {
+        LogHelper.i(TAG, " index " + index + " current " + current + "  " + songList.toString());
+        if (songList.size() > index && index >= 0) {
+            Artist artist = songList.get(index);
+            try {
+                mediaPlayer = new MediaPlayer();
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mediaPlayer.setDataSource(AppUrl.webUrl + artist.getArtistPath());
+                mediaPlayer.prepareAsync();
+                //为mediaPlayer的完成事件创建监听器
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        mTimerTask.cancel();
+                        LogHelper.i(TAG, "....setOnCompletionListener..........control " + control + " current " + current);
+                        state = ConstMsg.STATE_NONE;
+                        sendBroadcastToClient(state);
+                        if(songList.size()>current+1){
+                            prepare(++current);
+                        }
+                    }
+                });
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        LogHelper.i(TAG, "prepared......" + current);
+                        mediaPlayer.start();
+                        state = ConstMsg.STATE_PLAYING;
+                        sendBroadcastToClient(state);
+                        sendProgress();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        } else {
+            state = ConstMsg.STATE_NONE;
+            sendBroadcastToClient(state);
+            current = 0;
         }
-    };
+    }
 
-    Handler handleProgress = new Handler() {
-        public void handleMessage(Message msg) {
+    private TimerTask mTimerTask;
 
-            int currentPosition = mediaPlayer.getCurrentPosition();
-            int duration = mediaPlayer.getDuration();
-
-            if (duration > 0) {
-                LogHelper.i(TAG,"handle .." + duration + "");
-                notification.contentView.setProgressBar(R.id.pb, during, currentPosition, false);
-                showNotification();
-                sendBroadcastToClient(state);
-            }
-        };
-    };*/
     public void sendProgress() {
+        during = mediaPlayer.getDuration();
         Timer mTimer = new Timer();
-        TimerTask mTimerTask = new TimerTask() {
+        mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                int currentPosition = mediaPlayer.getCurrentPosition();
-                int duration = mediaPlayer.getDuration();
-
-                if (duration > 0) {
-                    LogHelper.i(TAG,"handle .." + duration + "");
-                    notification.contentView.setProgressBar(R.id.pb, during, currentPosition, false);
-                    showNotification();
-                    sendBroadcastToClient(state);
+//                LogHelper.i(TAG,"Run...");
+                if (state == ConstMsg.STATE_STOPPED || state == ConstMsg.STATE_NONE) {
+                    this.cancel();
                 }
+                isTimerRunning = true;
+                if (isChanging == true)//当用户正在拖动进度进度条时不处理进度条的的进度
+                    return;
+                if (mediaPlayer.getDuration() == 0) return;
+                currentPosition = mediaPlayer.getCurrentPosition();
+//                LogHelper.i(TAG,"Run..." + currentPosition + "   " + mediaPlayer.getDuration());
+                if (currentPosition > during) {
+                    this.cancel();
+
+                }
+                notification.contentView.setProgressBar(R.id.pb, during, currentPosition, false);
+//                showNotification();
+                sendBroadcastToClient(ConstMsg.STATE_PLAYING);
 
             }
         };
         //每隔10毫秒检测一下播放进度
         mTimer.schedule(mTimerTask, 0, 1000);
     }
+
 
     @Override
     public boolean stopService(Intent name) {
@@ -217,111 +268,61 @@ public class MusicService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
 
+            ArrayList list = intent.getParcelableArrayListExtra(ConstMsg.ALBUM);
+            if (list != null) {
+                songList = list;
+                current = 0;
+                LogHelper.i(TAG, "接收前台Activity发来的Song" + songList.size());
 
-            int control = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
+            }
+            control = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
             LogHelper.i(TAG, "接收前台Activity发来的广播" + control);
+            if (mTimerTask != null) {
+                mTimerTask.cancel();
+            }
             switch (control) {
                 case ConstMsg.STATE_PLAYING://播放音乐
                     if (state == ConstMsg.STATE_PAUSED) {//如果原来状态是暂停
                         mediaPlayer.start();
-
-                    } else if (state != ConstMsg.STATE_PLAYING) {
-                        ArrayList<Artist> songList = intent.getParcelableArrayListExtra(ConstMsg.ALBUM);
-                        if (songList != null) {
-                            LogHelper.i(TAG, "接收前台Activity发来的Song" + songList.size());
-                            //TODO 准备播放Songs
-                            for (Artist artist : songList) {
-                                String url = AppUrl.webUrl + artist.getArtistPath();
-                                try {
-                                    LogHelper.i(TAG, "接收前台Activity发来的 URL" + url);
-                                    mediaPlayer = new MediaPlayer();
-                                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                        @Override
-                                        public void onCompletion(MediaPlayer mp) {
-                                            LogHelper.i(TAG, "播放完毕");
-                                            mediaPlayer.stop();
-                                            mediaPlayer.release();
-                                            mediaPlayer = null;
-                                            state = ConstMsg.STATE_STOPPED;
-                                            sendBroadcastToClient(state);
-
-                                            showNotification();
-                                        }
-                                    });
-                                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                        @Override
-                                        public void onPrepared(MediaPlayer mp) {
-                                            mediaPlayer.start();
-                                            sendProgress();
-                                            state = ConstMsg.STATE_PLAYING;
-                                            sendBroadcastToClient(state);
-
-                                        }
-                                    });
-                                    mediaPlayer.reset();
-                                    mediaPlayer.setDataSource(url);
-                                    mediaPlayer.prepareAsync();
-
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-
-                    }
-
-                    break;
-                case ConstMsg.STATE_PAUSED://暂停播放
-                    if (state == ConstMsg.STATE_PLAYING) {
-                        mediaPlayer.pause();
-                        state = ConstMsg.STATE_PAUSED;
+                        state = ConstMsg.STATE_PLAYING;
+                        sendBroadcastToClient(state);
+                    } else if (state == ConstMsg.STATE_NONE || state == ConstMsg.STATE_STOPPED) {
+                        prepare(current);
+                        state = ConstMsg.STATE_PLAYING;
+                    } else {
+                        mediaPlayer.stop();
+                        prepare(current);
+                        state = ConstMsg.STATE_STOPPED;
                     }
                     break;
                 case ConstMsg.STATE_STOPPED://停止播放
                     if (state == ConstMsg.STATE_PLAYING || state == ConstMsg.STATE_PAUSED) {
                         mediaPlayer.stop();
-                        mediaPlayer.release();
-                        LogHelper.i(TAG, "停止播放");
                         state = ConstMsg.STATE_STOPPED;
+                        sendBroadcastToClient(state);
+                    }
+                    break;
+                case ConstMsg.STATE_PAUSED://暂停播放
+                    if (state == ConstMsg.STATE_PLAYING) {
+                        mediaPlayer.pause();
+                        state = ConstMsg.STATE_PAUSED;
+                        sendBroadcastToClient(state);
                     }
                     break;
                 case ConstMsg.STATE_PREVIOUS://上一首
-//                    prepare(--current);
+                    mediaPlayer.stop();
+                    state = ConstMsg.STATE_STOPPED;
+                    prepare(--current);
                     state = ConstMsg.STATE_PLAYING;
                     break;
                 case ConstMsg.STATE_NEXT://下一首
-//                    prepare(++current);
+                    mediaPlayer.stop();
+                    state = ConstMsg.STATE_STOPPED;
+                    prepare(++current);
                     state = ConstMsg.STATE_PLAYING;
                     break;
-                default:
-                    break;
-            }
-//            更新通知面板
-            switch (state) {
-                case ConstMsg.STATE_PLAYING:
-                    notification.contentView.setImageViewResource(R.id.play_pause, R.drawable.ic_pause_black_36dp);
-                    Intent pause_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
-                    pause_intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PAUSED);
-                    notification.contentView.setOnClickPendingIntent(R.id.play_pause,
-                            PendingIntent.getBroadcast(getApplicationContext(), ConstMsg.STATE_PAUSED,
-                                    pause_intent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT));
-                    break;
-                case ConstMsg.STATE_PAUSED:
-                    notification.contentView.setImageViewResource(R.id.play_pause, R.drawable.ic_play_arrow_black_36dp);
-                    Intent play_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
-                    play_intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
-                    notification.contentView.setOnClickPendingIntent(R.id.play_pause,
-                            PendingIntent.getBroadcast(getApplicationContext(), ConstMsg.STATE_PLAYING,
-                                    play_intent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT));
-                    break;
             }
 
-            showNotification();
-            sendBroadcastToClient(control);
         }
-
     }
 }

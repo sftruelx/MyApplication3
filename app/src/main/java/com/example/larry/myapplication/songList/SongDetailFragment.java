@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
@@ -52,7 +53,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
 
     public static final String ARG_ITEM_ID = "item_id";
     private View mContentView;
-    ArrayList<Artist> list;
+
 
     private RecyclerView mListView;
     private Album mItem;
@@ -61,7 +62,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
     private ImageLoader mImageLoader;
     private CollapsingToolbarLayout toolbar;
     private TextView txt;
-
+    private ArrayList<Artist> list;
 
     public static SongDetailFragment newInstance(Album album , byte[] bis) {
         SongDetailFragment sdf = new SongDetailFragment();
@@ -95,8 +96,11 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                T.showShort(getContext(),"==========播放专辑中的所有文件==========="+ list.size());
-                ((SongDetailActivity)getActivity()).sendBroadcastToService(ConstMsg.STATE_PLAYING, list);
+                T.showShort(getContext(),"==========播放专辑中的所有文件===========");
+                Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+                intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
+                intent.putParcelableArrayListExtra(ConstMsg.ALBUM,list);
+                getActivity().sendBroadcast(intent);
             }
         });
 

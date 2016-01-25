@@ -11,25 +11,25 @@ public class ConstMsg {
     //MusicService接收器所能响应的Action
     public static final String MUSICSERVICE_ACTION="com.example.larry.myapplication.MUSICSERVICE_ACTION";
     //初始化flag
-    public static final int STATE_NONE=0x122;
+    public static final int STATE_NONE=122;
     //播放的flag
-    public static final int STATE_PLAYING=0x123;
+    public static final int STATE_PLAYING=123;
     //暂停的flag
-    public static final int STATE_PAUSED=0x124;
+    public static final int STATE_PAUSED=124;
     //停止放的flag
-    public static final int STATE_STOPPED=0x125;
+    public static final int STATE_STOPPED=125;
     //播放上一首的flag
-    public static final int STATE_PREVIOUS=0x126;
+    public static final int STATE_PREVIOUS=126;
     //播放下一首的flag
-    public static final int STATE_NEXT=0x127;
+    public static final int STATE_NEXT=127;
 
-    public static final int STATE_BUFFERING=0x128;
+    public static final int STATE_BUFFERING=128;
 
-    public static final int STATE_CONNECTING=0x129;
+    public static final int STATE_CONNECTING=129;
     //菜单关于选项的itemId
-    public static final int MENU_ABOUT=0x200;
+    public static final int MENU_ABOUT=200;
     //菜单退出选的项的itemId
-    public static final int MENU_EXIT=0x201;
+    public static final int MENU_EXIT=201;
 
     public static final String SONG_TITLE = "song title";
     public static final String SONG_ARTIST = "song artist";
