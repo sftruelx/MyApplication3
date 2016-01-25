@@ -36,6 +36,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.entity.Artist;
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.utils.AlbumArtCache;
@@ -86,7 +87,7 @@ public class PlaybackControlsFragment extends Fragment {
         });
         parentActivity = (MyActivity) getActivity();
         state = parentActivity.state;
-        updateState(state,0,0,null);
+        updateState(state,0,0, null, null);
         return rootView;
     }
 
@@ -105,30 +106,33 @@ public class PlaybackControlsFragment extends Fragment {
                             state == ConstMsg.STATE_STOPPED ||
                             state == ConstMsg.STATE_NONE) {
                         //通知service播放音乐
-                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PLAYING,null);
+                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PLAYING,null,null);
                     } else if (state == ConstMsg.STATE_PLAYING ||
                             state == ConstMsg.STATE_BUFFERING ||
                             state == ConstMsg.STATE_CONNECTING) {
-                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PAUSED,null);
+                        parentActivity.sendBroadcastToService(ConstMsg.STATE_PAUSED,null,null);
                     }
                     break;
                 case R.id.play_next:
-                    parentActivity.sendBroadcastToService(ConstMsg.STATE_NEXT,null);
+                    parentActivity.sendBroadcastToService(ConstMsg.STATE_NEXT,null,null);
                     break;
                 case R.id.play_previous:
-                    parentActivity.sendBroadcastToService(ConstMsg.STATE_PREVIOUS,null);
+                    parentActivity.sendBroadcastToService(ConstMsg.STATE_PREVIOUS,null,null);
                     break;
             }
         }
     };
 
-    public void updateState(int state, int currentPosition, int during, Artist artist) {
+    public void updateState(int state, int currentPosition, int during, Artist artist, Album album) {
         this.state = state;
         //根据状态更新按钮形态
         seekBar.setMax(during);
         seekBar.setProgress(currentPosition);
         if(artist != null){
             mTitle.setText(artist.getArtistName());
+        }
+        if(album != null){
+            mSubtitle.setText(album.getAlbumName() + " " + album.getAuthor());
         }
 
         switch (state) {

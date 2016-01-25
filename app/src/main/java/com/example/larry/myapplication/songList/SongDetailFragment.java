@@ -8,11 +8,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
@@ -30,12 +28,8 @@ import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.entity.Artist;
 import com.example.larry.myapplication.entity.DataModule;
-import com.example.larry.myapplication.entity.DummyContent;
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.swipe.ProgressFragment;
-import com.example.larry.myapplication.swipe.SwipeRefreshLayout;
-import com.example.larry.myapplication.utils.AppUrl;
-import com.example.larry.myapplication.utils.MyFragment;
 import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.UILApplication;
 
@@ -56,7 +50,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
 
 
     private RecyclerView mListView;
-    private Album mItem;
+    private Album album;
     private Bitmap bitmap;
     private ImageView image;
     private ImageLoader mImageLoader;
@@ -77,7 +71,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mImageLoader = new ImageLoader(((UILApplication)getActivity().getApplication()).mQueue);
-        mItem = (Album) getArguments().getParcelable(ARG_ITEM_ID);
+        album = (Album) getArguments().getParcelable(ARG_ITEM_ID);
         byte[] bis = getArguments().getByteArray("bitmap");
         bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
     }
@@ -99,7 +93,8 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 T.showShort(getContext(),"==========播放专辑中的所有文件===========");
                 Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
                 intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
-                intent.putParcelableArrayListExtra(ConstMsg.ALBUM,list);
+                intent.putParcelableArrayListExtra(ConstMsg.ARISTLIST,list);
+                intent.putExtra(ConstMsg.ALBUM,album);
                 getActivity().sendBroadcast(intent);
             }
         });
@@ -121,7 +116,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
 
 
     private void obtainData(int type) {
-        TaskHandle handle_0 = getNetworkModule().getArtists(String.valueOf(mItem.getId()));
+        TaskHandle handle_0 = getNetworkModule().getArtists(String.valueOf(album.getId()));
         handle_0.setId(type);
         handle_0.setReceiver(this);
         handle_0.pullTrigger();

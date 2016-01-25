@@ -13,6 +13,7 @@ import android.text.TextUtils;
 
 import com.example.larry.myapplication.PlaybackControlsFragment;
 import com.example.larry.myapplication.R;
+import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.entity.Artist;
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.media.MusicService;
@@ -81,10 +82,11 @@ public class MyActivity extends AppCompatActivity{
     }
 
 
-    public void sendBroadcastToService(int state, ArrayList<Artist> songList) {
+    public void sendBroadcastToService(int state, ArrayList<Artist> songList, Album album) {
         Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
         intent.putExtra(ConstMsg.SONG_STATE, state);
-        intent.putParcelableArrayListExtra(ConstMsg.ALBUM,songList);
+        intent.putParcelableArrayListExtra(ConstMsg.ARISTLIST,songList);
+        intent.putExtra(ConstMsg.ALBUM, album);
         sendBroadcast(intent);
         LogHelper.i(TAG, "发送控制广播" + state);
     }
@@ -102,10 +104,11 @@ public class MyActivity extends AppCompatActivity{
             int during = intent.getIntExtra(ConstMsg.SONG_DURING, 0);
             int currentPosition = intent.getIntExtra(ConstMsg.SONG_PROGRESS, 0);
             Artist artist = (Artist)intent.getParcelableExtra(ConstMsg.SONG_ARTIST);
+            Album album = (Album)intent.getParcelableExtra(ConstMsg.ALBUM);
             LogHelper.i(TAG, "client播放信息" + state + " song " + artist) ;
             //TODO 搞个接口
 
-            mControlsFragment.updateState(state, currentPosition, during, artist);
+            mControlsFragment.updateState(state, currentPosition, during, artist, album);
             activity.state = state;
             boolean bool = isActivityRunning(getApplicationContext(),getPackageName()+ "." +getLocalClassName());
             LogHelper.i(TAG,"is activity " + bool + "getLocalClassName() " + getLocalClassName() + " " + getPackageName());

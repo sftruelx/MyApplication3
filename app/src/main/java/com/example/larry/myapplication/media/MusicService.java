@@ -22,7 +22,8 @@ import android.widget.RemoteViews;
 import com.example.larry.myapplication.MainActivity;
 import com.example.larry.myapplication.NotifactionActivity;
 import com.example.larry.myapplication.R;
-import com.example.larry.myapplication.entity.Artist;
+import com.example.larry.myapplication.entity.*;
+import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.utils.AppUrl;
 import com.example.larry.myapplication.utils.LogHelper;
 
@@ -44,6 +45,7 @@ public class MusicService extends Service {
     static MediaPlayer mediaPlayer;
     //创建一个Asset管理器的的对象
     ArrayList<Artist> songList;
+    Album album;
     int during = 0;
     int currentPosition = 0;
     //当前的播放的音乐
@@ -123,20 +125,27 @@ public class MusicService extends Service {
         nm.notify(notification_id, notification);
     }
 
-    protected void sendBroadcastToClient(int state, Artist artist) {
+    protected void sendBroadcastToClient(int state, Artist artist, Album album) {
         LogHelper.i(TAG, "发送Service控制广播" + state);
         Intent intent = new Intent(ConstMsg.MUSICSERVICE_ACTION);
         intent.putExtra(ConstMsg.SONG_STATE, state);
         intent.putExtra(ConstMsg.SONG_PROGRESS, currentPosition);
         intent.putExtra(ConstMsg.SONG_DURING, during);
         intent.putExtra(ConstMsg.SONG_ARTIST, artist);
+        intent.putExtra(ConstMsg.ALBUM, album);
         sendBroadcast(intent);
-        updateState();
+        if(state != ConstMsg.STATE_NONE) {
+            updateState();
+        }else{
+            nm.cancelAll();
+        }
     }
 
     protected void updateState() {
         switch (state) {
             case ConstMsg.STATE_PLAYING:
+                notification.contentView.setTextViewText(R.id.title, ((Artist)songList.get(current)).getArtistName());
+                notification.contentView.setTextViewText(R.id.artist, album.getAlbumName() + " " + album.getAuthor());
                 notification.contentView.setImageViewResource(R.id.play_pause, R.drawable.ic_pause_black_36dp);
                 Intent pause_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
                 pause_intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PAUSED);
@@ -188,7 +197,7 @@ public class MusicService extends Service {
                         mTimerTask.cancel();
                         LogHelper.i(TAG, "....setOnCompletionListener..........control " + control + " current " + current + " state " + state);
                         state = ConstMsg.STATE_NONE;
-                        sendBroadcastToClient(state, null);
+                        sendBroadcastToClient(state, null, null);
                         if (songList.size() > current + 1) {
                             prepare(++current);
                         }
@@ -200,7 +209,7 @@ public class MusicService extends Service {
                         LogHelper.i(TAG, "prepared......" + current);
                         mediaPlayer.start();
                         state = ConstMsg.STATE_PLAYING;
-                        sendBroadcastToClient(state, artist);
+                        sendBroadcastToClient(state, artist, album);
                         sendProgress();
                     }
                 });
@@ -209,7 +218,7 @@ public class MusicService extends Service {
             }
         } else {
             state = ConstMsg.STATE_NONE;
-            sendBroadcastToClient(state, null);
+            sendBroadcastToClient(state, null, null);
             current = 0;
         }
     }
@@ -229,7 +238,7 @@ public class MusicService extends Service {
                 isTimerRunning = true;
                 if (isChanging == true)//当用户正在拖动进度进度条时不处理进度条的的进度
                     return;
-                sendBroadcastToClient(state, songList.get(current));
+                sendBroadcastToClient(state, songList.get(current), album);
                 if (mediaPlayer.getDuration() == 0) return;
                 currentPosition = mediaPlayer.getCurrentPosition();
 //                LogHelper.i(TAG,"Run..." + currentPosition + "   " + mediaPlayer.getDuration());
@@ -239,7 +248,7 @@ public class MusicService extends Service {
                 }
                 notification.contentView.setProgressBar(R.id.pb, during, currentPosition, false);
 //                showNotification();
-                sendBroadcastToClient(ConstMsg.STATE_PLAYING, songList.get(current));
+                sendBroadcastToClient(ConstMsg.STATE_PLAYING, songList.get(current), album);
 
             }
         };
@@ -268,11 +277,12 @@ public class MusicService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            ArrayList list = intent.getParcelableArrayListExtra(ConstMsg.ALBUM);
+            ArrayList list = intent.getParcelableArrayListExtra(ConstMsg.ARISTLIST);
             if (list != null) {
                 songList = list;
                 current = 0;
                 LogHelper.i(TAG, "接收前台Activity发来的Song" + songList.size());
+                album = (Album) intent.getParcelableExtra(ConstMsg.ALBUM);
             }
             if (songList == null) return; //没歌放什么放
             control = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
@@ -283,7 +293,7 @@ public class MusicService extends Service {
                     if (state == ConstMsg.STATE_PAUSED) {//如果原来状态是暂停
                         mediaPlayer.start();
                         state = ConstMsg.STATE_PLAYING;
-                        sendBroadcastToClient(state, null);
+                        sendBroadcastToClient(state, null, null);
                     } else if (state == ConstMsg.STATE_NONE || state == ConstMsg.STATE_STOPPED) {
                         prepare(current);
                         state = ConstMsg.STATE_PLAYING;
@@ -297,19 +307,19 @@ public class MusicService extends Service {
                     if (state == ConstMsg.STATE_PLAYING || state == ConstMsg.STATE_PAUSED) {
                         mediaPlayer.stop();
                         state = ConstMsg.STATE_STOPPED;
-                        sendBroadcastToClient(state, null);
+                        sendBroadcastToClient(state, null, null);
                     }
                     break;
                 case ConstMsg.STATE_PAUSED://暂停播放
                     if (state == ConstMsg.STATE_PLAYING) {
                         mediaPlayer.pause();
                         state = ConstMsg.STATE_PAUSED;
-                        sendBroadcastToClient(state, null);
+                        sendBroadcastToClient(state, null, null);
                     }
                     break;
                 case ConstMsg.STATE_PREVIOUS://上一首
                     if (songList != null) {
-                        if (current - 1 > 0) {
+                        if (current - 1 >= 0) {
                             mediaPlayer.stop();
                             state = ConstMsg.STATE_STOPPED;
                             prepare(--current);
