@@ -36,6 +36,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.larry.myapplication.entity.Artist;
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.utils.AlbumArtCache;
 import com.example.larry.myapplication.utils.LogHelper;
@@ -59,7 +60,7 @@ public class PlaybackControlsFragment extends Fragment {
     private ImageView mAlbumArt;
     private SeekBar seekBar;
     private String mArtUrl;
-
+    private int state ;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +70,8 @@ public class PlaybackControlsFragment extends Fragment {
         mPlayNext = (ImageButton)rootView.findViewById(R.id.play_next);
         mPlayPrevious = (ImageButton)rootView.findViewById(R.id.play_previous);
         seekBar = (SeekBar) rootView.findViewById(R.id.seek_bar);
+        mTitle = (TextView)rootView.findViewById(R.id.title);
+        mSubtitle = (TextView)rootView.findViewById(R.id.artist);
         mPlayPause.setEnabled(true);
         mPlayNext.setEnabled(true);
         mPlayPrevious.setEnabled(true);
@@ -82,13 +85,15 @@ public class PlaybackControlsFragment extends Fragment {
             }
         });
         parentActivity = (MyActivity) getActivity();
+        state = parentActivity.state;
+        updateState(state,0,0,null);
         return rootView;
     }
 
     /**
      * 播放面板播放按键或暂停按键
      **/
-    private int state = ConstMsg.STATE_PAUSED;
+
     private final View.OnClickListener mButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -108,21 +113,24 @@ public class PlaybackControlsFragment extends Fragment {
                     }
                     break;
                 case R.id.play_next:
-                    parentActivity.sendBroadcastToService(ConstMsg.STATE_NEXT);
+                    parentActivity.sendBroadcastToService(ConstMsg.STATE_NEXT,null);
                     break;
                 case R.id.play_previous:
-                    parentActivity.sendBroadcastToService(ConstMsg.STATE_PREVIOUS);
+                    parentActivity.sendBroadcastToService(ConstMsg.STATE_PREVIOUS,null);
                     break;
             }
         }
     };
 
-    public void updateState(int state, int currentPosition, int during) {
+    public void updateState(int state, int currentPosition, int during, Artist artist) {
         this.state = state;
         //根据状态更新按钮形态
         seekBar.setMax(during);
         seekBar.setProgress(currentPosition);
-        //TODO 上一首 下一首
+        if(artist != null){
+            mTitle.setText(artist.getArtistName());
+        }
+
         switch (state) {
             case ConstMsg.STATE_PLAYING:
                 mPlayPause.setImageResource(R.drawable.ic_pause_black_36dp);
@@ -134,7 +142,6 @@ public class PlaybackControlsFragment extends Fragment {
                 mPlayPause.setImageResource(R.drawable.ic_play_arrow_black_36dp);
                 break;
         }
-
 
     }
 }

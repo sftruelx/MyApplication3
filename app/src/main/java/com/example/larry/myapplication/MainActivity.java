@@ -36,28 +36,15 @@ public class MainActivity extends MyActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-/*        //注册广播接收器
-        musicReceiver = new MsgReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConstMsg.MUSICSERVICE_ACTION);
-        registerReceiver(musicReceiver, intentFilter);
-        //启动MUSIC服务
-        intent = new Intent(this, MusicService.class);
-        getApplicationContext().startService(intent);*/
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -82,9 +69,6 @@ public class MainActivity extends MyActivity
 //        mControlsFragment.updateState(state,currentPosition,during);
 
     }
-
-
-
 
 
     @Override

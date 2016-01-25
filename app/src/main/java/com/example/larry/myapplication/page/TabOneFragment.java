@@ -106,7 +106,7 @@ public class TabOneFragment extends ProgressFragment implements Receiver<DataMod
                 try {
                     //添加栏目
                     if (result.code() > 0) {
-                        getChildFragmentManager().beginTransaction().add(R.id.tab_one_frame_one, PicTextFragment.newInstance("小编推荐", result.getAlbum())).commit();
+                        getFragmentManager().beginTransaction().add(R.id.tab_one_frame_one, PicTextFragment.newInstance("小编推荐", result.getAlbum())).commit();
                     }
                     setContentShown(true);
                 } catch (Exception e) {

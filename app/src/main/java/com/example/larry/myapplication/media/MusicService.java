@@ -123,12 +123,13 @@ public class MusicService extends Service {
         nm.notify(notification_id, notification);
     }
 
-    protected void sendBroadcastToClient(int state) {
+    protected void sendBroadcastToClient(int state, Artist artist) {
         LogHelper.i(TAG, "发送Service控制广播" + state);
         Intent intent = new Intent(ConstMsg.MUSICSERVICE_ACTION);
         intent.putExtra(ConstMsg.SONG_STATE, state);
         intent.putExtra(ConstMsg.SONG_PROGRESS, currentPosition);
         intent.putExtra(ConstMsg.SONG_DURING, during);
+        intent.putExtra(ConstMsg.SONG_ARTIST, artist);
         sendBroadcast(intent);
         updateState();
     }
@@ -168,15 +169,13 @@ public class MusicService extends Service {
 
     }
 
-    /**
-     * 装载和播放音乐
-     *
-     * @param index int index 播放第几首音乐的索引
-     */
     protected void prepare(int index) {
+        if (mTimerTask != null) {
+            mTimerTask.cancel();
+        }
         LogHelper.i(TAG, " index " + index + " current " + current + "  " + songList.toString());
         if (songList.size() > index && index >= 0) {
-            Artist artist = songList.get(index);
+            final Artist artist = songList.get(index);
             try {
                 mediaPlayer = new MediaPlayer();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -187,10 +186,10 @@ public class MusicService extends Service {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         mTimerTask.cancel();
-                        LogHelper.i(TAG, "....setOnCompletionListener..........control " + control + " current " + current);
+                        LogHelper.i(TAG, "....setOnCompletionListener..........control " + control + " current " + current + " state " + state);
                         state = ConstMsg.STATE_NONE;
-                        sendBroadcastToClient(state);
-                        if(songList.size()>current+1){
+                        sendBroadcastToClient(state, null);
+                        if (songList.size() > current + 1) {
                             prepare(++current);
                         }
                     }
@@ -201,7 +200,7 @@ public class MusicService extends Service {
                         LogHelper.i(TAG, "prepared......" + current);
                         mediaPlayer.start();
                         state = ConstMsg.STATE_PLAYING;
-                        sendBroadcastToClient(state);
+                        sendBroadcastToClient(state, artist);
                         sendProgress();
                     }
                 });
@@ -210,7 +209,7 @@ public class MusicService extends Service {
             }
         } else {
             state = ConstMsg.STATE_NONE;
-            sendBroadcastToClient(state);
+            sendBroadcastToClient(state, null);
             current = 0;
         }
     }
@@ -230,6 +229,7 @@ public class MusicService extends Service {
                 isTimerRunning = true;
                 if (isChanging == true)//当用户正在拖动进度进度条时不处理进度条的的进度
                     return;
+                sendBroadcastToClient(state, songList.get(current));
                 if (mediaPlayer.getDuration() == 0) return;
                 currentPosition = mediaPlayer.getCurrentPosition();
 //                LogHelper.i(TAG,"Run..." + currentPosition + "   " + mediaPlayer.getDuration());
@@ -239,7 +239,7 @@ public class MusicService extends Service {
                 }
                 notification.contentView.setProgressBar(R.id.pb, during, currentPosition, false);
 //                showNotification();
-                sendBroadcastToClient(ConstMsg.STATE_PLAYING);
+                sendBroadcastToClient(ConstMsg.STATE_PLAYING, songList.get(current));
 
             }
         };
@@ -273,19 +273,17 @@ public class MusicService extends Service {
                 songList = list;
                 current = 0;
                 LogHelper.i(TAG, "接收前台Activity发来的Song" + songList.size());
-
             }
+            if (songList == null) return; //没歌放什么放
             control = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
             LogHelper.i(TAG, "接收前台Activity发来的广播" + control);
-            if (mTimerTask != null) {
-                mTimerTask.cancel();
-            }
+
             switch (control) {
                 case ConstMsg.STATE_PLAYING://播放音乐
                     if (state == ConstMsg.STATE_PAUSED) {//如果原来状态是暂停
                         mediaPlayer.start();
                         state = ConstMsg.STATE_PLAYING;
-                        sendBroadcastToClient(state);
+                        sendBroadcastToClient(state, null);
                     } else if (state == ConstMsg.STATE_NONE || state == ConstMsg.STATE_STOPPED) {
                         prepare(current);
                         state = ConstMsg.STATE_PLAYING;
@@ -299,27 +297,35 @@ public class MusicService extends Service {
                     if (state == ConstMsg.STATE_PLAYING || state == ConstMsg.STATE_PAUSED) {
                         mediaPlayer.stop();
                         state = ConstMsg.STATE_STOPPED;
-                        sendBroadcastToClient(state);
+                        sendBroadcastToClient(state, null);
                     }
                     break;
                 case ConstMsg.STATE_PAUSED://暂停播放
                     if (state == ConstMsg.STATE_PLAYING) {
                         mediaPlayer.pause();
                         state = ConstMsg.STATE_PAUSED;
-                        sendBroadcastToClient(state);
+                        sendBroadcastToClient(state, null);
                     }
                     break;
                 case ConstMsg.STATE_PREVIOUS://上一首
-                    mediaPlayer.stop();
-                    state = ConstMsg.STATE_STOPPED;
-                    prepare(--current);
-                    state = ConstMsg.STATE_PLAYING;
+                    if (songList != null) {
+                        if (current - 1 > 0) {
+                            mediaPlayer.stop();
+                            state = ConstMsg.STATE_STOPPED;
+                            prepare(--current);
+                            state = ConstMsg.STATE_PLAYING;
+                        }
+                    }
                     break;
                 case ConstMsg.STATE_NEXT://下一首
-                    mediaPlayer.stop();
-                    state = ConstMsg.STATE_STOPPED;
-                    prepare(++current);
-                    state = ConstMsg.STATE_PLAYING;
+                    if(songList != null) {
+                        if (songList.size() > current + 1) {
+                            mediaPlayer.stop();
+                            state = ConstMsg.STATE_STOPPED;
+                            prepare(++current);
+                            state = ConstMsg.STATE_PLAYING;
+                        }
+                    }
                     break;
             }
 

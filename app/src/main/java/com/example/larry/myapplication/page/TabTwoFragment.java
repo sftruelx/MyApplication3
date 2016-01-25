@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.android.volley.Receiver;
 import com.android.volley.TaskHandle;
 import com.android.volley.cache.plus.ImageLoader;
+import com.android.volley.toolbox.Volley;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.entity.DataModule;
@@ -38,7 +39,7 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
     private SimpleItemRecyclerViewAdapter mListAdapter;
     SwipeRefreshLayout mSwipeLayout;
     private View mContentView;
-
+    protected ImageLoader mImageLoader;
 
     public static TabTwoFragment newInstance() {
         TabTwoFragment fragment = new TabTwoFragment();
@@ -48,6 +49,7 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mImageLoader = new ImageLoader( Volley.newRequestQueue(getContext()));
     }
 
     @Override
@@ -131,13 +133,13 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-        private ImageLoader mImageLoader;
+
         private final List<Album> mValues;
 
         public SimpleItemRecyclerViewAdapter(List<Album> items) {
 
             mValues = items;
-            mImageLoader = new ImageLoader(((UILApplication) getActivity().getApplication()).mQueue);
+
         }
 
         @Override
