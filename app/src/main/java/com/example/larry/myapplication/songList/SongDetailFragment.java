@@ -30,6 +30,7 @@ import com.example.larry.myapplication.entity.Artist;
 import com.example.larry.myapplication.entity.DataModule;
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.swipe.ProgressFragment;
+import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.UILApplication;
 
@@ -121,7 +122,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         handle_0.setReceiver(this);
         handle_0.pullTrigger();
     }
-    private SimpleItemRecyclerViewAdapter mListAdapter;
+    public  SimpleItemRecyclerViewAdapter mListAdapter;
     @Override
     public void onSucess(TaskHandle handle, DataModule result) {
         switch (handle.id()) {
@@ -133,9 +134,6 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                     list = result.getArtist();
                     mListAdapter = new SimpleItemRecyclerViewAdapter(list);
                     mListView.setAdapter(mListAdapter);
-//                    Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
-//                    intent.putParcelableArrayListExtra(ConstMsg.ALBUM,list);
-//                    getActivity().sendBroadcast(intent);
                     setContentShown(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -242,11 +240,13 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    LogHelper.i("onClick", "+");
                 }
             });
         }
-
+        public void updateView(Album album, Artist artist){
+            LogHelper.i("++++", "+");
+        }
         @Override
         public int getItemCount() {
             return mValues.size();

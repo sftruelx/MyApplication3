@@ -168,6 +168,7 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
                     byte[] bitmapByte = baos.toByteArray();
                     intent.putExtra("bitmap", bitmapByte);
                     context.startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 }
             });
         }

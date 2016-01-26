@@ -44,7 +44,17 @@ public class MyActivity extends AppCompatActivity{
         getApplicationContext().startService(intent);
     }
 
-    public static boolean isActivityRunning(Context mContext,String activityClassName){
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if(state != ConstMsg.STATE_NONE) {
+            showPlaybackControls();
+        }else {
+            hidePlaybackControls();
+        }
+    }
+
+    public static boolean isActivityRunning(Context mContext, String activityClassName){
         ActivityManager activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> info = activityManager.getRunningTasks(1);
         if(info != null && info.size() > 0){
@@ -81,6 +91,8 @@ public class MyActivity extends AppCompatActivity{
                 .commit();
     }
 
+    public void updateView(Album album, Artist artist){
+    };
 
     public void sendBroadcastToService(int state, ArrayList<Artist> songList, Album album) {
         Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
@@ -110,6 +122,7 @@ public class MyActivity extends AppCompatActivity{
 
             mControlsFragment.updateState(state, currentPosition, during, artist, album);
             activity.state = state;
+            activity.updateView(album, artist);
             boolean bool = isActivityRunning(getApplicationContext(),getPackageName()+ "." +getLocalClassName());
             LogHelper.i(TAG,"is activity " + bool + "getLocalClassName() " + getLocalClassName() + " " + getPackageName());
             if(bool) {

@@ -5,9 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/song_list"
     android:name="com.example.larry.myapplication.SongListFragment"
-    android:background="#eeeeee"
+    android:background="#ffffff"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.example.larry.myapplication.songList.SongListActivity"
-    tools:listitem="@layout/song_list_content" />
+    tools:listitem="@layout/song_list_content"
+    app:cardElevation="8dp"/>

@@ -18,7 +18,7 @@
             android:id="@+id/pic_title"
             android:layout_alignBottom="@+id/pic_image1"
             android:textSize="18sp"
-            android:padding="10dp"
+            android:padding="2dp"
             android:textColor="#ffffff"
             android:background="@color/transparent"
             android:layout_width="match_parent"
