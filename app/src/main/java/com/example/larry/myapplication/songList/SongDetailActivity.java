@@ -26,23 +26,21 @@ import com.example.larry.myapplication.utils.MyActivity;
 import com.example.larry.myapplication.utils.NetworkHelper;
 import com.example.larry.myapplication.utils.TestActivity;
 
-/**
- * An activity representing a single Song detail screen. This
- * activity is only used narrow width devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
- * in a {@link SongListActivity}.
- */
+import java.util.List;
+
+
 public class SongDetailActivity extends MyActivity {
     private static final String TAG = LogHelper.makeLogTag(SongDetailActivity.class);
     public static final String ARG_ITEM_ID = "item_id";
     private MyHandler handler;
     private boolean mTwoPane;
+    protected Album album;
     private SongDetailFragment  songDetailFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.song_detail);
-        Album album =  (Album)this.getIntent().getExtras().get(ARG_ITEM_ID);
+        album =  (Album)this.getIntent().getExtras().get(ARG_ITEM_ID);
         byte [] bis=this.getIntent().getByteArrayExtra("bitmap");
         Bitmap bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -75,11 +73,12 @@ public class SongDetailActivity extends MyActivity {
     }
 
     @Override
-    public void updateView(Album album, Artist artist) {
-        LogHelper.i(TAG, "-------------------------..." + artist);
+    public void updateView(int state, Album album, int current) {
+        LogHelper.i(TAG, "-------------------------..." + current);
         Bundle b = new Bundle();// 存放数据
         b.putParcelable(ConstMsg.ALBUM, album);
-        b.putParcelable(ConstMsg.SONG_ARTIST, artist);
+        b.putInt(ConstMsg.SONG_STATE, state);
+        b.putInt(ConstMsg.SONG_POSITION, current);
         Message msg = new Message();
         msg.setData(b);
         handler.handleMessage(msg);
@@ -120,9 +119,24 @@ public class SongDetailActivity extends MyActivity {
             // 此处可以更新UI
             Bundle b = msg.getData();
             Album a = b.getParcelable(ConstMsg.ALBUM);
-            Artist a1 = b.getParcelable(ConstMsg.SONG_ARTIST);
-            if(a1 != null) {
-                songDetailFragment.mListAdapter.updateView(a, a1);
+            int state = b.getInt(ConstMsg.SONG_STATE);
+            int current = b.getInt(ConstMsg.SONG_POSITION);
+            if(a != null && album != null) {
+                if (album.getId() == a.getId()) {
+                    if(songDetailFragment != null) {
+                        if(songDetailFragment.mListAdapter != null) {
+                            List<Artist> list = songDetailFragment.mListAdapter.getItem();
+                            for (int i = 0; i < list.size(); i++) {
+                                if (i == current) {
+                                    list.get(i).setState(state);
+                                } else {
+                                    list.get(i).setState(ConstMsg.STATE_NONE);
+                                }
+                            }
+                            songDetailFragment.mListAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
             }
 
         }

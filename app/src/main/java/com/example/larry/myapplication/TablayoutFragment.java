@@ -94,10 +94,10 @@ public class TablayoutFragment extends Fragment {
                     getChildFragmentManager().beginTransaction().replace(R.id.album_frame, TabTwoFragment.newInstance()).commit();
                     break;
                 default:
-                    resource = R.layout.tab_three;
-                    rootView = inflater.inflate(resource, container, false);
-                    break;
-            }
+            resource = R.layout.tab_three;
+            rootView = inflater.inflate(resource, container, false);
+            break;
+        }
             return rootView;
         }
 

@@ -3,6 +3,8 @@ package com.example.larry.myapplication.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.larry.myapplication.media.ConstMsg;
+
 /**
  * Created by Larry on 2016/1/19.
  */
@@ -13,7 +15,7 @@ public class Artist implements Parcelable {
     private String artistPath;
     private String artistImg;
     private long albumId;
-
+    private int state = ConstMsg.STATE_NONE;
 
     @Override
     public int describeContents() {
@@ -88,5 +90,13 @@ public class Artist implements Parcelable {
 
     public void setAlbumId(long albumId) {
         this.albumId = albumId;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 }

@@ -133,6 +133,7 @@ public class MusicService extends Service {
         intent.putExtra(ConstMsg.SONG_DURING, during);
         intent.putExtra(ConstMsg.SONG_ARTIST, artist);
         intent.putExtra(ConstMsg.ALBUM, album);
+        intent.putExtra(ConstMsg.SONG_POSITION,current);
         sendBroadcast(intent);
         if(state != ConstMsg.STATE_NONE) {
             updateState();
@@ -197,7 +198,7 @@ public class MusicService extends Service {
                         mTimerTask.cancel();
                         LogHelper.i(TAG, "....setOnCompletionListener..........control " + control + " current " + current + " state " + state);
                         state = ConstMsg.STATE_NONE;
-                        sendBroadcastToClient(state, null, null);
+                        sendBroadcastToClient(state, artist, album);
                         if (songList.size() > current + 1) {
                             prepare(++current);
                         }

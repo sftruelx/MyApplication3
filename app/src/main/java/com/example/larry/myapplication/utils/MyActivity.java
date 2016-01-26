@@ -91,7 +91,7 @@ public class MyActivity extends AppCompatActivity{
                 .commit();
     }
 
-    public void updateView(Album album, Artist artist){
+    public void updateView(int state, Album album, int current){
     };
 
     public void sendBroadcastToService(int state, ArrayList<Artist> songList, Album album) {
@@ -117,12 +117,13 @@ public class MyActivity extends AppCompatActivity{
             int currentPosition = intent.getIntExtra(ConstMsg.SONG_PROGRESS, 0);
             Artist artist = (Artist)intent.getParcelableExtra(ConstMsg.SONG_ARTIST);
             Album album = (Album)intent.getParcelableExtra(ConstMsg.ALBUM);
+            int current = intent.getIntExtra(ConstMsg.SONG_POSITION,-1);
             LogHelper.i(TAG, "client播放信息" + state + " song " + artist) ;
             //TODO 搞个接口
 
             mControlsFragment.updateState(state, currentPosition, during, artist, album);
             activity.state = state;
-            activity.updateView(album, artist);
+            activity.updateView(state, album, current);
             boolean bool = isActivityRunning(getApplicationContext(),getPackageName()+ "." +getLocalClassName());
             LogHelper.i(TAG,"is activity " + bool + "getLocalClassName() " + getLocalClassName() + " " + getPackageName());
             if(bool) {

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.renderscript.Allocation;
@@ -38,12 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * A fragment representing a single Song detail screen.
- * This fragment is either contained in a {@link SongListActivity}
- * in two-pane mode (on tablets) or a {@link SongDetailActivity}
- * on handsets.
- */
+
 public class SongDetailFragment extends ProgressFragment implements Receiver<DataModule> {
 
     public static final String ARG_ITEM_ID = "item_id";
@@ -234,9 +230,14 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
+            if(holder.mItem.getState() == ConstMsg.STATE_NONE){
+                holder.mImage.setImageResource(R.drawable.ic_play_arrow_black_36dp);
+            }else{
+                holder.mImage.setImageResource(R.drawable.ic_pause_black_36dp);
+            }
             holder.mIdView.setText(String.valueOf(mValues.get(position).getArtistId()));
             holder.mContentView.setText(mValues.get(position).getArtistName());
-
+            holder.mView.setTag(holder.mItem.getArtistId());
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -246,14 +247,23 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         }
         public void updateView(Album album, Artist artist){
             LogHelper.i("++++", "+");
+            for(Artist artist1 : mValues){
+
+            }
+
         }
         @Override
         public int getItemCount() {
             return mValues.size();
         }
 
+        public List<Artist> getItem(){
+            return mValues;
+        }
+
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
+            public final ImageView mImage;
             public final TextView mIdView;
             public final TextView mContentView;
             public Artist mItem;
@@ -261,6 +271,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
+                mImage = (ImageView) view.findViewById(R.id.item_image);
                 mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
