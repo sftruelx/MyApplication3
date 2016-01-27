@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -46,6 +48,8 @@ public class MusicService extends Service {
     //创建一个Asset管理器的的对象
     ArrayList<Artist> songList;
     Album album;
+    byte[] bis;
+    int color;
     int during = 0;
     int currentPosition = 0;
     //当前的播放的音乐
@@ -125,14 +129,16 @@ public class MusicService extends Service {
         nm.notify(notification_id, notification);
     }
 
-    protected void sendBroadcastToClient(int state, Artist artist, Album album) {
+    protected void sendBroadcastToClient(int state) {
         LogHelper.i(TAG, "发送Service控制广播" + state);
         Intent intent = new Intent(ConstMsg.MUSICSERVICE_ACTION);
         intent.putExtra(ConstMsg.SONG_STATE, state);
         intent.putExtra(ConstMsg.SONG_PROGRESS, currentPosition);
         intent.putExtra(ConstMsg.SONG_DURING, during);
-        intent.putExtra(ConstMsg.SONG_ARTIST, artist);
+        intent.putExtra(ConstMsg.SONG_ARTIST, songList);
         intent.putExtra(ConstMsg.ALBUM, album);
+        intent.putExtra(ConstMsg.SONG_ICON, bis);
+        intent.putExtra(ConstMsg.SONG_COLOR, color);
         intent.putExtra(ConstMsg.SONG_POSITION,current);
         sendBroadcast(intent);
         if(state != ConstMsg.STATE_NONE) {
@@ -140,6 +146,8 @@ public class MusicService extends Service {
         }else{
             nm.cancelAll();
         }
+
+
     }
 
     protected void updateState() {
@@ -198,7 +206,7 @@ public class MusicService extends Service {
                         mTimerTask.cancel();
                         LogHelper.i(TAG, "....setOnCompletionListener..........control " + control + " current " + current + " state " + state);
                         state = ConstMsg.STATE_NONE;
-                        sendBroadcastToClient(state, artist, album);
+                        sendBroadcastToClient(state);
                         if (songList.size() > current + 1) {
                             prepare(++current);
                         }
@@ -210,7 +218,7 @@ public class MusicService extends Service {
                         LogHelper.i(TAG, "prepared......" + current);
                         mediaPlayer.start();
                         state = ConstMsg.STATE_PLAYING;
-                        sendBroadcastToClient(state, artist, album);
+                        sendBroadcastToClient(state);
                         sendProgress();
                     }
                 });
@@ -219,7 +227,7 @@ public class MusicService extends Service {
             }
         } else {
             state = ConstMsg.STATE_NONE;
-            sendBroadcastToClient(state, null, null);
+            sendBroadcastToClient(state);
             current = 0;
         }
     }
@@ -239,7 +247,7 @@ public class MusicService extends Service {
                 isTimerRunning = true;
                 if (isChanging == true)//当用户正在拖动进度进度条时不处理进度条的的进度
                     return;
-                sendBroadcastToClient(state, songList.get(current), album);
+                sendBroadcastToClient(state);
                 if (mediaPlayer.getDuration() == 0) return;
                 currentPosition = mediaPlayer.getCurrentPosition();
 //                LogHelper.i(TAG,"Run..." + currentPosition + "   " + mediaPlayer.getDuration());
@@ -249,7 +257,7 @@ public class MusicService extends Service {
                 }
                 notification.contentView.setProgressBar(R.id.pb, during, currentPosition, false);
 //                showNotification();
-                sendBroadcastToClient(ConstMsg.STATE_PLAYING, songList.get(current), album);
+                sendBroadcastToClient(ConstMsg.STATE_PLAYING);
 
             }
         };
@@ -285,6 +293,13 @@ public class MusicService extends Service {
                 LogHelper.i(TAG, "接收前台Activity发来的Song" + songList.size());
                 album = (Album) intent.getParcelableExtra(ConstMsg.ALBUM);
             }
+            byte[]  mbis = intent.getByteArrayExtra(ConstMsg.SONG_ICON);
+            if(mbis != null){
+                bis = mbis;
+                Bitmap bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
+                notification.contentView.setImageViewBitmap(R.id.album_art,bitmap);
+                color = intent.getIntExtra(ConstMsg.SONG_COLOR, -1);
+            }
             if (songList == null) return; //没歌放什么放
             control = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
             LogHelper.i(TAG, "接收前台Activity发来的广播" + control);
@@ -294,7 +309,7 @@ public class MusicService extends Service {
                     if (state == ConstMsg.STATE_PAUSED) {//如果原来状态是暂停
                         mediaPlayer.start();
                         state = ConstMsg.STATE_PLAYING;
-                        sendBroadcastToClient(state, null, null);
+                        sendBroadcastToClient(state);
                     } else if (state == ConstMsg.STATE_NONE || state == ConstMsg.STATE_STOPPED) {
                         prepare(current);
                         state = ConstMsg.STATE_PLAYING;
@@ -308,14 +323,14 @@ public class MusicService extends Service {
                     if (state == ConstMsg.STATE_PLAYING || state == ConstMsg.STATE_PAUSED) {
                         mediaPlayer.stop();
                         state = ConstMsg.STATE_STOPPED;
-                        sendBroadcastToClient(state, null, null);
+                        sendBroadcastToClient(state);
                     }
                     break;
                 case ConstMsg.STATE_PAUSED://暂停播放
                     if (state == ConstMsg.STATE_PLAYING) {
                         mediaPlayer.pause();
                         state = ConstMsg.STATE_PAUSED;
-                        sendBroadcastToClient(state, null, null);
+                        sendBroadcastToClient(state);
                     }
                     break;
                 case ConstMsg.STATE_PREVIOUS://上一首

@@ -60,7 +60,7 @@ public class TabOneFragment extends ProgressFragment implements Receiver<DataMod
         mContentView = inflater.inflate(R.layout.tab_one, container, false);
         sib_simple_usage(mContentView);
         TextView tv = (TextView) mContentView.findViewById(R.id.tab1_title);
-        tv.setText(new SimpleDateFormat("dd-MMM EEEEE aa", Locale.ENGLISH).format(new Date()));
+        tv.setText(new SimpleDateFormat("dd-MMM EEEE aa", Locale.SIMPLIFIED_CHINESE).format(new Date()));
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }

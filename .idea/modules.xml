@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FlycoBanner_Lib/FlycoBanner_Lib.iml" filepath="$PROJECT_DIR$/FlycoBanner_Lib/FlycoBanner_Lib.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyApp5.iml" filepath="$PROJECT_DIR$/MyApp5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MyAppTemp.iml" filepath="$PROJECT_DIR$/MyAppTemp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/library/volleylibrary.iml" filepath="$PROJECT_DIR$/library/volleylibrary.iml" />
     </modules>

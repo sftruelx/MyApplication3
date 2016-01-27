@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.renderscript.Allocation;
@@ -35,6 +34,7 @@ import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.UILApplication;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,10 +49,12 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
     private RecyclerView mListView;
     private Album album;
     private Bitmap bitmap;
+    private Bitmap newBitmap;
     private ImageView image;
     private ImageLoader mImageLoader;
     private CollapsingToolbarLayout toolbar;
     private TextView txt;
+    private int color;
     private ArrayList<Artist> list;
 
     public static SongDetailFragment newInstance(Album album , byte[] bis) {
@@ -92,6 +94,12 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
                 intent.putParcelableArrayListExtra(ConstMsg.ARISTLIST,list);
                 intent.putExtra(ConstMsg.ALBUM,album);
+                intent.putExtra(ConstMsg.SONG_COLOR, color);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] bitmapByte = baos.toByteArray();
+                intent.putExtra(ConstMsg.SONG_ICON, bitmapByte);
                 getActivity().sendBroadcast(intent);
             }
         });
@@ -140,6 +148,9 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         }
     }
 
+    public ArrayList<Artist> getSongList(){
+        return list;
+    }
     @Override
     public void onError(TaskHandle handle, Throwable error) {
 
@@ -151,7 +162,15 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         Bitmap bitmap = drawable.getBitmap();
         // Palette的部分
         Palette.Builder from = Palette.from(bitmap);
-        int color =from.generate().getDarkVibrantColor(getResources().getColor(android.R.color.transparent));
+        Palette palette = from.generate();
+        Palette.Swatch vibrant =
+                palette.getVibrantSwatch();
+
+//        color =from.generate().getDarkVibrantColor(getResources().getColor(android.R.color.transparent));
+        color = colorBurn(vibrant.getRgb());
+//        color = vibrant.getPopulation(); //白色
+//        color = vibrant.getBodyTextColor();//白色
+//        color = vibrant.getTitleTextColor();
         toolbar.setContentScrimColor(colorBurn(color));
 
     }
@@ -235,23 +254,30 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             }else{
                 holder.mImage.setImageResource(R.drawable.ic_pause_black_36dp);
             }
-            holder.mIdView.setText(String.valueOf(mValues.get(position).getArtistId()));
+//            holder.mIdView.setText(String.valueOf(mValues.get(position).getArtistId()));
             holder.mContentView.setText(mValues.get(position).getArtistName());
             holder.mView.setTag(holder.mItem.getArtistId());
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     LogHelper.i("onClick", "+");
+                    Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
+                    intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
+                    ArrayList<Artist> mList = new ArrayList<Artist>();
+                    mList.add(holder.mItem);
+                    intent.putParcelableArrayListExtra(ConstMsg.ARISTLIST,mList);
+                    intent.putExtra(ConstMsg.ALBUM,album);
+                    intent.putExtra(ConstMsg.SONG_COLOR, color);
+
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte[] bitmapByte = baos.toByteArray();
+                    intent.putExtra(ConstMsg.SONG_ICON, bitmapByte);
+                    getActivity().sendBroadcast(intent);
                 }
             });
         }
-        public void updateView(Album album, Artist artist){
-            LogHelper.i("++++", "+");
-            for(Artist artist1 : mValues){
 
-            }
-
-        }
         @Override
         public int getItemCount() {
             return mValues.size();

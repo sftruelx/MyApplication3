@@ -39,6 +39,7 @@ public class ConstMsg {
     public static final String SONG_DURING = "song during";
     public static final String SONG_STATE = "song state";
     public static final String SONG_POSITION = "song position";
+    public static final String SONG_COLOR = "song color";
 
     public static final String ARISTLIST = "artistList";
     public static final String ALBUM = "album";

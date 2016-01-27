@@ -20,11 +20,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 
 
+import android.graphics.Color;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
 
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -32,6 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +62,7 @@ public class PlaybackControlsFragment extends Fragment {
     private TextView mSubtitle;
     private TextView mExtraInfo;
     private ImageView mAlbumArt;
+    private RelativeLayout mRelate;
     private SeekBar seekBar;
     private String mArtUrl;
     private int state ;
@@ -67,6 +71,8 @@ public class PlaybackControlsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_playback_controls, container, false);
+        mAlbumArt =(ImageView) rootView.findViewById(R.id.album_art);
+        mRelate =(RelativeLayout)rootView.findViewById(R.id.play_panel);
         mPlayPause = (ImageButton) rootView.findViewById(R.id.play_pause);
         mPlayNext = (ImageButton)rootView.findViewById(R.id.play_next);
         mPlayPrevious = (ImageButton)rootView.findViewById(R.id.play_previous);
@@ -122,6 +128,13 @@ public class PlaybackControlsFragment extends Fragment {
             }
         }
     };
+
+    public void updateImage(Bitmap newBitmap){
+        mAlbumArt.setImageBitmap(newBitmap);
+    }
+    public void updateColor(int color){
+        mRelate.setBackgroundColor(color);
+    }
 
     public void updateState(int state, int currentPosition, int during, Artist artist, Album album) {
         this.state = state;

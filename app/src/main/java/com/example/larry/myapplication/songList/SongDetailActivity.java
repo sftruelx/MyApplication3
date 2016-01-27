@@ -26,6 +26,7 @@ import com.example.larry.myapplication.utils.MyActivity;
 import com.example.larry.myapplication.utils.NetworkHelper;
 import com.example.larry.myapplication.utils.TestActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -73,9 +74,20 @@ public class SongDetailActivity extends MyActivity {
     }
 
     @Override
-    public void updateView(int state, Album album, int current) {
-        LogHelper.i(TAG, "-------------------------..." + current);
+    public void updateView(int state, Album album, Artist artist) {
+        LogHelper.i(TAG, "-------------------------..." + artist);
         Bundle b = new Bundle();// 存放数据
+        int current = 0;
+        ArrayList<Artist> list = songDetailFragment.getSongList();
+        if(list != null) {
+            for (int i = 0; i < list.size(); i++) {
+                Artist a = list.get(i);
+                if (a.getArtistId() == artist.getArtistId()) {
+                    current = i;
+                    break;
+                }
+            }
+        }
         b.putParcelable(ConstMsg.ALBUM, album);
         b.putInt(ConstMsg.SONG_STATE, state);
         b.putInt(ConstMsg.SONG_POSITION, current);

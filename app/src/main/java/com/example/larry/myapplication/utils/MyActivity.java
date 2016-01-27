@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -91,7 +93,7 @@ public class MyActivity extends AppCompatActivity{
                 .commit();
     }
 
-    public void updateView(int state, Album album, int current){
+    public void updateView(int state, Album album, Artist artist){
     };
 
     public void sendBroadcastToService(int state, ArrayList<Artist> songList, Album album) {
@@ -114,16 +116,24 @@ public class MyActivity extends AppCompatActivity{
         public void onReceive(Context context, Intent intent) {
             state = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
             int during = intent.getIntExtra(ConstMsg.SONG_DURING, 0);
-            int currentPosition = intent.getIntExtra(ConstMsg.SONG_PROGRESS, 0);
-            Artist artist = (Artist)intent.getParcelableExtra(ConstMsg.SONG_ARTIST);
-            Album album = (Album)intent.getParcelableExtra(ConstMsg.ALBUM);
-            int current = intent.getIntExtra(ConstMsg.SONG_POSITION,-1);
-            LogHelper.i(TAG, "client播放信息" + state + " song " + artist) ;
-            //TODO 搞个接口
+            int currentPosition = intent.getIntExtra(ConstMsg.SONG_POSITION, 0);
 
+            ArrayList<Artist> list = intent.getParcelableArrayListExtra(ConstMsg.SONG_ARTIST);
+            Artist artist = list.get(currentPosition);
+            Album album = (Album)intent.getParcelableExtra(ConstMsg.ALBUM);
+            LogHelper.i(TAG, "client播放信息" + state + " song " + album) ;
+            int color = intent.getIntExtra(ConstMsg.SONG_COLOR,-1);
+            byte[] bis = intent.getByteArrayExtra(ConstMsg.SONG_ICON);
+            if(color != -1){
+                mControlsFragment.updateColor(color);
+            }
+            if(bis != null){
+               Bitmap bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
+                mControlsFragment.updateImage(bitmap);
+            }
             mControlsFragment.updateState(state, currentPosition, during, artist, album);
             activity.state = state;
-            activity.updateView(state, album, current);
+            activity.updateView(state, album, artist);
             boolean bool = isActivityRunning(getApplicationContext(),getPackageName()+ "." +getLocalClassName());
             LogHelper.i(TAG,"is activity " + bool + "getLocalClassName() " + getLocalClassName() + " " + getPackageName());
             if(bool) {
