@@ -61,6 +61,15 @@ public class MusicService extends Service {
     int control;
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+        nm.cancelAll();
+        mediaPlayer.release();
+        LogHelper.i(TAG, "service 结束！");
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         LogHelper.i(TAG, "service 启动！");
@@ -262,7 +271,7 @@ public class MusicService extends Service {
             }
         };
         //每隔10毫秒检测一下播放进度
-        mTimer.schedule(mTimerTask, 0, 1000);
+        mTimer.schedule(mTimerTask, 0, 500);
     }
 
 

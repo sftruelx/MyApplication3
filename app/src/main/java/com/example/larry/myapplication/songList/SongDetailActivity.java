@@ -75,7 +75,7 @@ public class SongDetailActivity extends MyActivity {
 
     @Override
     public void updateView(int state, Album album, Artist artist) {
-        LogHelper.i(TAG, "-------------------------..." + artist);
+//        LogHelper.i(TAG, "-------------------------..." + artist);
         Bundle b = new Bundle();// 存放数据
         int current = 0;
         ArrayList<Artist> list = songDetailFragment.getSongList();
@@ -126,7 +126,7 @@ public class SongDetailActivity extends MyActivity {
         // 子类必须重写此方法，接受数据
         @Override
         public void handleMessage(Message msg) {
-            Log.d("MyHandler","handleMessage。。。。。。");
+//            Log.d("MyHandler","handleMessage。。。。。。");
             super.handleMessage(msg);
             // 此处可以更新UI
             Bundle b = msg.getData();

@@ -89,7 +89,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                T.showShort(getContext(),"==========播放专辑中的所有文件===========");
+//                T.showShort(getContext(),"==========播放专辑中的所有文件===========");
                 Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
                 intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
                 intent.putParcelableArrayListExtra(ConstMsg.ARISTLIST,list);

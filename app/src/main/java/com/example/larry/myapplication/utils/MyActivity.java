@@ -121,7 +121,7 @@ public class MyActivity extends AppCompatActivity{
             ArrayList<Artist> list = intent.getParcelableArrayListExtra(ConstMsg.SONG_ARTIST);
             Artist artist = list.get(currentPosition);
             Album album = (Album)intent.getParcelableExtra(ConstMsg.ALBUM);
-            LogHelper.i(TAG, "client播放信息" + state + " song " + album) ;
+            LogHelper.i(TAG, "client接收信息" + state + " song " + album) ;
             int color = intent.getIntExtra(ConstMsg.SONG_COLOR,-1);
             byte[] bis = intent.getByteArrayExtra(ConstMsg.SONG_ICON);
             if(color != -1){
@@ -129,13 +129,14 @@ public class MyActivity extends AppCompatActivity{
             }
             if(bis != null){
                Bitmap bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
+                bitmap = BitmapHelper.getRoundCornerImage(bitmap,40);
                 mControlsFragment.updateImage(bitmap);
             }
             mControlsFragment.updateState(state, currentPosition, during, artist, album);
             activity.state = state;
             activity.updateView(state, album, artist);
             boolean bool = isActivityRunning(getApplicationContext(),getPackageName()+ "." +getLocalClassName());
-            LogHelper.i(TAG,"is activity " + bool + "getLocalClassName() " + getLocalClassName() + " " + getPackageName());
+//            LogHelper.i(TAG,"is activity " + bool + "getLocalClassName() " + getLocalClassName() + " " + getPackageName());
             if(bool) {
                 if(state != ConstMsg.STATE_NONE) {
                     activity.showPlaybackControls();
