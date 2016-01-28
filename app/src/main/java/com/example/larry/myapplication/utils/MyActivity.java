@@ -121,7 +121,7 @@ public class MyActivity extends AppCompatActivity{
             ArrayList<Artist> list = intent.getParcelableArrayListExtra(ConstMsg.SONG_ARTIST);
             Artist artist = list.get(currentPosition);
             Album album = (Album)intent.getParcelableExtra(ConstMsg.ALBUM);
-            LogHelper.i(TAG, "client接收信息" + state + " song " + album) ;
+//            LogHelper.i(TAG, "client接收信息" + state + " song " + album) ;
             int color = intent.getIntExtra(ConstMsg.SONG_COLOR,-1);
             byte[] bis = intent.getByteArrayExtra(ConstMsg.SONG_ICON);
             if(color != -1){
@@ -129,7 +129,7 @@ public class MyActivity extends AppCompatActivity{
             }
             if(bis != null){
                Bitmap bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
-                bitmap = BitmapHelper.getRoundCornerImage(bitmap,40);
+//                bitmap = BitmapHelper.scaleBitmap(bitmap,75,75);
                 mControlsFragment.updateImage(bitmap);
             }
             mControlsFragment.updateState(state, currentPosition, during, artist, album);

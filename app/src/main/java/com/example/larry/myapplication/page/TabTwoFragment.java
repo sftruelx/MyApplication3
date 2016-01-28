@@ -194,7 +194,7 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
                 mView = view;
                 mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);
-                mPic = (ImageView) view.findViewById(R.id.album_pic);
+                mPic = (ImageView) view.findViewById(R.id.list_img);
             }
 
 

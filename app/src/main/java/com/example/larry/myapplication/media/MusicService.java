@@ -139,7 +139,7 @@ public class MusicService extends Service {
     }
 
     protected void sendBroadcastToClient(int state) {
-        LogHelper.i(TAG, "发送Service控制广播" + state);
+//        LogHelper.i(TAG, "发送Service控制广播" + state);
         Intent intent = new Intent(ConstMsg.MUSICSERVICE_ACTION);
         intent.putExtra(ConstMsg.SONG_STATE, state);
         intent.putExtra(ConstMsg.SONG_PROGRESS, currentPosition);
@@ -148,21 +148,37 @@ public class MusicService extends Service {
         intent.putExtra(ConstMsg.ALBUM, album);
         intent.putExtra(ConstMsg.SONG_ICON, bis);
         intent.putExtra(ConstMsg.SONG_COLOR, color);
-        intent.putExtra(ConstMsg.SONG_POSITION,current);
+        intent.putExtra(ConstMsg.SONG_POSITION, current);
         sendBroadcast(intent);
-        if(state != ConstMsg.STATE_NONE) {
+        if (state != ConstMsg.STATE_NONE) {
             updateState();
-        }else{
+        } else {
             nm.cancelAll();
         }
-
-
     }
 
+    protected void sendBroadcastToClientLight(int state) {
+//        LogHelper.i(TAG, "发送Service控制广播" + state);
+        Intent intent = new Intent(ConstMsg.MUSICSERVICE_ACTION);
+        intent.putExtra(ConstMsg.SONG_STATE, state);
+        intent.putExtra(ConstMsg.SONG_PROGRESS, currentPosition);
+        intent.putExtra(ConstMsg.SONG_DURING, during);
+//        intent.putExtra(ConstMsg.SONG_ARTIST, songList);
+//        intent.putExtra(ConstMsg.ALBUM, album);
+//        intent.putExtra(ConstMsg.SONG_ICON, bis);
+//        intent.putExtra(ConstMsg.SONG_COLOR, color);
+//        intent.putExtra(ConstMsg.SONG_POSITION, current);
+        sendBroadcast(intent);
+        if (state != ConstMsg.STATE_NONE) {
+            updateState();
+        } else {
+            nm.cancelAll();
+        }
+    }
     protected void updateState() {
         switch (state) {
             case ConstMsg.STATE_PLAYING:
-                notification.contentView.setTextViewText(R.id.title, ((Artist)songList.get(current)).getArtistName());
+                notification.contentView.setTextViewText(R.id.title, ((Artist) songList.get(current)).getArtistName());
                 notification.contentView.setTextViewText(R.id.artist, album.getAlbumName() + " " + album.getAuthor());
                 notification.contentView.setImageViewResource(R.id.play_pause, R.drawable.ic_pause_black_36dp);
                 Intent pause_intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
@@ -266,12 +282,12 @@ public class MusicService extends Service {
                 }
                 notification.contentView.setProgressBar(R.id.pb, during, currentPosition, false);
 //                showNotification();
-                sendBroadcastToClient(ConstMsg.STATE_PLAYING);
+                sendBroadcastToClientLight(ConstMsg.STATE_PLAYING);
 
             }
         };
         //每隔10毫秒检测一下播放进度
-        mTimer.schedule(mTimerTask, 0, 500);
+        mTimer.schedule(mTimerTask, 0, 1000);
     }
 
 
@@ -302,11 +318,11 @@ public class MusicService extends Service {
                 LogHelper.i(TAG, "接收前台Activity发来的Song" + songList.size());
                 album = (Album) intent.getParcelableExtra(ConstMsg.ALBUM);
             }
-            byte[]  mbis = intent.getByteArrayExtra(ConstMsg.SONG_ICON);
-            if(mbis != null){
+            byte[] mbis = intent.getByteArrayExtra(ConstMsg.SONG_ICON);
+            if (mbis != null) {
                 bis = mbis;
-                Bitmap bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
-                notification.contentView.setImageViewBitmap(R.id.album_art,bitmap);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bis, 0, bis.length);
+                notification.contentView.setImageViewBitmap(R.id.album_art, bitmap);
                 color = intent.getIntExtra(ConstMsg.SONG_COLOR, -1);
             }
             if (songList == null) return; //没歌放什么放
@@ -353,7 +369,7 @@ public class MusicService extends Service {
                     }
                     break;
                 case ConstMsg.STATE_NEXT://下一首
-                    if(songList != null) {
+                    if (songList != null) {
                         if (songList.size() > current + 1) {
                             mediaPlayer.stop();
                             state = ConstMsg.STATE_STOPPED;

@@ -167,7 +167,11 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 palette.getVibrantSwatch();
 
 //        color =from.generate().getDarkVibrantColor(getResources().getColor(android.R.color.transparent));
-        color = colorBurn(vibrant.getRgb());
+        if(vibrant != null) {
+            color = colorBurn(vibrant.getRgb());
+        }else{
+            color = R.color.black;
+        }
 //        color = vibrant.getPopulation(); //白色
 //        color = vibrant.getBodyTextColor();//白色
 //        color = vibrant.getTitleTextColor();
@@ -203,7 +207,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
 
     private void blur(Bitmap bkg, View view) {
 
-        float radius = 20;
+        float radius = 25;
         Bitmap overlay = Bitmap.createBitmap((int) (view.getMeasuredWidth()),
                 (int) (view.getMeasuredHeight()), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(overlay);
