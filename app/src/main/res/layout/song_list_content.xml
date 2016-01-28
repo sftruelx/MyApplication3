@@ -18,19 +18,19 @@
         android:layout_margin="1dp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <RelativeLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
                 android:layout_margin="8dp"
                 android:textAppearance="?attr/textAppearanceLargePopupMenu"
                 android:textStyle="bold" />
@@ -41,8 +41,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAppearance="?attr/textAppearanceListItem" />
+            <ImageView
+                android:src="@drawable/download"
+                android:layout_alignParentRight="true"
+                android:tint="@color/grey"
+                android:tintMode="src_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
+
     </LinearLayout>
+
     </LinearLayout>
     <LinearLayout
         android:background="#d9d9d9"
