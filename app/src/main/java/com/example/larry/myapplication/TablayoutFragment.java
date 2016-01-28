@@ -122,7 +122,7 @@ public class TablayoutFragment extends Fragment {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 5;
+            return 2;
         }
 
         @Override

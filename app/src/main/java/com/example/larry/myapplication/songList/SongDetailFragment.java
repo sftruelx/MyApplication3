@@ -31,7 +31,7 @@ import com.example.larry.myapplication.entity.DataModule;
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.swipe.ProgressFragment;
 import com.example.larry.myapplication.utils.LogHelper;
-import com.example.larry.myapplication.utils.T;
+import com.example.larry.myapplication.utils.MyActivity;
 import com.example.larry.myapplication.utils.UILApplication;
 
 import java.io.ByteArrayOutputStream;
@@ -95,7 +95,6 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 intent.putParcelableArrayListExtra(ConstMsg.ARISTLIST,list);
                 intent.putExtra(ConstMsg.ALBUM,album);
                 intent.putExtra(ConstMsg.SONG_COLOR, color);
-
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                 byte[] bitmapByte = baos.toByteArray();
@@ -126,7 +125,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         handle_0.setReceiver(this);
         handle_0.pullTrigger();
     }
-    public  SimpleItemRecyclerViewAdapter mListAdapter;
+    public SongRecyclerViewAdapter mListAdapter;
     @Override
     public void onSucess(TaskHandle handle, DataModule result) {
         switch (handle.id()) {
@@ -136,7 +135,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
 
                     mListView = (RecyclerView) mContentView.findViewById(R.id.item_list);
                     list = result.getArtist();
-                    mListAdapter = new SimpleItemRecyclerViewAdapter(list);
+                    mListAdapter = new SongRecyclerViewAdapter(list);
                     mListView.setAdapter(mListAdapter);
                     setContentShown(true);
                 } catch (Exception e) {
@@ -234,12 +233,12 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
     }
 
 
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+    public class SongRecyclerViewAdapter
+            extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> {
 
         private final List<Artist> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<Artist> items) {
+        public SongRecyclerViewAdapter(List<Artist> items) {
             mValues = items;
         }
 

@@ -379,7 +379,7 @@ public class MusicService extends Service {
                     }
                     break;
             }
-
+            sendBroadcastToClient(state);
         }
     }
 }

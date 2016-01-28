@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,7 @@ import java.util.List;
  */
 public class TabTwoFragment extends ProgressFragment implements Receiver<DataModule>, SwipeRefreshLayout.OnRefreshListener, SwipeRefreshLayout.OnLoadListener {
     protected RecyclerView mListView;
-    private SimpleItemRecyclerViewAdapter mListAdapter;
+    private AlbumRecyclerViewAdapter mListAdapter;
     SwipeRefreshLayout mSwipeLayout;
     private View mContentView;
     protected ImageLoader mImageLoader;
@@ -85,7 +86,8 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
                 try {
 
                     mListView = (RecyclerView) mContentView.findViewById(R.id.swipe_list);
-                    mListAdapter = new SimpleItemRecyclerViewAdapter(result.getAlbum());
+                    mListView.setLayoutManager(new StaggeredGridLayoutManager( 1,StaggeredGridLayoutManager.VERTICAL));
+                    mListAdapter = new AlbumRecyclerViewAdapter(result.getAlbum());
                     mListView.setAdapter(mListAdapter);
                     mSwipeLayout = (SwipeRefreshLayout) mContentView.findViewById(R.id.swipe_container);
                     mSwipeLayout.setRefreshing(false);
@@ -131,12 +133,12 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
 
     }
 
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+    public class AlbumRecyclerViewAdapter
+            extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
 
         private final List<Album> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<Album> items) {
+        public AlbumRecyclerViewAdapter(List<Album> items) {
 
             mValues = items;
 
