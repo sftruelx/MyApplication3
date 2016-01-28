@@ -119,32 +119,35 @@ public class MyActivity extends AppCompatActivity{
             int currentPosition = intent.getIntExtra(ConstMsg.SONG_POSITION, 0);
 
             ArrayList<Artist> list = intent.getParcelableArrayListExtra(ConstMsg.SONG_ARTIST);
-            Artist artist = list.get(currentPosition);
-            Album album = (Album)intent.getParcelableExtra(ConstMsg.ALBUM);
-//            LogHelper.i(TAG, "client接收信息" + state + " song " + album) ;
-            int color = intent.getIntExtra(ConstMsg.SONG_COLOR,-1);
-            byte[] bis = intent.getByteArrayExtra(ConstMsg.SONG_ICON);
-            if(color != -1){
-                mControlsFragment.updateColor(color);
-            }
-            if(bis != null){
-               Bitmap bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
-//                bitmap = BitmapHelper.scaleBitmap(bitmap,75,75);
-                mControlsFragment.updateImage(bitmap);
-            }
-            mControlsFragment.updateState(state, currentPosition, during, artist, album);
-            activity.state = state;
-            activity.updateView(state, album, artist);
-            boolean bool = isActivityRunning(getApplicationContext(),getPackageName()+ "." +getLocalClassName());
-//            LogHelper.i(TAG,"is activity " + bool + "getLocalClassName() " + getLocalClassName() + " " + getPackageName());
-            if(bool) {
-                if(state != ConstMsg.STATE_NONE) {
-                    activity.showPlaybackControls();
-                }else {
-                    activity.hidePlaybackControls();
-                }
-            }
 
+            if (list != null) {
+                Artist artist = list.get(currentPosition);
+                Album album = (Album) intent.getParcelableExtra(ConstMsg.ALBUM);
+//            LogHelper.i(TAG, "client接收信息" + state + " song " + album) ;
+                int color = intent.getIntExtra(ConstMsg.SONG_COLOR, -1);
+                byte[] bis = intent.getByteArrayExtra(ConstMsg.SONG_ICON);
+                if (color != -1) {
+                    mControlsFragment.updateColor(color);
+                }
+                if (bis != null) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bis, 0, bis.length);
+//                bitmap = BitmapHelper.scaleBitmap(bitmap,75,75);
+                    mControlsFragment.updateImage(bitmap);
+                }
+                mControlsFragment.updateState(state, currentPosition, during, artist, album);
+                activity.state = state;
+                activity.updateView(state, album, artist);
+                boolean bool = isActivityRunning(getApplicationContext(), getPackageName() + "." + getLocalClassName());
+//            LogHelper.i(TAG,"is activity " + bool + "getLocalClassName() " + getLocalClassName() + " " + getPackageName());
+                if (bool) {
+                    if (state != ConstMsg.STATE_NONE) {
+                        activity.showPlaybackControls();
+                    } else {
+                        activity.hidePlaybackControls();
+                    }
+                }
+
+            }
         }
 
     }
