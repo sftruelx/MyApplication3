@@ -16,19 +16,8 @@
 package com.example.larry.myapplication;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.graphics.Bitmap;
-
-
-import android.graphics.Color;
-import android.media.MediaMetadata;
-import android.media.session.MediaController;
-import android.media.session.PlaybackState;
 import android.os.Bundle;
-
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,12 +26,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.entity.Artist;
 import com.example.larry.myapplication.media.ConstMsg;
-import com.example.larry.myapplication.utils.AlbumArtCache;
 import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.MyActivity;
 

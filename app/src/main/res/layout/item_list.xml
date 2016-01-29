@@ -8,5 +8,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.example.larry.myapplication.songList.SongDetailActivity"
+    tools:context=".page.SongDetailActivity"
     tools:listitem="@layout/item_list_content" />

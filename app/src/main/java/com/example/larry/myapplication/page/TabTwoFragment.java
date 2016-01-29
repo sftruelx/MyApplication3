@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -22,11 +21,9 @@ import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.entity.DataModule;
 import com.example.larry.myapplication.songList.SongDetailActivity;
-import com.example.larry.myapplication.songList.SongDetailFragment;
 import com.example.larry.myapplication.swipe.ProgressFragment;
 import com.example.larry.myapplication.swipe.SwipeRefreshLayout;
 import com.example.larry.myapplication.utils.AppUrl;
-import com.example.larry.myapplication.utils.UILApplication;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -52,10 +49,26 @@ public class TabTwoFragment extends ProgressFragment implements Receiver<DataMod
         super.onCreate(savedInstanceState);
         mImageLoader = new ImageLoader( Volley.newRequestQueue(getContext()));
     }
-
+    final SearchFragment sf = new SearchFragment();
+    boolean allowHiden = true;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContentView = LayoutInflater.from(getActivity().getBaseContext()).inflate(R.layout.tab_two, null);
+        getChildFragmentManager().beginTransaction().replace(R.id.search_frame, sf).commit();
+        getChildFragmentManager().beginTransaction().hide(sf).commit();
+        ImageView mSearchImage = (ImageView) mContentView.findViewById(R.id.image_search);
+        mSearchImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(allowHiden){
+                    getChildFragmentManager().beginTransaction().show(sf).commit();
+                    allowHiden = false;
+                }else {
+                    getChildFragmentManager().beginTransaction().hide(sf).commit();
+                    allowHiden = true;
+                }
+            }
+        });
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 

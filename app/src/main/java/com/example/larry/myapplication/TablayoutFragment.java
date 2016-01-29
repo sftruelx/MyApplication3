@@ -149,12 +149,12 @@ public class TablayoutFragment extends Fragment {
 
         @NonNull
         private SpannableString getSpannableString(@DrawableRes int id, String title) {
-            Drawable dImage = getResources().getDrawable(id);
-            dImage.setBounds(0, 0, dImage.getIntrinsicWidth(), dImage.getIntrinsicHeight());
+//            Drawable dImage = getResources().getDrawable(id);
+//            dImage.setBounds(0, 0, dImage.getIntrinsicWidth(), dImage.getIntrinsicHeight());
             //这里前面加的空格就是为图片显示
             SpannableString sp = new SpannableString("  " + title);
-            ImageSpan imageSpan = new ImageSpan(dImage, ImageSpan.ALIGN_BOTTOM);
-            sp.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            ImageSpan imageSpan = new ImageSpan(dImage, ImageSpan.ALIGN_BOTTOM);
+//            sp.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             return sp;
         }
 

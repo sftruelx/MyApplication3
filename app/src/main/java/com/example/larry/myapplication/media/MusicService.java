@@ -228,7 +228,11 @@ public class MusicService extends Service {
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        mTimerTask.cancel();
+                        if(mTimerTask!=null) {
+                            mTimerTask.cancel();
+                        }
+                        mediaPlayer.release();
+                        mediaPlayer = null;
                         LogHelper.i(TAG, "....setOnCompletionListener..........control " + control + " current " + current + " state " + state);
                         state = ConstMsg.STATE_NONE;
                         sendBroadcastToClient(state);
@@ -240,11 +244,14 @@ public class MusicService extends Service {
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
                     public void onPrepared(MediaPlayer mp) {
-                        LogHelper.i(TAG, "prepared......" + current);
-                        mediaPlayer.start();
-                        state = ConstMsg.STATE_PLAYING;
-                        sendBroadcastToClient(state);
-                        sendProgress();
+                        LogHelper.i(TAG, "prepared......" + mp + " " + mediaPlayer);
+                        mediaPlayer = mp;
+                        if(mediaPlayer!=null) {
+                            mediaPlayer.start();
+                            state = ConstMsg.STATE_PLAYING;
+                            sendBroadcastToClient(state);
+                            sendProgress();
+                        }
                     }
                 });
             } catch (Exception e) {

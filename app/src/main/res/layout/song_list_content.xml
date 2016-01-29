@@ -45,13 +45,23 @@
                 android:textColor="@color/grey"
                 android:textAppearance="?attr/textAppearanceListItem" />
             <ImageView
-                android:src="@drawable/download"
+                android:id="@+id/favor"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="6dp"
+                android:layout_toLeftOf="@+id/download"
+                android:src="@drawable/ic_star_off"
+                android:tint="@color/grey"
+                android:tintMode="src_in" />
+            <ImageView
+                android:id="@+id/download"
+                android:src="@drawable/ic_action_download"
                 android:layout_marginRight="5dp"
                 android:layout_alignParentRight="true"
                 android:tint="@color/grey"
                 android:tintMode="src_in"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
         </RelativeLayout>
 
     </LinearLayout>

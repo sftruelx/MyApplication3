@@ -2,11 +2,8 @@ package com.example.larry.myapplication;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -14,7 +11,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,13 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.larry.myapplication.media.ConstMsg;
-import com.example.larry.myapplication.media.MusicService;
 import com.example.larry.myapplication.utils.ConfigStore;
 import com.example.larry.myapplication.utils.DeviceUuidFactory;
 import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.MyActivity;
-import com.example.larry.myapplication.utils.NetworkHelper;
 
 import java.util.UUID;
 

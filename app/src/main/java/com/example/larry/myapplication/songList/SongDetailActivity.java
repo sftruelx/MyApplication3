@@ -158,7 +158,6 @@ public class SongDetailActivity extends MyActivity {
     {
         public void run()
         {
-
             Log.d("update_thread","update_thread。。。。。。");
             songDetailFragment.mListAdapter.updateView(null,null);
         }

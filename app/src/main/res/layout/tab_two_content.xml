@@ -8,6 +8,7 @@
     android:layout_height="2dp"
     android:background="@color/lightgrey"
     android:orientation="vertical" />
+
 <FrameLayout
     android:id="@+id/album_frame"
     android:layout_width="match_parent"

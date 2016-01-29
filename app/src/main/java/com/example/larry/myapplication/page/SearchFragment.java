@@ -10,16 +10,14 @@ import android.view.ViewGroup;
 import com.example.larry.myapplication.R;
 
 /**
- * Created by 067231 on 2016/1/14.
+ * Created by 067231 on 2016/1/29.
  */
-public class DemoFragment extends Fragment {
+public class SearchFragment extends Fragment{
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.tab_one_demo,container,false);
-
+        View rootView = inflater.inflate(R.layout.search_fragment,container,false);
         return rootView;
-
     }
 }

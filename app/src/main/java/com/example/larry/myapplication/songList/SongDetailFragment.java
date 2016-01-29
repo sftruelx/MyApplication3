@@ -2,10 +2,12 @@ package com.example.larry.myapplication.songList;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.renderscript.Allocation;
@@ -32,6 +34,7 @@ import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.swipe.ProgressFragment;
 import com.example.larry.myapplication.utils.LogHelper;
 import com.example.larry.myapplication.utils.MyActivity;
+import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.UILApplication;
 
 import java.io.ByteArrayOutputStream;
@@ -251,6 +254,10 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
+            holder.mImage.setColorFilter(color);
+            holder.mFavor.setColorFilter(color );
+            holder.mOption.setColorFilter(color);
+
             holder.mItem = mValues.get(position);
             if(holder.mItem.getState() == ConstMsg.STATE_NONE){
                 holder.mImage.setImageResource(R.drawable.ic_play_arrow_black_36dp);
@@ -260,10 +267,37 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
 //            holder.mIdView.setText(String.valueOf(mValues.get(position).getArtistId()));
             holder.mContentView.setText(mValues.get(position).getArtistName());
             holder.mView.setTag(holder.mItem.getArtistId());
+
+
+            holder.mFavor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    T.showShort(getContext(),"==========favor===========" + (Boolean) holder.mFavor.getTag());
+                    if(!(Boolean) holder.mFavor.getTag()) {
+                        holder.mFavor.setImageResource(R.drawable.ic_star_on);
+                        holder.mFavor.setTag(Boolean.TRUE);
+                    }else{
+                        holder.mFavor.setImageResource(R.drawable.ic_star_off);
+                        holder.mFavor.setTag(Boolean.FALSE);
+                    }
+                }
+            });
+            holder.mOption.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    T.showShort(getContext(),"==========download===========");
+                }
+            });
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    LogHelper.i("onClick", "+");
+                    switch (v.getId()) {
+                        case R.id.favor:
+                            LogHelper.i("onClick", "+favor" );
+                            break;
+                        case R.id.option:
+                            break;
+                    }
                     Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
                     intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
                     ArrayList<Artist> mList = new ArrayList<Artist>();
@@ -289,12 +323,25 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         public List<Artist> getItem(){
             return mValues;
         }
-
+        private ColorStateList createColorStateList(int normal, int pressed, int focused, int unable) {
+            int[] colors = new int[] { pressed, focused, normal, focused, unable, normal };
+            int[][] states = new int[6][];
+            states[0] = new int[] { android.R.attr.state_pressed, android.R.attr.state_enabled };
+            states[1] = new int[] { android.R.attr.state_enabled, android.R.attr.state_focused };
+            states[2] = new int[] { android.R.attr.state_enabled };
+            states[3] = new int[] { android.R.attr.state_focused };
+            states[4] = new int[] { android.R.attr.state_window_focused };
+            states[5] = new int[] {};
+            ColorStateList colorList = new ColorStateList(states, colors);
+            return colorList;
+        }
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final ImageView mImage;
             public final TextView mIdView;
             public final TextView mContentView;
+            public final ImageView mFavor;
+            public final ImageView mOption;
             public Artist mItem;
 
             public ViewHolder(View view) {
@@ -303,6 +350,9 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 mImage = (ImageView) view.findViewById(R.id.item_image);
                 mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);
+                mFavor = (ImageView) view.findViewById(R.id.favor);
+                mOption = (ImageView) view.findViewById(R.id.option);
+                mFavor.setTag(Boolean.FALSE);
             }
 
             @Override

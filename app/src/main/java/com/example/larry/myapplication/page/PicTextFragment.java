@@ -18,15 +18,11 @@ import android.widget.Toast;
 
 import com.android.volley.base.RequestQueue;
 import com.android.volley.cache.plus.ImageLoader;
-import com.android.volley.toolbox.Volley;
-import com.example.larry.myapplication.MainActivity;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
-import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.songList.SongDetailActivity;
 import com.example.larry.myapplication.utils.AppUrl;
 import com.example.larry.myapplication.utils.LogHelper;
-import com.example.larry.myapplication.utils.MyActivity;
 import com.example.larry.myapplication.utils.UILApplication;
 
 import java.io.ByteArrayOutputStream;
