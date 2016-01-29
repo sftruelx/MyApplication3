@@ -15,7 +15,7 @@
         android:orientation="vertical"
         android:layout_height="2dp"
         android:layout_alignParentTop="true"
-        android:background="#f7f7f7"/>
+        android:background="@color/white"/>
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
