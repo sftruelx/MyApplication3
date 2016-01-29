@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginTop="15dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-<TextView
-    android:id="@+id/column_title"
-    android:text="必读精选"
-    android:paddingTop="5dp"
-    android:paddingLeft="7dp"
-    android:textSize="24sp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
-<HorizontalScrollView
-    android:id="@+id/tab_one_column_linear"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:orientation="vertical">
 
-</HorizontalScrollView>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/column_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="必读精选"
+            android:textSize="24sp" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:tint="@color/grey"
+            android:tintMode="src_in"
+            android:src="@drawable/ic_action_overflow" />
+    </RelativeLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/tab_one_column_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </HorizontalScrollView>
 
 </LinearLayout>
