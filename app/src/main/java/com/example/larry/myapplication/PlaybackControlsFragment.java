@@ -18,11 +18,13 @@ package com.example.larry.myapplication;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -50,7 +52,7 @@ public class PlaybackControlsFragment extends Fragment {
     private TextView mExtraInfo;
     private ImageView mAlbumArt;
     private RelativeLayout mRelate;
-    private SeekBar seekBar;
+    private ProgressBar seekBar;
     private String mArtUrl;
     private int state ;
 
@@ -63,7 +65,7 @@ public class PlaybackControlsFragment extends Fragment {
         mPlayPause = (ImageButton) rootView.findViewById(R.id.play_pause);
         mPlayNext = (ImageButton)rootView.findViewById(R.id.play_next);
         mPlayPrevious = (ImageButton)rootView.findViewById(R.id.play_previous);
-        seekBar = (SeekBar) rootView.findViewById(R.id.seek_bar);
+        seekBar = (ProgressBar) rootView.findViewById(R.id.seek_bar);
         mTitle = (TextView)rootView.findViewById(R.id.title);
         mSubtitle = (TextView)rootView.findViewById(R.id.artist);
         mPlayPause.setEnabled(true);
@@ -123,13 +125,15 @@ public class PlaybackControlsFragment extends Fragment {
         mRelate.setBackgroundColor(color);
     }
 
-    public void updateState(int state, int currentPosition, int during, Artist artist, Album album) {
+    public void updateState(int state, int duringTime, int during, Artist artist, Album album) {
         this.state = state;
         //根据状态更新按钮形态
-        seekBar.setMax(during);
-        seekBar.setProgress(currentPosition);
+
         if(artist != null){
             mTitle.setText(artist.getArtistName());
+            seekBar.setMax(artist.getArtistTraceLength());
+            seekBar.setProgress(duringTime);
+//            LogHelper.i(TAG,"Length = " + artist.getArtistTraceLength() + " during " + duringTime);
         }
         if(album != null){
             mSubtitle.setText(album.getAlbumName() + " " + album.getAuthor());

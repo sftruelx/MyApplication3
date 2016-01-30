@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".page.SongDetailActivity">
+    android:background="@color/white"
+    tools:context=".songList.SongDetailActivity">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -64,6 +65,7 @@
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_below="@+id/app_bar"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">

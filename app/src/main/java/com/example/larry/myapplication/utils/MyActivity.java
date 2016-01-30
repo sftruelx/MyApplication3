@@ -33,6 +33,7 @@ public class MyActivity extends AppCompatActivity{
     protected PlaybackControlsFragment mControlsFragment;
     protected MsgReceiver musicReceiver;
     public   int state = ConstMsg.STATE_NONE;
+    boolean isChanging;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,10 +115,12 @@ public class MyActivity extends AppCompatActivity{
         }
         @Override
         public void onReceive(Context context, Intent intent) {
+            if(isChanging) return;
             state = intent.getIntExtra(ConstMsg.SONG_STATE, 0);
             int during = intent.getIntExtra(ConstMsg.SONG_DURING, 0);
             int currentPosition = intent.getIntExtra(ConstMsg.SONG_POSITION, 0);
-
+            int duringTime = intent.getIntExtra(ConstMsg.SONG_PROGRESS,0);
+//            LogHelper.i(TAG, "during time " + duringTime);
             ArrayList<Artist> list = intent.getParcelableArrayListExtra(ConstMsg.SONG_ARTIST);
 
             if (list != null) {
@@ -134,7 +137,7 @@ public class MyActivity extends AppCompatActivity{
 //                bitmap = BitmapHelper.scaleBitmap(bitmap,75,75);
                     mControlsFragment.updateImage(bitmap);
                 }
-                mControlsFragment.updateState(state, currentPosition, during, artist, album);
+                mControlsFragment.updateState(state, duringTime, during, artist, album);
                 activity.state = state;
                 activity.updateView(state, album, artist);
                 boolean bool = isActivityRunning(getApplicationContext(), getPackageName() + "." + getLocalClassName());

@@ -20,6 +20,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:src="@drawable/uamp_ic_play_arrow_white_24dp"
                 android:tint="@color/bisque"
                 android:tintMode="src_in" />
@@ -36,6 +37,14 @@
                 android:layout_margin="5dp"
                 android:textSize="20dp"
                 android:textAppearance="?attr/textAppearanceListItem" />
+            <TextView
+                android:id="@+id/item_time"
+                android:layout_toLeftOf="@+id/favor"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="25dp"
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
             <ImageView
                 android:id="@+id/favor"
                 android:layout_width="30dp"

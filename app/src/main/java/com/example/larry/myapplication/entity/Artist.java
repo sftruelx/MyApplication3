@@ -14,43 +14,12 @@ public class Artist implements Parcelable {
     private String artistName;
     private String artistPath;
     private String artistImg;
+    private Integer artistTraceLength;
     private long albumId;
     private int state = ConstMsg.STATE_NONE;
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.artistId);
-        dest.writeString(this.artistName);
-        dest.writeString(this.artistPath);
-        dest.writeString(this.artistImg);
-        dest.writeLong(this.albumId);
-    }
-
     public Artist() {
     }
-
-    protected Artist(Parcel in) {
-        this.artistId = in.readLong();
-        this.artistName = in.readString();
-        this.artistPath = in.readString();
-        this.artistImg = in.readString();
-        this.albumId = in.readLong();
-    }
-
-    public static final Parcelable.Creator<Artist> CREATOR = new Parcelable.Creator<Artist>() {
-        public Artist createFromParcel(Parcel source) {
-            return new Artist(source);
-        }
-
-        public Artist[] newArray(int size) {
-            return new Artist[size];
-        }
-    };
 
     public long getArtistId() {
         return artistId;
@@ -99,4 +68,48 @@ public class Artist implements Parcelable {
     public void setState(int state) {
         this.state = state;
     }
+
+    public Integer getArtistTraceLength() {
+        return artistTraceLength;
+    }
+
+    public void setArtistTraceLength(Integer artistTraceLength) {
+        this.artistTraceLength = artistTraceLength;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.artistId);
+        dest.writeString(this.artistName);
+        dest.writeString(this.artistPath);
+        dest.writeString(this.artistImg);
+        dest.writeValue(this.artistTraceLength);
+        dest.writeLong(this.albumId);
+        dest.writeInt(this.state);
+    }
+
+    protected Artist(Parcel in) {
+        this.artistId = in.readLong();
+        this.artistName = in.readString();
+        this.artistPath = in.readString();
+        this.artistImg = in.readString();
+        this.artistTraceLength = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.albumId = in.readLong();
+        this.state = in.readInt();
+    }
+
+    public static final Creator<Artist> CREATOR = new Creator<Artist>() {
+        public Artist createFromParcel(Parcel source) {
+            return new Artist(source);
+        }
+
+        public Artist[] newArray(int size) {
+            return new Artist[size];
+        }
+    };
 }

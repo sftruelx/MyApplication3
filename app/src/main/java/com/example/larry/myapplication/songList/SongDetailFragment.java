@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class SongDetailFragment extends ProgressFragment implements Receiver<DataModule> {
 
     public static final String ARG_ITEM_ID = "item_id";
@@ -60,7 +59,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
     private int color;
     private ArrayList<Artist> list;
 
-    public static SongDetailFragment newInstance(Album album , byte[] bis) {
+    public static SongDetailFragment newInstance(Album album, byte[] bis) {
         SongDetailFragment sdf = new SongDetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_ITEM_ID, album);
@@ -72,31 +71,31 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mImageLoader = new ImageLoader(((UILApplication)getActivity().getApplication()).mQueue);
+        mImageLoader = new ImageLoader(((UILApplication) getActivity().getApplication()).mQueue);
         album = (Album) getArguments().getParcelable(ARG_ITEM_ID);
         byte[] bis = getArguments().getByteArray("bitmap");
-        bitmap= BitmapFactory.decodeByteArray(bis, 0, bis.length);
+        bitmap = BitmapFactory.decodeByteArray(bis, 0, bis.length);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mContentView = inflater.inflate(R.layout.item_list, container, false);
-        mListView = (RecyclerView)mContentView.findViewById(R.id.item_list);
+        mListView = (RecyclerView) mContentView.findViewById(R.id.item_list);
         Activity activity = this.getActivity();
 
         txt = (TextView) activity.findViewById(R.id.toolar_text);
         toolbar = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
 
-        ImageView mButton = (ImageView)activity.findViewById(R.id.play_button);
+        ImageView mButton = (ImageView) activity.findViewById(R.id.play_button);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                T.showShort(getContext(),"==========播放专辑中的所有文件===========");
                 Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
                 intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
-                intent.putParcelableArrayListExtra(ConstMsg.ARISTLIST,list);
-                intent.putExtra(ConstMsg.ALBUM,album);
+                intent.putParcelableArrayListExtra(ConstMsg.ARISTLIST, list);
+                intent.putExtra(ConstMsg.ALBUM, album);
                 intent.putExtra(ConstMsg.SONG_COLOR, color);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
@@ -128,7 +127,9 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         handle_0.setReceiver(this);
         handle_0.pullTrigger();
     }
+
     public SongRecyclerViewAdapter mListAdapter;
+
     @Override
     public void onSucess(TaskHandle handle, DataModule result) {
         switch (handle.id()) {
@@ -150,15 +151,16 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         }
     }
 
-    public ArrayList<Artist> getSongList(){
+    public ArrayList<Artist> getSongList() {
         return list;
     }
+
     @Override
     public void onError(TaskHandle handle, Throwable error) {
 
     }
 
-    private void colorChange( ) {
+    private void colorChange() {
         // 用来提取颜色的Bitmap
         BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
         Bitmap bitmap = drawable.getBitmap();
@@ -169,9 +171,9 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 palette.getVibrantSwatch();
 
 //        color =from.generate().getDarkVibrantColor(getResources().getColor(android.R.color.transparent));
-        if(vibrant != null) {
+        if (vibrant != null) {
             color = colorBurn(vibrant.getRgb());
-        }else{
+        } else {
             color = R.color.black;
         }
 //        color = vibrant.getPopulation(); //白色
@@ -252,31 +254,75 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             return new ViewHolder(view);
         }
 
+        public  String cal(int second) {
+            int h = 0;
+            int d = 0;
+            int s = 0;
+            int temp = second % 3600;
+            if (second > 3600) {
+                h = second / 3600;
+                if (temp != 0) {
+                    if (temp > 60) {
+                        d = temp / 60;
+                        if (temp % 60 != 0) {
+                            s = temp % 60;
+                        }
+                    } else {
+                        s = temp;
+                    }
+                }
+            } else {
+                d = second / 60;
+                if (second % 60 != 0) {
+                    s = second % 60;
+                }
+            }
+
+            String H ="";
+            if(h>0){
+                H = h + ":";
+            }
+            String M ="";
+            if(d>10){
+                M = d + ":";
+            }else{
+                M = "0" + d + ":";
+            }
+            String S ="";
+            if(s>10){
+                S = s + "";
+            }else{
+                S += "0" + s;
+            }
+
+            return H + M + S ;
+        }
+
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mImage.setColorFilter(color);
-            holder.mFavor.setColorFilter(color );
+            holder.mFavor.setColorFilter(color);
             holder.mOption.setColorFilter(color);
 
             holder.mItem = mValues.get(position);
-            if(holder.mItem.getState() == ConstMsg.STATE_NONE){
+            if (holder.mItem.getState() == ConstMsg.STATE_NONE) {
                 holder.mImage.setImageResource(R.drawable.ic_play_arrow_black_36dp);
-            }else{
+            } else {
                 holder.mImage.setImageResource(R.drawable.ic_pause_black_36dp);
             }
 //            holder.mIdView.setText(String.valueOf(mValues.get(position).getArtistId()));
             holder.mContentView.setText(mValues.get(position).getArtistName());
             holder.mView.setTag(holder.mItem.getArtistId());
-
+            holder.mTextTime.setText(cal(holder.mItem.getArtistTraceLength()));
 
             holder.mFavor.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    T.showShort(getContext(),"==========favor===========" + (Boolean) holder.mFavor.getTag());
-                    if(!(Boolean) holder.mFavor.getTag()) {
+                    T.showShort(getContext(), "==========favor===========" + (Boolean) holder.mFavor.getTag());
+                    if (!(Boolean) holder.mFavor.getTag()) {
                         holder.mFavor.setImageResource(R.drawable.ic_star_on);
                         holder.mFavor.setTag(Boolean.TRUE);
-                    }else{
+                    } else {
                         holder.mFavor.setImageResource(R.drawable.ic_star_off);
                         holder.mFavor.setTag(Boolean.FALSE);
                     }
@@ -285,7 +331,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             holder.mOption.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    T.showShort(getContext(),"==========download===========");
+                    T.showShort(getContext(), "==========download===========");
                 }
             });
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -293,7 +339,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 public void onClick(View v) {
                     switch (v.getId()) {
                         case R.id.favor:
-                            LogHelper.i("onClick", "+favor" );
+                            LogHelper.i("onClick", "+favor");
                             break;
                         case R.id.option:
                             break;
@@ -302,8 +348,8 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                     intent.putExtra(ConstMsg.SONG_STATE, ConstMsg.STATE_PLAYING);
                     ArrayList<Artist> mList = new ArrayList<Artist>();
                     mList.add(holder.mItem);
-                    intent.putParcelableArrayListExtra(ConstMsg.ARISTLIST,mList);
-                    intent.putExtra(ConstMsg.ALBUM,album);
+                    intent.putParcelableArrayListExtra(ConstMsg.ARISTLIST, mList);
+                    intent.putExtra(ConstMsg.ALBUM, album);
                     intent.putExtra(ConstMsg.SONG_COLOR, color);
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -320,26 +366,16 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             return mValues.size();
         }
 
-        public List<Artist> getItem(){
+        public List<Artist> getItem() {
             return mValues;
         }
-        private ColorStateList createColorStateList(int normal, int pressed, int focused, int unable) {
-            int[] colors = new int[] { pressed, focused, normal, focused, unable, normal };
-            int[][] states = new int[6][];
-            states[0] = new int[] { android.R.attr.state_pressed, android.R.attr.state_enabled };
-            states[1] = new int[] { android.R.attr.state_enabled, android.R.attr.state_focused };
-            states[2] = new int[] { android.R.attr.state_enabled };
-            states[3] = new int[] { android.R.attr.state_focused };
-            states[4] = new int[] { android.R.attr.state_window_focused };
-            states[5] = new int[] {};
-            ColorStateList colorList = new ColorStateList(states, colors);
-            return colorList;
-        }
+
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final ImageView mImage;
             public final TextView mIdView;
             public final TextView mContentView;
+            public final TextView mTextTime;
             public final ImageView mFavor;
             public final ImageView mOption;
             public Artist mItem;
@@ -350,6 +386,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 mImage = (ImageView) view.findViewById(R.id.item_image);
                 mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);
+                mTextTime = (TextView) view.findViewById(R.id.item_time);
                 mFavor = (ImageView) view.findViewById(R.id.favor);
                 mOption = (ImageView) view.findViewById(R.id.option);
                 mFavor.setTag(Boolean.FALSE);

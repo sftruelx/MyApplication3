@@ -175,6 +175,7 @@ public class MusicService extends Service {
             nm.cancelAll();
         }
     }
+
     protected void updateState() {
         switch (state) {
             case ConstMsg.STATE_PLAYING:
@@ -214,12 +215,14 @@ public class MusicService extends Service {
 
     protected void prepare(int index) {
         if (mTimerTask != null) {
+
             mTimerTask.cancel();
         }
         LogHelper.i(TAG, " index " + index + " current " + current + "  " + songList.toString());
         if (songList.size() > index && index >= 0) {
             final Artist artist = songList.get(index);
             try {
+                currentPosition = 0;
                 mediaPlayer = new MediaPlayer();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.setDataSource(AppUrl.webUrl + artist.getArtistPath());
@@ -228,7 +231,7 @@ public class MusicService extends Service {
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        if(mTimerTask!=null) {
+                        if (mTimerTask != null) {
                             mTimerTask.cancel();
                         }
                         mediaPlayer.release();
@@ -246,12 +249,19 @@ public class MusicService extends Service {
                     public void onPrepared(MediaPlayer mp) {
                         LogHelper.i(TAG, "prepared......" + mp + " " + mediaPlayer);
                         mediaPlayer = mp;
-                        if(mediaPlayer!=null) {
+                        if (mediaPlayer != null) {
                             mediaPlayer.start();
                             state = ConstMsg.STATE_PLAYING;
                             sendBroadcastToClient(state);
                             sendProgress();
                         }
+                    }
+                });
+                mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+                    @Override
+                    public void onSeekComplete(MediaPlayer mp) {
+                        isChanging = false;
+                        LogHelper.i("finish seek" + mp.getCurrentPosition());
                     }
                 });
             } catch (Exception e) {
@@ -279,17 +289,22 @@ public class MusicService extends Service {
                 isTimerRunning = true;
                 if (isChanging == true)//当用户正在拖动进度进度条时不处理进度条的的进度
                     return;
-                sendBroadcastToClient(state);
-                if (mediaPlayer.getDuration() == 0) return;
-                currentPosition = mediaPlayer.getCurrentPosition();
-//                LogHelper.i(TAG,"Run..." + currentPosition + "   " + mediaPlayer.getDuration());
-                if (currentPosition > during) {
-                    this.cancel();
-
+                currentPosition= 0;
+                if (mediaPlayer != null) {
+                    if(mediaPlayer.getCurrentPosition()>0) {
+                        currentPosition = Math.round(mediaPlayer.getCurrentPosition()/1000) ;
+                        notification.contentView.setProgressBar(R.id.pb, songList.get(current).getArtistTraceLength(), currentPosition, false);
+                    }
                 }
-                notification.contentView.setProgressBar(R.id.pb, during, currentPosition, false);
+                sendBroadcastToClient(state);
+//                currentPosition = mediaPlayer.getCurrentPosition();
+//                LogHelper.i(TAG,"Run..." + currentPosition + "   " + mediaPlayer.getDuration());
+/*                if (currentPosition > during) {
+                    this.cancel();
+                }*/
+//                notification.contentView.setProgressBar(R.id.pb, during, currentPosition, false);
 //                showNotification();
-                sendBroadcastToClientLight(ConstMsg.STATE_PLAYING);
+//                sendBroadcastToClientLight(ConstMsg.STATE_PLAYING);
 
             }
         };

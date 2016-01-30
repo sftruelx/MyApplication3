@@ -26,6 +26,10 @@ public class ConstMsg {
     public static final int STATE_BUFFERING=128;
 
     public static final int STATE_CONNECTING=129;
+
+    public static  final int STATE_SEEKTO=130;
+
+    public static final int STATE_CHANGE=131;
     //菜单关于选项的itemId
     public static final int MENU_ABOUT=200;
     //菜单退出选的项的itemId
@@ -37,6 +41,7 @@ public class ConstMsg {
     public static final String SONG_TIME = "song time";
     public static final String SONG_ICON = "song icon";
     public static final String SONG_DURING = "song during";
+    public static final String SONG_CHANGE = "song change";
     public static final String SONG_STATE = "song state";
     public static final String SONG_POSITION = "song position";
     public static final String SONG_COLOR = "song color";
