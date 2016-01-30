@@ -283,13 +283,13 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 H = h + ":";
             }
             String M ="";
-            if(d>10){
+            if(d>9){
                 M = d + ":";
             }else{
                 M = "0" + d + ":";
             }
             String S ="";
-            if(s>10){
+            if(s>9){
                 S = s + "";
             }else{
                 S += "0" + s;
@@ -318,7 +318,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             holder.mFavor.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    T.showShort(getContext(), "==========favor===========" + (Boolean) holder.mFavor.getTag());
+//                    T.showShort(getContext(), "==========favor===========" + (Boolean) holder.mFavor.getTag());
                     if (!(Boolean) holder.mFavor.getTag()) {
                         holder.mFavor.setImageResource(R.drawable.ic_star_on);
                         holder.mFavor.setTag(Boolean.TRUE);
@@ -331,7 +331,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             holder.mOption.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    T.showShort(getContext(), "==========download===========");
+//                    T.showShort(getContext(), "==========download===========");
                 }
             });
             holder.mView.setOnClickListener(new View.OnClickListener() {
