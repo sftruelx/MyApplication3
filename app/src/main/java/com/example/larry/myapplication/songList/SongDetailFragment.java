@@ -340,7 +340,9 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
 //            holder.mIdView.setText(String.valueOf(mValues.get(position).getArtistId()));
             holder.mContentView.setText(mValues.get(position).getArtistName());
             holder.mView.setTag(holder.mItem.getArtistId());
-            holder.mTextTime.setText(cal(holder.mItem.getArtistTraceLength()));
+            if(holder.mItem.getArtistTraceLength()!=null) {
+                holder.mTextTime.setText(cal(holder.mItem.getArtistTraceLength()));
+            }
 
             holder.mFavor.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -389,8 +391,8 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                         LogHelper.i(TAG,"new image file ");
                         compressAndSaveBitmapToSDCard(bitmap, imageFile);
                     }
-                    LogHelper.i(TAG,"OK.......");
-                   /* request.setDestinationInExternalPublicDir(dir, holder.mItem.getArtistName()+".mp3");
+                    LogHelper.i(TAG,"OK......."+ dir);
+                    request.setDestinationInExternalPublicDir(dir, holder.mItem.getArtistName()+".mp3");
                     //TODO 判断是否已经下载
                     final String mp3_name = d.getAbsolutePath()+File.separator+holder.mItem.getArtistName()+".mp3";
                     LogHelper.i(TAG,mp3_name);
@@ -431,7 +433,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                         long reference = downloadManager.enqueue(request);
                     }
 
-*/
+
                 }
             });
             holder.mView.setOnClickListener(new View.OnClickListener() {

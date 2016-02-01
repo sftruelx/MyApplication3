@@ -257,13 +257,7 @@ public class MusicService extends Service {
                         }
                     }
                 });
-                mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
-                    @Override
-                    public void onSeekComplete(MediaPlayer mp) {
-                        isChanging = false;
-                        LogHelper.i("finish seek" + mp.getCurrentPosition());
-                    }
-                });
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
