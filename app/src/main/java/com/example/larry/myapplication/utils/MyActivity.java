@@ -1,6 +1,7 @@
 package com.example.larry.myapplication.utils;
 
 import android.app.ActivityManager;
+import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -32,6 +33,7 @@ public class MyActivity extends AppCompatActivity{
     protected Intent intent;
     protected PlaybackControlsFragment mControlsFragment;
     protected MsgReceiver musicReceiver;
+    protected DownloadCompleteReceiver receiver;
     public   int state = ConstMsg.STATE_NONE;
     boolean isChanging;
     @Override
@@ -39,9 +41,8 @@ public class MyActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         //注册广播接收器
         musicReceiver = new MsgReceiver(this);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConstMsg.MUSICSERVICE_ACTION);
-        registerReceiver(musicReceiver, intentFilter);
+
+        receiver = new DownloadCompleteReceiver();
         //启动MUSIC服务
         intent = new Intent(this, MusicService.class);
         getApplicationContext().startService(intent);
@@ -50,6 +51,10 @@ public class MyActivity extends AppCompatActivity{
     @Override
     protected void onPostResume() {
         super.onPostResume();
+        registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConstMsg.MUSICSERVICE_ACTION);
+        registerReceiver(musicReceiver, intentFilter);
         if(state != ConstMsg.STATE_NONE) {
             showPlaybackControls();
         }else {
@@ -71,7 +76,8 @@ public class MyActivity extends AppCompatActivity{
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(musicReceiver);
+        if(musicReceiver!=null)unregisterReceiver(musicReceiver);
+        if(receiver != null)unregisterReceiver(receiver);
         super.onDestroy();
     }
 
@@ -153,6 +159,16 @@ public class MyActivity extends AppCompatActivity{
             }
         }
 
+    }
+    class DownloadCompleteReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)){
+                long downId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                LogHelper.i(""," download complete! id : "+downId);
+                T.showShort(getApplicationContext(), intent.getAction()+"id : "+downId);
+            }
+        }
     }
 
 }

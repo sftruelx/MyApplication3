@@ -15,7 +15,7 @@ public class FileUtils {
 
     public FileUtils() {
         //得到当前外部存储设备的目录
-        SDPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        SDPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator;
     }
 
     /**
@@ -42,7 +42,8 @@ public class FileUtils {
      */
     public File createSDDir(String dirName) {
         File file = new File(SDPath + dirName);
-        file.mkdir();
+        if (!file.exists())
+            file.mkdir();
         return file;
     }
 
@@ -53,7 +54,7 @@ public class FileUtils {
      * @return
      */
     public boolean isFileExist(String fileName) {
-        File file = new File(SDPath + fileName);
+        File file = new File(fileName);
         return file.exists();
     }
 
@@ -88,5 +89,38 @@ public class FileUtils {
             }
         }
         return file;
+    }
+
+    private void deleteFile(File file) {
+        if (file.isFile()) {
+            deleteFileSafely(file);
+            return;
+        }
+        if (file.isDirectory()) {
+            File[] childFiles = file.listFiles();
+            if (childFiles == null || childFiles.length == 0) {
+                deleteFileSafely(file);
+                return;
+            }
+            for (int i = 0; i < childFiles.length; i++) {
+                deleteFile(childFiles[i]);
+            }
+            deleteFileSafely(file);
+        }
+    }
+
+    /**
+     * 安全删除文件.
+     * @param file
+     * @return
+     */
+    public static boolean deleteFileSafely(File file) {
+        if (file != null) {
+            String tmpPath = file.getParent() + File.separator + System.currentTimeMillis();
+            File tmp = new File(tmpPath);
+            file.renameTo(tmp);
+            return tmp.delete();
+        }
+        return false;
     }
 }

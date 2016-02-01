@@ -10,4 +10,7 @@ public class AppUrl {
     public static final String testUrl = "http://"+IP+":8080/mypro/client/test";
     public static final String WEB_URL = "http://"+IP+":8080/mypro/client/album";
     public static final String ARTIST_URL = "http://"+IP+":8080/mypro/client/artist";
+
+
+    public static final String DIR = "MYPRO1/";
 }

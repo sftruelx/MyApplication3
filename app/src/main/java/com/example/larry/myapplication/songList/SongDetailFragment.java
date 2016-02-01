@@ -1,19 +1,26 @@
 package com.example.larry.myapplication.songList;
 
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,32 +29,39 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Receiver;
 import com.android.volley.TaskHandle;
 import com.android.volley.cache.plus.ImageLoader;
+import com.example.larry.myapplication.MainActivity;
 import com.example.larry.myapplication.R;
 import com.example.larry.myapplication.entity.Album;
 import com.example.larry.myapplication.entity.Artist;
 import com.example.larry.myapplication.entity.DataModule;
 import com.example.larry.myapplication.media.ConstMsg;
 import com.example.larry.myapplication.swipe.ProgressFragment;
+import com.example.larry.myapplication.utils.AppUrl;
+import com.example.larry.myapplication.utils.FileUtils;
 import com.example.larry.myapplication.utils.LogHelper;
-import com.example.larry.myapplication.utils.MyActivity;
 import com.example.larry.myapplication.utils.T;
 import com.example.larry.myapplication.utils.UILApplication;
+import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class SongDetailFragment extends ProgressFragment implements Receiver<DataModule> {
-
+    private static final String TAG = LogHelper.makeLogTag(SongDetailFragment.class);
     public static final String ARG_ITEM_ID = "item_id";
     private View mContentView;
 
-
+    Activity activity;
     private RecyclerView mListView;
     private Album album;
     private Bitmap bitmap;
@@ -82,7 +96,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                              Bundle savedInstanceState) {
         mContentView = inflater.inflate(R.layout.item_list, container, false);
         mListView = (RecyclerView) mContentView.findViewById(R.id.item_list);
-        Activity activity = this.getActivity();
+        activity = this.getActivity();
 
         txt = (TextView) activity.findViewById(R.id.toolar_text);
         toolbar = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -108,6 +122,9 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         image = (ImageView) activity.findViewById(R.id.backdrop);
         colorChange();
         applyBlur();
+
+
+
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -237,6 +254,16 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         return "RenderScript";
     }
 
+    class DownloadCompleteReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)){
+                long downId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                LogHelper.i(""," download complete! id : "+downId);
+                T.showShort(getContext(), intent.getAction()+"id : "+downId);
+            }
+        }
+    }
 
     public class SongRecyclerViewAdapter
             extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> {
@@ -302,7 +329,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mImage.setColorFilter(color);
             holder.mFavor.setColorFilter(color);
-            holder.mOption.setColorFilter(color);
+            holder.mDownload.setColorFilter(color);
 
             holder.mItem = mValues.get(position);
             if (holder.mItem.getState() == ConstMsg.STATE_NONE) {
@@ -328,10 +355,83 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                     }
                 }
             });
-            holder.mOption.setOnClickListener(new View.OnClickListener() {
+
+            holder.mDownload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    T.showShort(getContext(), "==========download===========");
+                    Gson gson = new Gson();
+                    String json = gson.toJson(holder.mItem);
+                    LogHelper.i(TAG, json );
+                    //下载
+//                    T.showShort(getContext(), "==========download===========" + AppUrl.webUrl + holder.mItem.getArtistPath() );
+                    String serviceString = Context.DOWNLOAD_SERVICE;
+                    final DownloadManager downloadManager;
+                    downloadManager = (DownloadManager) activity.getSystemService(serviceString);
+                    Uri uri = Uri.parse(AppUrl.webUrl + holder.mItem.getArtistPath());
+                    final DownloadManager.Request request = new DownloadManager.Request(uri);
+
+                    //指定需要WIFI
+//                    request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    request.setTitle(holder.mItem.getArtistName());
+                    request.setDescription(album.getAlbumName());
+                    request.setAllowedOverRoaming(false);
+                    //设置文件存放目录
+                    FileUtils fu = new FileUtils();
+                    File dd = fu.createSDDir(AppUrl.DIR);
+                    LogHelper.i(TAG, dd.getAbsolutePath());
+//                    request.setDestinationInExternalFilesDir(activity, Environment.DIRECTORY_DOWNLOADS, "mydown");
+                    String dir = AppUrl.DIR+album.getAlbumName();
+                    File d = fu.createSDDir(dir);
+                    String imageFile = d.getAbsolutePath()+ File.separator + "xx100.jpg";
+                    LogHelper.i(TAG,imageFile);
+                    if(!fu.isFileExist(imageFile)){
+                        LogHelper.i(TAG,"new image file ");
+                        compressAndSaveBitmapToSDCard(bitmap, imageFile);
+                    }
+                    LogHelper.i(TAG,"OK.......");
+                   /* request.setDestinationInExternalPublicDir(dir, holder.mItem.getArtistName()+".mp3");
+                    //TODO 判断是否已经下载
+                    final String mp3_name = d.getAbsolutePath()+File.separator+holder.mItem.getArtistName()+".mp3";
+                    LogHelper.i(TAG,mp3_name);
+                    if(fu.isFileExist(mp3_name)){
+                        //    通过AlertDialog.Builder这个类来实例化我们的一个AlertDialog的对象
+                        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                        //    设置Title的图标
+                        builder.setIcon(R.drawable.ic_launcher);
+                        //    设置Title的内容
+                        builder.setTitle("下载");
+                        //    设置Content来显示一个信息
+                        builder.setMessage("文件已存在，确定重新下载吗？");
+                        //    设置一个PositiveButton
+                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                File f = new File(mp3_name);
+                                f.delete();
+
+//                                Toast.makeText(MainActivity.this, "positive: " + which, Toast.LENGTH_SHORT).show();
+                                long reference = downloadManager.enqueue(request);
+
+                            }
+                        });
+                        //    设置一个NegativeButton
+                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+//                                Toast.makeText(MainActivity.this, "negative: " + which, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        //    显示出该对话框
+                        builder.show();
+                    }else{
+                        long reference = downloadManager.enqueue(request);
+                    }
+
+*/
                 }
             });
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -341,7 +441,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                         case R.id.favor:
                             LogHelper.i("onClick", "+favor");
                             break;
-                        case R.id.option:
+                        case R.id.download:
                             break;
                     }
                     Intent intent = new Intent(ConstMsg.MUSICCLIENT_ACTION);
@@ -361,6 +461,36 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             });
         }
 
+        //获取SDCard的目录路径功能
+        private String getSDCardPath() {
+            String SDCardPath = null;
+// 判断SDCard是否存在
+            boolean IsSDcardExist = Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+            if (IsSDcardExist) {
+                SDCardPath = Environment.getExternalStorageDirectory().toString();
+            }
+            return SDCardPath;
+        }
+
+        //压缩且保存图片到SDCard
+        private void compressAndSaveBitmapToSDCard(Bitmap rawBitmap,String fileName){
+
+            File saveFile=new File(fileName);
+            if (!saveFile.exists()) {
+                try {
+                    saveFile.createNewFile();
+                    FileOutputStream fileOutputStream=new FileOutputStream(saveFile);
+                    if (fileOutputStream!=null) {
+                        rawBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                    }
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         @Override
         public int getItemCount() {
             return mValues.size();
@@ -377,7 +507,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
             public final TextView mContentView;
             public final TextView mTextTime;
             public final ImageView mFavor;
-            public final ImageView mOption;
+            public final ImageView mDownload;
             public Artist mItem;
 
             public ViewHolder(View view) {
@@ -388,7 +518,7 @@ public class SongDetailFragment extends ProgressFragment implements Receiver<Dat
                 mContentView = (TextView) view.findViewById(R.id.content);
                 mTextTime = (TextView) view.findViewById(R.id.item_time);
                 mFavor = (ImageView) view.findViewById(R.id.favor);
-                mOption = (ImageView) view.findViewById(R.id.option);
+                mDownload = (ImageView) view.findViewById(R.id.download);
                 mFavor.setTag(Boolean.FALSE);
             }
 
